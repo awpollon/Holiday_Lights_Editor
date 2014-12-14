@@ -12,4 +12,6 @@ digitalWrite(1, HIGH);
 digitalWrite(2, HIGH);
 delay(2000.0);
 digitalWrite(1, LOW);
+delay(1000.0);
+digitalWrite(1, HIGH);
 }

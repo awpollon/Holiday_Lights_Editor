@@ -27,6 +27,10 @@ public class Show{
 		d.addEvent(new LightEvent(s.channels[1], false));
 		jingle.addCue(d);
 		
+		Cue f = new Cue(3000);
+		f.addEvent(new LightEvent(s.channels[1], true));
+		jingle.addCue(f);
+		
 		jingle.writeFile();
 	}
 }

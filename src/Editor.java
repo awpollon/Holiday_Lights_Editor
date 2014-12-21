@@ -1,108 +1,49 @@
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JList;
 
 
 
-public class Editor {
-	long editorTime;
+public class Editor implements Serializable{
+	private Song currentSong;
+	private long editorTime;
 	boolean isPlaying;
-	JTextField timeText;
-	JPanel p;
-	JFrame f;
+	GUI gui;
 
-	public Editor() {
-		editorTime = 0;
-
-
-		f = new JFrame("Show Editor");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setBounds(50, 100, 300, 300);
-		f.setVisible(true);
-
-		p = new JPanel();
-		p.setLayout(new BorderLayout());
-		f.add(p);
-
-		timeText = new JTextField("Time: " + editorTime);
-		timeText.setEditable(false);
-		p.add(timeText, BorderLayout.PAGE_START);
-		
-		JButton start = new JButton("Play");
-		start.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				handleButtonClick((JButton)e.getSource());
-			}
-		});
-		p.add(start, BorderLayout.SOUTH);
-		
-		f.addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println(e.getKeyChar()+ " pressed!");
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				System.out.println(e.getKeyChar()+ " released!");
-
-			}
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-
-			}
-
-
-		});
-
-		f.validate();
-
+	public Editor(Song s) {
+		this.currentSong = s;
+		gui = new GUI(this);
+		setEditorTime(0);
 	}
 
-	protected void handleButtonClick(JButton b) {
-		if(b.getText() == "Play") {
-			startTimer();
-			b.setText("Stop");
-		}
-		else if (b.getText() == "Stop") {
-			stopTimer();
-			b.setText("Play");
-		}
-	}
-
-	private void stopTimer() {
+	void stopTimer() {
 		isPlaying = false;
+		System.out.println("Stopped time: " + editorTime);
 	}
 
 	void startTimer() {
         (new Thread(new Timer(this))).start();
 	}
 
-
-	void updateTime() {
-		timeText.setText("Time: " + editorTime);		
+	
+	void refresh() {
+		//Get list of cues
+		this.currentSong.getCues();
 	}
 
 	public static void main(String[] args) {
-		Editor e = new Editor();
+		Song s = new Song("First Song", 60000);
+
+		Editor e = new Editor(s);
+
 	}
+	
+	
 	public boolean writeFile(Song s){
 		try {
 
@@ -180,6 +121,24 @@ public class Editor {
 		}
 
 		return true;
+	}
+
+	public Song getCurrentSong() {
+		return currentSong;
+	}
+
+	public long getEditorTime() {
+		return editorTime;
+	}
+
+	public void setEditorTime(long editorTime) {
+		this.editorTime = editorTime;
+	}
+
+
+	public void addNewCue() {
+		//Handle button click to add new cue
+		NewCueWindow n = new NewCueWindow();
 	}
 
 }

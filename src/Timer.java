@@ -8,17 +8,17 @@ public class Timer implements Runnable {
 	@Override
 	public void run() {
 		long startTime = System.currentTimeMillis();
-		long editorStart = editor.editorTime;
+		long editorStart = editor.getEditorTime();
 		
 		editor.isPlaying = true;
 
 		while(editor.isPlaying){
 			long currentTime = System.currentTimeMillis(); 
-			editor.editorTime = (currentTime-startTime) + editorStart;
-			editor.updateTime();
+			editor.setEditorTime((currentTime-startTime) + editorStart);
+			editor.gui.updateTime();
 			
 			if((currentTime - startTime)%2000 == 0) {
-				System.out.println(editor.editorTime);
+				System.out.println(editor.getEditorTime());
 
 			}
 			

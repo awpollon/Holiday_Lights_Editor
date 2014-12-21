@@ -8,24 +8,22 @@ import java.util.ArrayList;
 public class Song {
 
 	private String title;
-	private ArrayList<Cue> cues;
-	private Show show;
+	private CueList cues;
 	private Channel[] channels;	
 
 
 
-	public Song(String songTitle, Show s) {
+	public Song(String songTitle, double songLength) {
 		this.title = songTitle;
-		cues = new ArrayList<Cue>();
-		this.show = s;
+		cues = new CueList(songLength);
 	}
 
 	boolean addCue(Cue c) {
-		return cues.add(c);
+		return cues.addCue(c);
 	}
 
 	boolean removeCue(Cue c) {
-		return cues.remove(c);
+		return false;
 	}
 
 	public String getTitle() {

@@ -1,6 +1,8 @@
+import java.io.Serializable;
+
 
  
-public class Show{
+public class Show implements Serializable{
 	int numSlots = 13;
 	Channel[] channels;	
 	Song x;

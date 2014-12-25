@@ -1,7 +1,13 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class CueList {
+public class CueList implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9162876658074854677L;
+	
 	private Cue root;
 	private int numCues;
 

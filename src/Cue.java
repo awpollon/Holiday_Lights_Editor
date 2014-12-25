@@ -1,30 +1,36 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Cue {
+public class Cue implements Comparable<Cue>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7498455730594590728L;
+	
 	Cue leftQ;
 	Cue rightQ;
 	Cue parent;
 	boolean isRoot;
-	
+
 	private ArrayList<LightEvent> events;
 	public ArrayList<LightEvent> getEvents() {
 		return events;
 	}
 
 	private double runTime;
-	
+
 	public Cue(double time) {
 		isRoot = false; //Will always be false except when a new cuelist is created. Will change.
 		this.setRunTime(time);
 		events = new ArrayList<LightEvent>();
 	}
-	
+
 	boolean addEvent(LightEvent e) {
-		
+
 		return events.add(e);
 	}
-	
+
 	boolean removeEvent(LightEvent e) {
 		return events.remove(e);
 	}
@@ -35,6 +41,13 @@ public class Cue {
 
 	public void setRunTime(double runTime) {
 		this.runTime = runTime;
+	}
+
+	@Override
+	public int compareTo(Cue c) {
+		if (c.getRunTime() > this. runTime) return 1;
+		else if (c.getRunTime() < this.runTime) return -1;		
+		else return 0;
 	}
 
 }

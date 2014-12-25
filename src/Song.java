@@ -1,29 +1,34 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
-public class Song {
+public class Song implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4942039484548991991L;
+	
 	private String title;
-	private CueList cues;
-	private Channel[] channels;	
-
-
+	private ArrayList<Cue> cues;
+	private ArrayList<Channel> channels;	
 
 	public Song(String songTitle, double songLength) {
 		this.title = songTitle;
-		cues = new CueList(songLength);
+		cues = new ArrayList<Cue>();
+		channels = new ArrayList<Channel>();
 	}
 
 	boolean addCue(Cue c) {
-		return cues.addCue(c);
+		 if (cues.add(c)) {
+			 return true;
+		 }
+		 else return false;
 	}
 
 	boolean removeCue(Cue c) {
-		return false;
+		return cues.remove(c);
 	}
 
 	public String getTitle() {
@@ -33,17 +38,21 @@ public class Song {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Channel[] getChannels() {
-		return channels;
+	public Object[] getChannels() {
+		return channels.toArray();
 	}
 
-//	public void setChannels(Channel[] channels) {
-//		this.channels = channels;
-//	}
+	public boolean addChannel(Channel ch) {
+		return this.channels.add(ch);
+	}
 	
+	public boolean removeChannel(Channel ch) {
+		return this.channels.remove(ch);
+	}
 
-	public ArrayList<Cue> getCues() {
-		return cues;
+	public Object[] getCues() {
+		Collections.sort(this.cues);
+		return (cues.toArray());
 	}
 	
 }

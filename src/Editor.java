@@ -3,13 +3,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-
-import javax.swing.JList;
 
 
 
 public class Editor implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7794921541255885374L;
+	
 	private Song currentSong;
 	private long editorTime;
 	boolean isPlaying;
@@ -27,10 +29,10 @@ public class Editor implements Serializable{
 	}
 
 	void startTimer() {
-        (new Thread(new Timer(this))).start();
+		(new Thread(new Timer(this))).start();
 	}
 
-	
+
 	void refresh() {
 		//Get list of cues
 		this.currentSong.getCues();
@@ -38,12 +40,14 @@ public class Editor implements Serializable{
 
 	public static void main(String[] args) {
 		Song s = new Song("First Song", 60000);
-
 		Editor e = new Editor(s);
+		
+		s.addCue(new Cue(1000));
+		e.writeFile(s);
 
 	}
-	
-	
+
+
 	public boolean writeFile(Song s){
 		try {
 
@@ -70,23 +74,30 @@ public class Editor implements Serializable{
 			bw.append("*/\n\n");
 			//Setup method
 			bw.append("void setup() {\n");
-			Channel chs[] = s.getChannels();
+			Object[] chs = s.getChannels();
 
-			for(int i=0; i<chs.length; i++) {
-				if(chs[i] != null){
-					Channel c = chs[i];
-					bw.append("pinMode(" + c.getArduinoPin() +", OUTPUT);\n");
+			try {
+				for(int i=0; i<chs.length; i++) {
+					if(chs[i] != null){
+						Channel c = (Channel) chs[i];
+						bw.append("pinMode(" + c.getArduinoPin() +", OUTPUT);\n");
+					}
 				}
+			}
+			catch(Exception e) {
+				System.err.println("Error: Unable to print cues");
+				bw.close();
+				return false;
 			}
 			bw.append("}\n\n");
 
 			//Loop
 			bw.append("void loop() {\n");
 
-			ArrayList<Cue> qs = s.getCues();
+			Object[] qs = s.getCues();
 
-			for(int i=0; i<qs.size(); i++) {
-				Cue c = qs.get(i);
+			for(int i=0; i<qs.length; i++) {
+				Cue c = (Cue) qs[i];
 				for(int j=0; j<c.getEvents().size(); j++) {
 					LightEvent e = c.getEvents().get(j);
 					bw.append("digitalWrite(" +e.channel.getChNum() +", ");
@@ -101,8 +112,8 @@ public class Editor implements Serializable{
 				}
 				//After each cue, place a delay equal to difference in timing
 				//Check if there is another cue
-				if(i<qs.size()-1) {
-					double delayTime = qs.get(i+1).getRunTime() - c.getRunTime();
+				if(i<qs.length-1) {
+					double delayTime = ((Cue) qs[i+1]).getRunTime() - c.getRunTime();
 					bw.append("delay(" + delayTime +");\n");
 				}
 			}

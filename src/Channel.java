@@ -1,5 +1,12 @@
+import java.io.Serializable;
 
-public class Channel {
+
+public class Channel implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7257850489035330987L;
+	
 	private String chName;
 	private String color;
 	private int chNum;

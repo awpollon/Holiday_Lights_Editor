@@ -9,12 +9,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 
 
 public class GUI implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2843788118490686677L;
+
 	Editor e;
 	
 	JTextField timeText;
@@ -26,11 +29,11 @@ public class GUI implements Serializable {
 	
 	JButton start;
 	JButton addCue;
+
+	private Object[] cues;
 	
 
 	public GUI(Editor editor) {
-		JList x = new JList();
-		
 		this.e = editor; //Specifies the editor session
 		
 		f = new JFrame("Show Editor");
@@ -46,7 +49,11 @@ public class GUI implements Serializable {
 		timeText.setEditable(false);
 		p.add(timeText, BorderLayout.PAGE_START);
 		
-		list = new JList((ListModel) e.getCurrentSong().getCues());
+		//Test: print cue list
+		cues= e.getCurrentSong().getCues();
+
+		
+		list = new JList(e.getCurrentSong().getCues());
 		p.add(list,BorderLayout.CENTER);
 		
 		
@@ -109,5 +116,14 @@ public class GUI implements Serializable {
 	
 	void updateTime() {
 		timeText.setText("Time: " + e.getEditorTime());		
+	}
+	
+	void printCues() {
+		this.cues= e.getCurrentSong().getCues();
+		list = new JList(e.getCurrentSong().getCues());
+		
+		for (int i=0; i<cues.length; i++) {
+			System.out.println(cues[i]);
+		}
 	}
 }

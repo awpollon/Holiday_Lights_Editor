@@ -49,6 +49,9 @@ public class Cue implements Comparable<Cue>, Serializable {
 		else if (c.getRunTime() < this.runTime) return -1;		
 		else return 0;
 	}
-
+	@Override
+	public String toString() {
+		return (this.runTime + "");
+	}
 }
 

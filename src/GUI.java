@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,7 +10,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 
 public class GUI implements Serializable {
@@ -23,7 +26,6 @@ public class GUI implements Serializable {
 	JTextField timeText;
 	JPanel p;
 	JFrame f;
-	
 	
 	JList list;
 	
@@ -40,8 +42,11 @@ public class GUI implements Serializable {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setBounds(50, 100, 300, 300);
 		f.setVisible(true);
-
+		f.setFocusable(true);
+		f.requestFocusInWindow();
+		
 		p = new JPanel();
+
 		p.setLayout(new BorderLayout());
 		f.add(p);
 
@@ -54,7 +59,14 @@ public class GUI implements Serializable {
 
 		
 		list = new JList(e.getCurrentSong().getCues());
-		p.add(list,BorderLayout.CENTER);
+		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		list.setLayoutOrientation(JList.VERTICAL_WRAP);
+		list.setVisibleRowCount(-1);
+		
+		JScrollPane listScroller = new JScrollPane(list);
+		listScroller.setPreferredSize(new Dimension(250, 80));
+		
+		p.add(list,BorderLayout.WEST);
 		
 		
 		start = new JButton("Play");
@@ -82,7 +94,6 @@ public class GUI implements Serializable {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
 				System.out.println(e.getKeyChar()+ " pressed!");
 			}
 
@@ -96,8 +107,6 @@ public class GUI implements Serializable {
 			public void keyTyped(KeyEvent e) {
 
 			}
-
-
 		});
 
 		f.validate();
@@ -121,6 +130,17 @@ public class GUI implements Serializable {
 	void printCues() {
 		this.cues= e.getCurrentSong().getCues();
 		list = new JList(e.getCurrentSong().getCues());
+		
+		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		list.setLayoutOrientation(JList.VERTICAL_WRAP);
+		list.setVisibleRowCount(-1);
+		
+		JScrollPane listScroller = new JScrollPane(list);
+		listScroller.setPreferredSize(new Dimension(250, 80));
+		
+		p.add(list, BorderLayout.CENTER);
+		list.validate();
+		f.validate();
 		
 		for (int i=0; i<cues.length; i++) {
 			System.out.println(cues[i]);

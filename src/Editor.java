@@ -44,9 +44,9 @@ public class Editor implements Serializable{
 		
 		s.addCue(new Cue(1000));
 		e.writeFile(s);
+		e.gui.printCues();
 
 	}
-
 
 	public boolean writeFile(Song s){
 		try {

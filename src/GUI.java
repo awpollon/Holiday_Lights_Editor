@@ -27,6 +27,8 @@ public class GUI implements Serializable {
 	JPanel p;
 	JFrame f;
 	
+	JPanel buttonPanel;
+	
 	JList list;
 	
 	JButton start;
@@ -77,8 +79,6 @@ public class GUI implements Serializable {
 				handleButtonClick((JButton)e.getSource());
 			}
 		});
-		p.add(start, BorderLayout.SOUTH);
-
 		addCue = new JButton("Add Cue");
 		addCue.addActionListener(new ActionListener() {
 			
@@ -109,6 +109,13 @@ public class GUI implements Serializable {
 			}
 		});
 
+		
+		//Initialize button panel
+		buttonPanel = new JPanel();
+		buttonPanel.add(start);
+		buttonPanel.add(addCue);
+		p.add(buttonPanel, BorderLayout.SOUTH);
+		
 		f.validate();
 
 	}

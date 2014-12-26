@@ -21,6 +21,7 @@ public class NewCueWindow {
 	private JButton add;
 	private JButton cancel;
 	
+	
 	double cueTime;
 	int cueCh;
 	boolean wasCancelled = false;
@@ -32,7 +33,7 @@ public class NewCueWindow {
 		
 		f = new JFrame("New Cue");
 		f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		f.setBounds(50, 100, 100, 100);
+		f.setBounds(50, 100, 200, 200);
 		f.setVisible(true);
 
 		p = new JPanel();

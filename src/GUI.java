@@ -33,6 +33,7 @@ public class GUI implements Serializable {
 	
 	JButton start;
 	JButton addCue;
+	JButton export;
 
 	private Object[] cues;
 	
@@ -42,7 +43,7 @@ public class GUI implements Serializable {
 		
 		f = new JFrame("Show Editor");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setBounds(50, 100, 300, 300);
+		f.setBounds(50, 100, 400, 400);
 		f.setVisible(true);
 		f.setFocusable(true);
 		f.requestFocusInWindow();
@@ -110,10 +111,21 @@ public class GUI implements Serializable {
 		});
 
 		
+		export = new JButton("Create Sketch");
+		export.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				e.writeFile();				
+			}
+		});
+		
+		
 		//Initialize button panel
 		buttonPanel = new JPanel();
 		buttonPanel.add(start);
 		buttonPanel.add(addCue);
+		buttonPanel.add(export);
 		p.add(buttonPanel, BorderLayout.SOUTH);
 		
 		f.validate();

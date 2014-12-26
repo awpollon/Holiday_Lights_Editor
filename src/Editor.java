@@ -11,14 +11,14 @@ public class Editor implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -7794921541255885374L;
-	
-	private Song currentSong;
+
+	private Song song;
 	private long editorTime;
 	boolean isPlaying;
 	GUI gui;
 
 	public Editor(Song s) {
-		this.currentSong = s;
+		this.song = s;
 		gui = new GUI(this);
 		setEditorTime(0);
 	}
@@ -35,23 +35,21 @@ public class Editor implements Serializable{
 
 	void refresh() {
 		//Get list of cues
-		this.currentSong.getCues();
+		this.song.getCues();
 	}
 
 	public static void main(String[] args) {
-		Song s = new Song("First Song", 60000);
+		Song s = new Song("Second Song", 60000);
 		Editor e = new Editor(s);
-		
-		s.addCue(new Cue(1000));
-		e.writeFile(s);
+
 		e.gui.printCues();
 
 	}
 
-	public boolean writeFile(Song s){
-		try {
+	public boolean writeFile(){
 
-			File file = new File(s.getTitle());
+		try {
+			File file = new File(song.getTitle());
 			if (!file.exists()) {
 				if (file.mkdir()) {
 					System.out.println("Directory is created!");
@@ -59,7 +57,7 @@ public class Editor implements Serializable{
 					System.out.println("Failed to create directory!");
 				}
 			}
-			file = new File(s.getTitle() +"/"+s.getTitle()+".txt");
+			file = new File(song.getTitle() +"/"+song.getTitle()+".txt");
 
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
@@ -74,7 +72,7 @@ public class Editor implements Serializable{
 			bw.append("*/\n\n");
 			//Setup method
 			bw.append("void setup() {\n");
-			Object[] chs = s.getChannels();
+			Object[] chs = song.getChannels();
 
 			try {
 				for(int i=0; i<chs.length; i++) {
@@ -94,7 +92,7 @@ public class Editor implements Serializable{
 			//Loop
 			bw.append("void loop() {\n");
 
-			Object[] qs = s.getCues();
+			Object[] qs = song.getCues();
 
 			for(int i=0; i<qs.length; i++) {
 				Cue c = (Cue) qs[i];
@@ -124,7 +122,7 @@ public class Editor implements Serializable{
 
 			bw.close();
 
-			System.out.println("Done");
+			System.out.println("File Write Complete");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -135,7 +133,7 @@ public class Editor implements Serializable{
 	}
 
 	public Song getCurrentSong() {
-		return currentSong;
+		return song;
 	}
 
 	public long getEditorTime() {

@@ -13,7 +13,7 @@ public class Channel implements Serializable {
 	private int numLights;
 	private int arduinoPin;
 	
-	public Channel(String name, String color, int channel, int numLights, int pin) {
+	public Channel(String name, int channel, int pin) {
 		this.setChName(name);
 		this.setColor(color);
 		this.setChNum(channel);
@@ -59,5 +59,10 @@ public class Channel implements Serializable {
 
 	public void setArduinoPin(int arduinoPin) {
 		this.arduinoPin = arduinoPin;
+	}
+	
+	@Override
+	public String toString() {
+		return (chNum + ": " + chName);
 	}
 }

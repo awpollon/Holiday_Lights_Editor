@@ -1,8 +1,19 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 
@@ -40,6 +51,13 @@ public class Editor implements Serializable{
 
 	public static void main(String[] args) {
 		Song s = new Song("Second Song", 60000);
+
+		s.addChannel(new Channel("White Tree", 1, 2));
+		s.addChannel(new Channel("Blue Tree", 2, 3));
+		s.addChannel(new Channel("Blues", 3, 4));
+		s.addChannel(new Channel("Whites", 4, 5));
+		s.addChannel(new Channel("Wreaths", 5, 6));
+
 		Editor e = new Editor(s);
 
 		e.gui.printCues();
@@ -147,7 +165,104 @@ public class Editor implements Serializable{
 
 	public void addNewCue() {
 		//Handle button click to add new cue
-		NewCueWindow n = new NewCueWindow();
+		newCuePane();
+		//		NewCueWindow n = new NewCueWindow();
 	}
 
+	public void newCuePane() {		
+		JTextField cueTime = new JTextField(5);
+		final JPanel myPanel = new JPanel();
+		cueTime.setText("" + editorTime);
+		//			JTextField channel = new JTextField(5);
+
+		final ArrayList<eventInput> events = new ArrayList<eventInput>();
+
+		//add initial event
+		events.add(new eventInput(song));
+
+		myPanel.add(new JLabel("Cue Time:"));
+		myPanel.add(cueTime);
+		myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+
+		myPanel.add(new JLabel("Channel:"));
+		myPanel.add(events.get(0).channel);
+		myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+		myPanel.add(new JLabel("State:"));
+		myPanel.add(events.get(0).state);
+
+
+		JButton addEvent = new JButton("Add Channels");
+		addEvent.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				events.add(new eventInput(song));
+				int i = events.size()-1;
+				
+				myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+
+				myPanel.add(new JLabel("Channel:"));
+				myPanel.add(events.get(i).channel);
+				myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+				myPanel.add(new JLabel("State:"));
+				myPanel.add(events.get(i).state);
+				
+				myPanel.validate();
+			}
+		});
+		
+		myPanel.add(addEvent);
+
+		int result = JOptionPane.showConfirmDialog(null, myPanel, 
+				"New Cue", JOptionPane.OK_CANCEL_OPTION);
+		
+		if (result == JOptionPane.OK_OPTION) {
+			//Validate input
+			double qTime = Double.parseDouble(cueTime.getText());
+			Cue tmp = new Cue(qTime);
+			boolean success = true;
+			
+			
+			if(qTime >=0) {
+				for(int i=0; i<events.size(); i++) {
+					boolean on = false;
+					if(events.get(i).state.equals("On")) on = true;
+
+					if(events.get(i).channel.getSelectedItem() != null) {
+						tmp.addEvent(new LightEvent(((Channel) events.get(i).channel.getSelectedItem()), on));
+					}
+					else {
+						System.err.println("Unable to add cue: Invalid Input.");
+						success = false;
+					}
+				}
+			}
+			
+			else {
+				System.err.println("Unable to add cue: Invalid Cue Time.");
+				success = false;
+			}
+			
+			if(success) {
+				//If input is valid, add cue and refresh
+				song.addCue(tmp);
+				gui.printCues();
+				System.out.println("Cue added.");
+			}
+			else {
+				System.err.println("Cue not added.");
+			}
+		}					
+	}		
+}
+
+class eventInput {
+	JComboBox channel;
+	JComboBox state;
+	String[] options = {"On", "Off"};
+
+	public eventInput(Song s) {
+		channel = new JComboBox(s.getChannels());
+		state = new JComboBox(options);
+	}
 }

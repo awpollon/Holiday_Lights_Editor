@@ -159,6 +159,7 @@ public class GUI implements Serializable {
 		
 		p.add(list, BorderLayout.CENTER);
 		list.validate();
+		p.validate();
 		f.validate();
 		
 		for (int i=0; i<cues.length; i++) {

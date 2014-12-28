@@ -38,8 +38,8 @@ public class Song implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Object[] getChannels() {
-		return channels.toArray();
+	public Channel[] getChannels() {
+		return channels.toArray(new Channel[channels.size()]);
 	}
 
 	public boolean addChannel(Channel ch) {
@@ -50,9 +50,10 @@ public class Song implements Serializable {
 		return this.channels.remove(ch);
 	}
 
-	public Object[] getCues() {
+	public Cue[] getCues() {
+
 		Collections.sort(this.cues);
-		return (cues.toArray());
+		return cues.toArray(new Cue[this.cues.size()]);
 	}
 	
 }

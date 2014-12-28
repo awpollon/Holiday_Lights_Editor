@@ -18,7 +18,7 @@ public class Timer implements Runnable {
 			editor.gui.updateTime();
 			
 			if((currentTime - startTime)%2000 == 0) {
-				System.out.println(editor.getEditorTime());
+//				System.out.println(editor.getEditorTime());
 
 			}
 			

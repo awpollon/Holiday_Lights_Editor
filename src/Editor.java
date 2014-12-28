@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -65,7 +67,7 @@ public class Editor implements Serializable{
 	}
 
 	public boolean writeFile(){
-				
+
 		try {
 			File file = new File(song.getTitle());
 			if (!file.exists()) {
@@ -81,7 +83,7 @@ public class Editor implements Serializable{
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			
+
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			//Intro comment
@@ -171,6 +173,7 @@ public class Editor implements Serializable{
 
 	public void newCuePane() {		
 		JTextField cueTime = new JTextField(5);
+		JLabel feedback; //Only initilized if error needs to be given to user
 		final JPanel myPanel = new JPanel();
 		cueTime.setText("" + editorTime);
 		//			JTextField channel = new JTextField(5);
@@ -198,7 +201,7 @@ public class Editor implements Serializable{
 			public void actionPerformed(ActionEvent arg0) {
 				events.add(new eventInput(song));
 				int i = events.size()-1;
-				
+
 				myPanel.add(Box.createHorizontalStrut(15)); // a spacer
 
 				myPanel.add(new JLabel("Channel:"));
@@ -206,24 +209,34 @@ public class Editor implements Serializable{
 				myPanel.add(Box.createHorizontalStrut(15)); // a spacer
 				myPanel.add(new JLabel("State:"));
 				myPanel.add(events.get(i).state);
-				
+
 				myPanel.validate();
 			}
 		});
-		
+
 		myPanel.add(addEvent);
 
 		int result = JOptionPane.showConfirmDialog(null, myPanel, 
 				"New Cue", JOptionPane.OK_CANCEL_OPTION);
-		
+
 		if (result == JOptionPane.OK_OPTION) {
 			//Validate input
-			double qTime = Double.parseDouble(cueTime.getText());
-			Cue tmp = new Cue(qTime);
 			boolean success = true;
+			double qTime = -1;
+			Cue tmp = null;
+			try{
+			qTime = Double.parseDouble(cueTime.getText());
+			tmp = new Cue(qTime);
+
+			}
+			catch(Exception e) {
+				success = false;
+				System.err.println("Cannot parseDouble time");
+				
+			}
 			
-			
-			if(qTime >=0) {
+			if(qTime >=0 && success) {
+				assert tmp != null;
 				for(int i=0; i<events.size(); i++) {
 					boolean on = false;
 					if(events.get(i).state.getSelectedItem().equals("On")) on = true;
@@ -233,16 +246,47 @@ public class Editor implements Serializable{
 					}
 					else {
 						System.err.println("Unable to add cue: Invalid Input.");
+						feedback = new JLabel("Unable to add cue: Invalid Input.");
+						feedback.setForeground(Color.red);
+						myPanel.add(feedback);
+						JOptionPane.showMessageDialog(null, "Unable to add cue: Invalid Input.");
+
 						success = false;
 					}
 				}
+				if(success) { //See if sucessfull so far, thn check if exists
+					//Check if cue already exists
+					for (int i=0; i<song.getCues().length; i++){
+						Cue c = song.getCues()[i];
+						//If runtime is less than current cue to check, end search
+						if(tmp.getRunTime() < c.getRunTime()) break;
+						else if (tmp.getRunTime() == c.getRunTime()) {
+							//Cue already exists
+							success = false;
+							System.err.println("Cue already exists at that time");
+							
+							feedback = new JLabel("Unable to add cue: Cue already exists at that time.");
+							feedback.setForeground(Color.red);
+							myPanel.add(feedback);
+							JOptionPane.showMessageDialog(null, "Unable to add cue: Cue already exists at that time.");
+
+						}
+					}
+				}
+
 			}
-			
+
 			else {
 				System.err.println("Unable to add cue: Invalid Cue Time.");
 				success = false;
+				
+				feedback = new JLabel("Unable to add cue: Invalid Cue Time.");
+				feedback.setForeground(Color.red);
+				myPanel.add(feedback);
+				JOptionPane.showMessageDialog(null, "Unable to add cue: Invalid Cue Time.");
 			}
-			
+
+
 			if(success) {
 				//If input is valid, add cue and refresh
 				song.addCue(tmp);

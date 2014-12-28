@@ -10,6 +10,7 @@ import java.io.Serializable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -37,6 +38,7 @@ public class GUI implements Serializable {
 	JButton start;
 	JButton addCue;
 	JButton export;
+	JButton removeCue;
 
 	private Object[] cues;
 	
@@ -46,7 +48,7 @@ public class GUI implements Serializable {
 		
 		f = new JFrame("Show Editor");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setBounds(50, 100, 400, 400);
+		f.setBounds(50, 100, 500, 400);
 		f.setVisible(true);
 //		f.setFocusable(true);
 //		f.requestFocusInWindow();
@@ -91,9 +93,7 @@ public class GUI implements Serializable {
 				e.addNewCue();
 			}
 		});
-		
-		p.add(addCue, BorderLayout.EAST);
-		
+				
 		f.addKeyListener(new KeyListener() {
 
 			@Override
@@ -123,11 +123,33 @@ public class GUI implements Serializable {
 			}
 		});
 		
+		removeCue = new JButton("Remove Cue");
+		//Will only be enbaled when a cue is selected
+		removeCue.setEnabled(false);
+		removeCue.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Cue tmp = (Cue) list.getSelectedValue();
+				int confirm = JOptionPane.showConfirmDialog(p, "Remove cue at " + tmp.getRunTime() + " ms?", "Remove Cue", JOptionPane.OK_CANCEL_OPTION);
+				if(confirm == JOptionPane.OK_OPTION) {
+					System.out.println("Removing cue at " + tmp.getRunTime());
+					if (e.removeCue(tmp)) {
+						System.out.println("Cue removed");
+					}
+					else {
+						System.err.println("Unable to remove cue");
+					}
+				}
+			}
+		});
+		
 		
 		//Initialize button panel
 		buttonPanel = new JPanel();
 		buttonPanel.add(start);
 		buttonPanel.add(addCue);
+		buttonPanel.add(removeCue);
 		buttonPanel.add(export);
 		p.add(buttonPanel, BorderLayout.SOUTH);
 		
@@ -162,9 +184,10 @@ public class GUI implements Serializable {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
 				if(!e.getValueIsAdjusting()) {
 				System.out.println(e);
+				//Enable remove cue button
+				removeCue.setEnabled(true);
 				}
 			}
 		});
@@ -179,5 +202,8 @@ public class GUI implements Serializable {
 		for (int i=0; i<cues.length; i++) {
 			System.out.println(cues[i]);
 		}
+		
+		//Disable remove cue since no cue will be selected
+		removeCue.setEnabled(false);
 	}
 }

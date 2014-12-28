@@ -173,9 +173,8 @@ public class Editor implements Serializable{
 		else {
 			addNewCue();
 		}
-		//		NewCueWindow n = new NewCueWindow();
 	}
-
+	
 	public boolean newCuePane() {		
 		JTextField cueTime = new JTextField(5);
 		JLabel feedback; //Only initilized if error needs to be given to user
@@ -305,6 +304,15 @@ public class Editor implements Serializable{
 		}
 		//If ok wasn't selected, return true to confirm valid input
 		return true;
+	}
+
+	public boolean removeCue(Cue c) {
+		if (song.removeCue(c)) {
+			gui.printCues();
+			return true;
+		}
+		else return false;
+		
 	}		
 }
 

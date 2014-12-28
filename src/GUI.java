@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 public class GUI implements Serializable {
@@ -45,8 +48,8 @@ public class GUI implements Serializable {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setBounds(50, 100, 400, 400);
 		f.setVisible(true);
-		f.setFocusable(true);
-		f.requestFocusInWindow();
+//		f.setFocusable(true);
+//		f.requestFocusInWindow();
 		
 		p = new JPanel();
 
@@ -69,7 +72,7 @@ public class GUI implements Serializable {
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		
-		p.add(list,BorderLayout.WEST);
+		p.add(list,BorderLayout.CENTER);
 		
 		
 		start = new JButton("Play");
@@ -148,18 +151,29 @@ public class GUI implements Serializable {
 	
 	void printCues() {
 		this.cues= e.getCurrentSong().getCues();
+		list.setVisible(false);
 		list = new JList(e.getCurrentSong().getCues());
 		
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
 		list.setVisibleRowCount(-1);
+		
+		list.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// TODO Auto-generated method stub
+				if(!e.getValueIsAdjusting()) {
+				System.out.println(e);
+				}
+			}
+		});
 		
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		
-		p.add(list, BorderLayout.CENTER);
-		list.validate();
-		p.validate();
+		p.add(list, BorderLayout.WEST);
+		
 		f.validate();
 		
 		for (int i=0; i<cues.length; i++) {

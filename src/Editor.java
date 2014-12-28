@@ -167,11 +167,16 @@ public class Editor implements Serializable{
 
 	public void addNewCue() {
 		//Handle button click to add new cue
-		newCuePane();
+		if (newCuePane()){
+			gui.printCues();
+		}
+		else {
+			addNewCue();
+		}
 		//		NewCueWindow n = new NewCueWindow();
 	}
 
-	public void newCuePane() {		
+	public boolean newCuePane() {		
 		JTextField cueTime = new JTextField(5);
 		JLabel feedback; //Only initilized if error needs to be given to user
 		final JPanel myPanel = new JPanel();
@@ -290,13 +295,16 @@ public class Editor implements Serializable{
 			if(success) {
 				//If input is valid, add cue and refresh
 				song.addCue(tmp);
-				gui.printCues();
 				System.out.println("Cue added.");
+				return true;
 			}
 			else {
 				System.err.println("Cue not added.");
+				return false;
 			}
-		}					
+		}
+		//If ok wasn't selected, return true to confirm valid input
+		return true;
 	}		
 }
 

@@ -65,7 +65,7 @@ public class Editor implements Serializable{
 	}
 
 	public boolean writeFile(){
-
+				
 		try {
 			File file = new File(song.getTitle());
 			if (!file.exists()) {
@@ -81,7 +81,7 @@ public class Editor implements Serializable{
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-
+			
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			//Intro comment
@@ -226,7 +226,7 @@ public class Editor implements Serializable{
 			if(qTime >=0) {
 				for(int i=0; i<events.size(); i++) {
 					boolean on = false;
-					if(events.get(i).state.equals("On")) on = true;
+					if(events.get(i).state.getSelectedItem().equals("On")) on = true;
 
 					if(events.get(i).channel.getSelectedItem() != null) {
 						tmp.addEvent(new LightEvent(((Channel) events.get(i).channel.getSelectedItem()), on));

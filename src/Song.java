@@ -4,7 +4,6 @@ import java.util.Collections;
 
 
 public class Song implements Serializable {
-
 	/**
 	 * 
 	 */
@@ -12,12 +11,17 @@ public class Song implements Serializable {
 	
 	private String title;
 	private ArrayList<Cue> cues;
-	private ArrayList<Channel> channels;	
+	private ArrayList<Channel> channels;
+	private String fileName;
 
-	public Song(String songTitle, double songLength) {
+	private String fileLocation;	
+
+	public Song(String songTitle) {
 		this.title = songTitle;
+		this.fileName = this.title + ".ser"; //Hardcode as .ser file for now
 		cues = new ArrayList<Cue>();
 		channels = new ArrayList<Channel>();
+		fileLocation = "";//hardcode for local file
 	}
 
 	boolean addCue(Cue c) {
@@ -37,6 +41,7 @@ public class Song implements Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+		this.fileName = title + ".ser"; //Hard code .ser
 	}
 	public Channel[] getChannels() {
 		return channels.toArray(new Channel[channels.size()]);
@@ -55,6 +60,22 @@ public class Song implements Serializable {
 		Collections.sort(this.cues);
 		return cues.toArray(new Cue[this.cues.size()]);
 	}
+
+	public void copySong(Song song) {
+		this.channels = song.channels;
+		this.cues = song.cues;
+	}
+
+	public String getFilePath() {
+		return ("" + this.fileLocation + this.fileName);
+	}
 	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileLocation(String fileLocation) {
+		this.fileLocation = fileLocation;
+	}
 }
 

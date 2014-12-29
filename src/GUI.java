@@ -6,10 +6,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class GUI implements Serializable {
@@ -32,12 +40,24 @@ public class GUI implements Serializable {
 	JFrame f;
 	
 	JPanel buttonPanel;
+	JPanel eventPanel;
 	
 	JList list;
 	
+	JMenuBar menubar;
+	JMenu file;
+	JMenuItem save;
+	JMenuItem saveAs;
+	JMenuItem open;
+	JMenu export;
+	JMenuItem quit;
+	
+	JMenu help;
+	JMenuItem info;
+	
+	
 	JButton start;
 	JButton addCue;
-	JButton export;
 	JButton removeCue;
 
 	private Object[] cues;
@@ -46,21 +66,123 @@ public class GUI implements Serializable {
 	public GUI(Editor editor) {
 		this.e = editor; //Specifies the editor session
 		
-		f = new JFrame("Show Editor");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f = new JFrame("Show Editor: \"" + e.getCurrentSong().getTitle() +"\"");
+		f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		f.setBounds(50, 100, 500, 400);
 		f.setVisible(true);
-//		f.setFocusable(true);
-//		f.requestFocusInWindow();
+
 		
 		p = new JPanel();
 
 		p.setLayout(new BorderLayout());
 		f.add(p);
 
+		//Set up menu bar
+		menubar = new JMenuBar();
+		file = new JMenu("File");
+		save = new JMenuItem("Save");
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				int confirmSave = JOptionPane.showConfirmDialog(null, "Save " + e.getCurrentSong().getTitle() + "?", "Save", JOptionPane.YES_NO_OPTION);
+				if (confirmSave == JOptionPane.YES_OPTION){
+					System.out.println("Saving");
+					e.saveFile();
+				}
+			}
+		});
+		
+		saveAs = new JMenuItem("Save As");
+		saveAs.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				String fileName = JOptionPane.showInputDialog("Enter file name");
+//				e.createNewFile(fileName);
+			}
+		});
+		
+		open = new JMenuItem("Open File");
+		open.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				int confirmOpen = JOptionPane.showConfirmDialog(null, "Open New File?", "Open", JOptionPane.YES_NO_OPTION);
+				if (confirmOpen == JOptionPane.YES_OPTION){
+					System.out.println("Openng");
+					JFileChooser fc = new JFileChooser(e.getCurrentSong().getFilePath());
+					FileNameExtensionFilter filter = new FileNameExtensionFilter(
+					        "Ser", "ser");
+					    fc.setFileFilter(filter);					
+					int opened = fc.showDialog(null, "Open");
+					if (opened == JFileChooser.APPROVE_OPTION) {
+						e.openFile(fc.getSelectedFile());
+					}
+				}
+			}
+		});
+		
+		export = new JMenu("Export");
+		JMenuItem toSketch = new JMenuItem("Arduino Sketch");
+		export.add(toSketch);
+		
+		toSketch.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				System.out.println("Exporting to Arduino Sketch");
+				if (e.writeFile()){
+					System.out.println("Sketch saved");
+				}
+				else {
+					System.err.println("Sketch not saved");
+				}
+			}
+		});
+				
+		quit = new JMenuItem("Quit");
+		quit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to quit?", "Quit", JOptionPane.OK_CANCEL_OPTION);
+				if(confirm == JOptionPane.OK_OPTION) {
+					System.exit(0);
+				}
+			}
+		});
+		
+		file.add(save);
+		file.add(saveAs);
+		file.add(open);
+		file.add(export);
+		file.add(quit);
+
+		help = new JMenu("Help");
+		info = new JMenuItem("About " + Editor.appName);
+		info.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				JOptionPane x = new JOptionPane();
+				
+			}
+		});
+		help.add(info);
+		
+		menubar.add(file);
+		menubar.add(help);
+		
+		p.add(menubar, BorderLayout.PAGE_START);
+		
 		timeText = new JTextField("Time: " + e.getEditorTime());
 		timeText.setEditable(false);
-		p.add(timeText, BorderLayout.PAGE_START);
 		
 		//Test: print cue list
 		cues= e.getCurrentSong().getCues();
@@ -114,15 +236,6 @@ public class GUI implements Serializable {
 		});
 
 		
-		export = new JButton("Create Sketch");
-		export.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				e.writeFile();				
-			}
-		});
-		
 		removeCue = new JButton("Remove Cue");
 		//Will only be enbaled when a cue is selected
 		removeCue.setEnabled(false);
@@ -144,14 +257,17 @@ public class GUI implements Serializable {
 			}
 		});
 		
-		
+		eventPanel = new JPanel();
+
 		//Initialize button panel
 		buttonPanel = new JPanel();
+		buttonPanel.add(timeText);
 		buttonPanel.add(start);
 		buttonPanel.add(addCue);
 		buttonPanel.add(removeCue);
-		buttonPanel.add(export);
 		p.add(buttonPanel, BorderLayout.SOUTH);
+		
+
 		
 		f.validate();
 
@@ -188,6 +304,37 @@ public class GUI implements Serializable {
 				System.out.println(e);
 				//Enable remove cue button
 				removeCue.setEnabled(true);
+				
+				Cue selected = (Cue) list.getSelectedValue();
+				eventPanel.removeAll();
+				//Create event info panel
+				eventPanel = new JPanel();
+				eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
+				eventPanel.setBackground(Color.WHITE);
+				p.add(eventPanel, BorderLayout.EAST);
+				
+				eventPanel.add(new JLabel("Time: " + selected.getRunTime()));
+				eventPanel.add(new JLabel("# of Events: " + selected.getEvents().size()));
+
+				if(selected.getEvents().size()>0){
+					ArrayList<LightEvent> evs = selected.getEvents();
+					for(int i=0; i<evs.size(); i++) {
+						LightEvent ev = evs.get(i);
+						
+						eventPanel.add(new JLabel("Event: " + i));
+						eventPanel.add(new  JLabel("Channel: " + ev.channel.getChName()));
+						eventPanel.add(new  JLabel("Channel #: " + ev.channel.getChNum()));
+		
+						if (ev.on){
+							eventPanel.add(new  JLabel("State: On"));
+						}
+						else {
+							eventPanel.add(new  JLabel("State: Off"));
+						}
+					}
+				}
+				
+				f.validate();
 				}
 			}
 		});

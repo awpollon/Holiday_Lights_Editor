@@ -3,8 +3,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -24,6 +28,8 @@ public class Editor implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -7794921541255885374L;
+
+	public static final String appName = "Song Editor";
 
 	private Song song;
 	private long editorTime;
@@ -52,7 +58,7 @@ public class Editor implements Serializable{
 	}
 
 	public static void main(String[] args) {
-		Song s = new Song("Second Song", 60000);
+		Song s = new Song("Second Song");
 
 		s.addChannel(new Channel("White Tree", 1, 2));
 		s.addChannel(new Channel("Blue Tree", 2, 3));
@@ -174,7 +180,7 @@ public class Editor implements Serializable{
 			addNewCue();
 		}
 	}
-	
+
 	public boolean newCuePane() {		
 		JTextField cueTime = new JTextField(5);
 		JLabel feedback; //Only initilized if error needs to be given to user
@@ -229,16 +235,16 @@ public class Editor implements Serializable{
 			double qTime = -1;
 			Cue tmp = null;
 			try{
-			qTime = Double.parseDouble(cueTime.getText());
-			tmp = new Cue(qTime);
+				qTime = Double.parseDouble(cueTime.getText());
+				tmp = new Cue(qTime);
 
 			}
 			catch(Exception e) {
 				success = false;
 				System.err.println("Cannot parseDouble time");
-				
+
 			}
-			
+
 			if(qTime >=0 && success) {
 				assert tmp != null;
 				for(int i=0; i<events.size(); i++) {
@@ -268,7 +274,7 @@ public class Editor implements Serializable{
 							//Cue already exists
 							success = false;
 							System.err.println("Cue already exists at that time");
-							
+
 							feedback = new JLabel("Unable to add cue: Cue already exists at that time.");
 							feedback.setForeground(Color.red);
 							myPanel.add(feedback);
@@ -283,7 +289,7 @@ public class Editor implements Serializable{
 			else {
 				System.err.println("Unable to add cue: Invalid Cue Time.");
 				success = false;
-				
+
 				feedback = new JLabel("Unable to add cue: Invalid Cue Time.");
 				feedback.setForeground(Color.red);
 				myPanel.add(feedback);
@@ -312,7 +318,47 @@ public class Editor implements Serializable{
 			return true;
 		}
 		else return false;
-		
+
+	}
+
+	public void createNewFile(String fileName) {
+		Song newSong = new Song(fileName);
+		newSong.copySong(this.song);
+		Editor newEditor = new Editor(newSong);
+	}
+
+	public boolean saveFile() {
+		try{
+			FileOutputStream fout = new FileOutputStream(song.getFilePath());
+			System.out.println("Saving file at: " + song.getFilePath());
+			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			
+			//Write song object
+			oos.writeObject(song);
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+
+	}
+
+	public boolean openFile(File file) {
+		try {
+			FileInputStream fin = new FileInputStream(file);
+			ObjectInputStream ois = new ObjectInputStream(fin);
+			Song openSong = (Song) ois.readObject();
+			Editor newEditor = new Editor(openSong);
+			ois.close();
+			return true;
+
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}		
 }
 

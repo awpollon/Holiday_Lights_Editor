@@ -355,6 +355,12 @@ public class Editor implements Serializable{
 			return true;
 
 		}
+		catch(ClassNotFoundException e){
+			System.err.println("File Not A Song File");
+			JOptionPane.showConfirmDialog(null, "Error: File is not a song file.", "Invalid File", JOptionPane.DEFAULT_OPTION);
+			return false;
+		}
+		
 		catch(Exception e){
 			e.printStackTrace();
 			return false;

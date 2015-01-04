@@ -1,8 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -67,13 +65,14 @@ public class GUI implements Serializable {
 
 
 	JButton start;
+	JButton reset;
 	JButton addCue;
 	JButton removeCue;
 
 	private Object[] cues;
 
 
-	public GUI(Editor editor) {
+	public GUI(final Editor editor) {
 		this.e = editor; //Specifies the editor session
 
 		f = new JFrame("Show Editor: \"" + e.getCurrentSong().getTitle() +"\"");
@@ -230,8 +229,10 @@ public class GUI implements Serializable {
 
 		p.add(menubar, BorderLayout.PAGE_START);
 
-		timeText = new JTextField("Time: " + e.getEditorTime());
+		timeText = new JTextField();
+		updateTime();
 		timeText.setEditable(false);
+		timeText.setColumns(9);
 
 		//Test: print cue list
 		cues= e.getCurrentSong().getCues();
@@ -255,6 +256,17 @@ public class GUI implements Serializable {
 				handleButtonClick((JButton)e.getSource());
 			}
 		});
+		
+		reset = new JButton("Reset");
+		reset.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				editor.setEditorTime(0);
+				updateTime();
+			}
+		});
+		
 		addCue = new JButton("Add Cue");
 		addCue.addActionListener(new ActionListener() {
 
@@ -312,11 +324,11 @@ public class GUI implements Serializable {
 		buttonPanel = new JPanel();
 		buttonPanel.add(timeText);
 		buttonPanel.add(start);
+		buttonPanel.add(reset);
+
 		buttonPanel.add(addCue);
 		buttonPanel.add(removeCue);
 		p.add(buttonPanel, BorderLayout.SOUTH);
-
-
 
 		f.validate();
 
@@ -324,16 +336,19 @@ public class GUI implements Serializable {
 	protected void handleButtonClick(JButton b) {
 		if(b.getText() == "Play") {
 			e.startTimer();
+			reset.setEnabled(false);
 			b.setText("Stop");
 		}
 		else if (b.getText() == "Stop") {
 			e.stopTimer();
+			reset.setEnabled(true);
+
 			b.setText("Play");
 		}
 	}
 
 	void updateTime() {
-		timeText.setText("Time: " + e.getEditorTime());		
+		timeText.setText("Time: " + e.getEditorTime() + " ms");		
 	}
 
 	void printCues() {

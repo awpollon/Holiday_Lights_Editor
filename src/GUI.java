@@ -51,7 +51,12 @@ public class GUI implements Serializable {
 	JMenuItem open;
 	JMenu export;
 	JMenuItem quit;
-
+	
+	JMenu edit;
+	JMenuItem renameSong;
+	JMenuItem editChannels;
+	JMenuItem duplicateCue;
+	
 	JMenu help;
 	JMenuItem info;
 
@@ -73,7 +78,6 @@ public class GUI implements Serializable {
 
 
 		p = new JPanel();
-
 		p.setLayout(new BorderLayout());
 		f.add(p);
 
@@ -169,6 +173,38 @@ public class GUI implements Serializable {
 		file.add(open);
 		file.add(export);
 		file.add(quit);
+		
+		edit = new JMenu("Edit");
+		editChannels = new JMenuItem("Channels");
+		editChannels.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		duplicateCue = new JMenuItem("Duplicate Cue");
+		duplicateCue.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		renameSong = new JMenuItem("Rename Song");
+		renameSong.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				String input = JOptionPane.showInputDialog("Enter new song name");
+				e.getCurrentSong().setTitle(input);
+			}
+		});
 
 		help = new JMenu("Help");
 		info = new JMenuItem("About " + Editor.appName);
@@ -184,6 +220,7 @@ public class GUI implements Serializable {
 		help.add(info);
 
 		menubar.add(file);
+		menubar.add(edit);
 		menubar.add(help);
 
 		p.add(menubar, BorderLayout.PAGE_START);

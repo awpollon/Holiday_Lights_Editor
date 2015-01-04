@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -13,15 +15,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-
-
 
 public class Editor implements Serializable{
 	/**
@@ -183,8 +186,17 @@ public class Editor implements Serializable{
 
 	public boolean newCuePane() {		
 		JTextField cueTime = new JTextField(5);
+		
 		JLabel feedback; //Only initilized if error needs to be given to user
-		final JPanel myPanel = new JPanel();
+		final JPanel cuePanel = new JPanel();
+		
+		cuePanel.setLayout(new BoxLayout(cuePanel, BoxLayout.Y_AXIS));
+		final JPanel chPanel = new JPanel();
+		final JScrollPane scp = new JScrollPane(cuePanel);
+		scp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
+		cuePanel.add(chPanel);		
 		cueTime.setText("" + editorTime);
 		//			JTextField channel = new JTextField(5);
 
@@ -193,41 +205,53 @@ public class Editor implements Serializable{
 		//add initial event
 		events.add(new eventInput(song));
 
-		myPanel.add(new JLabel("Cue Time:"));
-		myPanel.add(cueTime);
-		myPanel.add(Box.createHorizontalStrut(15)); // a spacer
+		chPanel.add(new JLabel("Cue Time:"));
+		chPanel.add(cueTime);
+		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
 
-		myPanel.add(new JLabel("Channel:"));
-		myPanel.add(events.get(0).channel);
-		myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-		myPanel.add(new JLabel("State:"));
-		myPanel.add(events.get(0).state);
+		chPanel.add(new JLabel("Channel:"));
+		chPanel.add(events.get(0).channel);
+		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
+		chPanel.add(new JLabel("State:"));
+		chPanel.add(events.get(0).state);
+		
 
 
 		JButton addEvent = new JButton("Add Channels");
+		
+		chPanel.add(addEvent);
+
 		addEvent.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				events.add(new eventInput(song));
-				int i = events.size()-1;
+				final eventInput event = new eventInput(song);
+				
+				events.add(event);
+				
+				cuePanel.add(event.createChPanel());
+				
+				event.rmvButton.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						cuePanel.remove(event.getChPanel());
+						events.remove(event);
+						scp.validate();
 
-				myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-
-				myPanel.add(new JLabel("Channel:"));
-				myPanel.add(events.get(i).channel);
-				myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-				myPanel.add(new JLabel("State:"));
-				myPanel.add(events.get(i).state);
-
-				myPanel.validate();
+					}
+				});
+				
+				scp.validate();
 			}
 		});
 
-		myPanel.add(addEvent);
-
-		int result = JOptionPane.showConfirmDialog(null, myPanel, 
+		JFrame cueFrame = new JFrame();
+		cueFrame.setResizable(true);
+		
+		int result = JOptionPane.showConfirmDialog(null, scp, 
 				"New Cue", JOptionPane.OK_CANCEL_OPTION);
+	
 
 		if (result == JOptionPane.OK_OPTION) {
 			//Validate input
@@ -258,7 +282,7 @@ public class Editor implements Serializable{
 						System.err.println("Unable to add cue: Invalid Input.");
 						feedback = new JLabel("Unable to add cue: Invalid Input.");
 						feedback.setForeground(Color.red);
-						myPanel.add(feedback);
+						cuePanel.add(feedback);
 						JOptionPane.showMessageDialog(null, "Unable to add cue: Invalid Input.");
 
 						success = false;
@@ -277,13 +301,12 @@ public class Editor implements Serializable{
 
 							feedback = new JLabel("Unable to add cue: Cue already exists at that time.");
 							feedback.setForeground(Color.red);
-							myPanel.add(feedback);
+							cuePanel.add(feedback);
 							JOptionPane.showMessageDialog(null, "Unable to add cue: Cue already exists at that time.");
 
 						}
 					}
 				}
-
 			}
 
 			else {
@@ -292,7 +315,7 @@ public class Editor implements Serializable{
 
 				feedback = new JLabel("Unable to add cue: Invalid Cue Time.");
 				feedback.setForeground(Color.red);
-				myPanel.add(feedback);
+				cuePanel.add(feedback);
 				JOptionPane.showMessageDialog(null, "Unable to add cue: Invalid Cue Time.");
 			}
 
@@ -372,9 +395,40 @@ class eventInput {
 	JComboBox channel;
 	JComboBox state;
 	String[] options = {"On", "Off"};
+	JButton rmvButton;
+	private JPanel newChPanel;
 
+	
 	public eventInput(Song s) {
+		newChPanel = new JPanel();
+		
 		channel = new JComboBox(s.getChannels());
 		state = new JComboBox(options);
+		rmvButton = new JButton("Remove");
+
+		
+//		newChPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
+//		int i = events.size()-1;
+
+//		newChPanel.add(Box.createHorizontalStrut(15)); // a spacer		
+		
 	}
+	
+	JPanel createChPanel() {
+		newChPanel.add(new JLabel("Channel:"));
+		newChPanel.add(channel);
+//		newChPanel.add(Box.createHorizontalStrut(15)); // a spacer
+		newChPanel.add(new JLabel("State:"));
+		newChPanel.add(state);
+		
+		//Remove Button
+		newChPanel.add(rmvButton);
+		
+		return newChPanel;
+	}
+	
+	JPanel getChPanel() {
+		return newChPanel;
+	}
+	
 }

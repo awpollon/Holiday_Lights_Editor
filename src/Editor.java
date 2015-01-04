@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Event;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -25,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileSystemView;
 
 public class Editor implements Serializable{
 	/**
@@ -39,7 +42,7 @@ public class Editor implements Serializable{
 	boolean isPlaying;
 	GUI gui;
 
-	public Editor(Song s) {
+	public Editor(Song s) {		
 		this.song = s;
 		gui = new GUI(this);
 		setEditorTime(0);
@@ -61,6 +64,11 @@ public class Editor implements Serializable{
 	}
 
 	public static void main(String[] args) {
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+	    System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
+
+		
+		
 		Song s = new Song("Second Song");
 
 		s.addChannel(new Channel("White Tree", 1, 2));

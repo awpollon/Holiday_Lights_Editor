@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -54,12 +56,12 @@ public class GUI implements Serializable {
 	JMenuItem open;
 	JMenu export;
 	JMenuItem quit;
-	
+
 	JMenu edit;
 	JMenuItem renameSong;
 	JMenuItem editChannels;
 	JMenuItem duplicateCue;
-	
+
 	JMenu help;
 	JMenuItem info;
 
@@ -122,6 +124,7 @@ public class GUI implements Serializable {
 				if (confirmOpen == JOptionPane.YES_OPTION){
 					System.out.println("Openng");
 					JFileChooser fc = new JFileChooser(e.getCurrentSong().getFilePath());
+
 					FileNameExtensionFilter filter = new FileNameExtensionFilter(
 							"Ser", "ser");
 					fc.setFileFilter(filter);					
@@ -177,31 +180,31 @@ public class GUI implements Serializable {
 		file.add(open);
 		file.add(export);
 		file.add(quit);
-		
+
 		edit = new JMenu("Edit");
 		editChannels = new JMenuItem("Channels");
 		editChannels.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
+
 		duplicateCue = new JMenuItem("Duplicate Cue");
 		duplicateCue.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-		
+
 		renameSong = new JMenuItem("Rename Song");
 		renameSong.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
@@ -227,7 +230,9 @@ public class GUI implements Serializable {
 		menubar.add(edit);
 		menubar.add(help);
 
-		p.add(menubar, BorderLayout.PAGE_START);
+
+		f.setJMenuBar(menubar);
+		//		p.add(menubar, BorderLayout.PAGE_START);
 
 		timeText = new JTextField();
 		updateTime();
@@ -244,7 +249,7 @@ public class GUI implements Serializable {
 		list.setVisibleRowCount(-1);
 
 
-//		JScrollPane listScroller = new JScrollPane(list);
+		//		JScrollPane listScroller = new JScrollPane(list);
 		p.add(list,BorderLayout.CENTER);
 
 
@@ -256,17 +261,17 @@ public class GUI implements Serializable {
 				handleButtonClick((JButton)e.getSource());
 			}
 		});
-		
+
 		reset = new JButton("Reset");
 		reset.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				editor.setEditorTime(0);
 				updateTime();
 			}
 		});
-		
+
 		addCue = new JButton("Add Cue");
 		addCue.addActionListener(new ActionListener() {
 
@@ -355,12 +360,74 @@ public class GUI implements Serializable {
 		this.cues= e.getCurrentSong().getCues();
 		list.setVisible(false);
 		list = new JList(e.getCurrentSong().getCues());
-		
-		list.setFixedCellWidth(40);
-		
+
+		list.setFixedCellWidth(60);
+
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
 		list.setVisibleRowCount(-1);
+
+		list.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent me) {
+
+				JList clicked = (JList) me.getSource();
+
+				if (me.getClickCount() >= 2) {
+					int index = list.locationToIndex(me.getPoint());
+					Cue selectedCue = e.getCurrentSong().getCues()[index];
+					
+					boolean success = false;
+					double newTime = -1;
+
+					String input = JOptionPane.showInputDialog("Enter new cue time");
+
+					if (input != null){
+						while(!success){
+							try{
+								newTime = Double.parseDouble(input);
+								success = true;
+							}
+							catch (Exception e) {
+								System.out.println("Invalid Input");
+								success = false;
+								input = JOptionPane.showInputDialog("Enter new cue time");
+							}
+						}
+						//Valid input
+						System.out.println("New Time: " + newTime);
+						selectedCue.setRunTime(newTime);
+						//Update GUI
+						printCues();
+					}
+				}
+			}
+		});
 
 		list.addListSelectionListener(new ListSelectionListener() {
 
@@ -372,12 +439,12 @@ public class GUI implements Serializable {
 					removeCue.setEnabled(true);
 
 					Cue selected = (Cue) list.getSelectedValue();
-					
+
 					//Clear current panel
 					eventPanel.removeAll();
 					eventScrlPane.setVisible(false);
 					p.remove(eventScrlPane);
-					
+
 					//Create event info panel
 					eventPanel = new JPanel();
 					eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
@@ -420,9 +487,9 @@ public class GUI implements Serializable {
 
 		f.validate();
 
-//		for (int i=0; i<cues.length; i++) {
-//			System.out.println(cues[i]);
-//		}
+		//		for (int i=0; i<cues.length; i++) {
+		//			System.out.println(cues[i]);
+		//		}
 
 		//Disable remove cue since no cue will be selected
 		removeCue.setEnabled(false);

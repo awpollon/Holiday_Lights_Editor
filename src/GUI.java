@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -8,6 +10,7 @@ import java.awt.event.KeyListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -41,6 +44,8 @@ public class GUI implements Serializable {
 
 	JPanel buttonPanel;
 	JPanel eventPanel;
+	JScrollPane eventScrlPane;
+
 
 	JList list;
 
@@ -237,9 +242,8 @@ public class GUI implements Serializable {
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
 		list.setVisibleRowCount(-1);
 
-		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setPreferredSize(new Dimension(250, 80));
 
+//		JScrollPane listScroller = new JScrollPane(list);
 		p.add(list,BorderLayout.CENTER);
 
 
@@ -302,6 +306,7 @@ public class GUI implements Serializable {
 		});
 
 		eventPanel = new JPanel();
+		eventScrlPane = new JScrollPane(eventPanel);
 
 		//Initialize button panel
 		buttonPanel = new JPanel();
@@ -335,7 +340,9 @@ public class GUI implements Serializable {
 		this.cues= e.getCurrentSong().getCues();
 		list.setVisible(false);
 		list = new JList(e.getCurrentSong().getCues());
-
+		
+		list.setFixedCellWidth(40);
+		
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
 		list.setVisibleRowCount(-1);
@@ -350,19 +357,27 @@ public class GUI implements Serializable {
 					removeCue.setEnabled(true);
 
 					Cue selected = (Cue) list.getSelectedValue();
+					
+					//Clear current panel
 					eventPanel.removeAll();
+					eventScrlPane.setVisible(false);
+					p.remove(eventScrlPane);
+					
 					//Create event info panel
 					eventPanel = new JPanel();
 					eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
 					eventPanel.setBackground(Color.WHITE);
-					p.add(eventPanel, BorderLayout.EAST);
+					eventScrlPane = new JScrollPane(eventPanel);
+					p.add(eventScrlPane, BorderLayout.EAST);
 
 					eventPanel.add(new JLabel("Time: " + selected.getRunTime()));
+					eventPanel.add(Box.createVerticalStrut(15));
 					eventPanel.add(new JLabel("# of Events: " + selected.getEvents().size()));
 
 					if(selected.getEvents().size()>0){
 						ArrayList<LightEvent> evs = selected.getEvents();
 						for(int i=0; i<evs.size(); i++) {
+							eventPanel.add(Box.createVerticalStrut(15));
 							LightEvent ev = evs.get(i);
 
 							eventPanel.add(new JLabel("Event: " + i));
@@ -390,9 +405,9 @@ public class GUI implements Serializable {
 
 		f.validate();
 
-		for (int i=0; i<cues.length; i++) {
-			System.out.println(cues[i]);
-		}
+//		for (int i=0; i<cues.length; i++) {
+//			System.out.println(cues[i]);
+//		}
 
 		//Disable remove cue since no cue will be selected
 		removeCue.setEnabled(false);

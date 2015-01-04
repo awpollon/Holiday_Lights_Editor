@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileSystemView;
 
 public class Editor implements Serializable{
 	/**
@@ -46,6 +45,8 @@ public class Editor implements Serializable{
 		this.song = s;
 		gui = new GUI(this);
 		setEditorTime(0);
+		
+		gui.printCues();
 	}
 
 	void stopTimer() {
@@ -356,6 +357,8 @@ public class Editor implements Serializable{
 		Song newSong = new Song(fileName);
 		newSong.copySong(this.song);
 		Editor newEditor = new Editor(newSong);
+		newEditor.saveFile();
+		gui.f.setVisible(false);
 	}
 
 	public boolean saveFile() {

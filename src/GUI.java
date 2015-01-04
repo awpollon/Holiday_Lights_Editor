@@ -109,9 +109,10 @@ public class GUI implements Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				String fileName = JOptionPane.showInputDialog("Enter file name");
-				//				e.createNewFile(fileName);
+				if(fileName != null){
+					e.createNewFile(fileName);
+				}
 			}
 		});
 
@@ -401,7 +402,7 @@ public class GUI implements Serializable {
 				if (me.getClickCount() >= 2) {
 					int index = list.locationToIndex(me.getPoint());
 					Cue selectedCue = e.getCurrentSong().getCues()[index];
-					
+
 					boolean success = false;
 					double newTime = -1;
 

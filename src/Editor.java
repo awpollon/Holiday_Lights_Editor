@@ -40,6 +40,7 @@ public class Editor implements Serializable{
 	private long editorTime;
 	boolean isPlaying;
 	GUI gui;
+	Timer timer;
 
 	public Editor(Song s) {		
 		this.song = s;
@@ -47,6 +48,8 @@ public class Editor implements Serializable{
 		setEditorTime(0);
 		
 		gui.printCues();
+		
+		timer = new Timer(this);
 	}
 
 	void stopTimer() {
@@ -55,7 +58,7 @@ public class Editor implements Serializable{
 	}
 
 	void startTimer() {
-		(new Thread(new Timer(this))).start();
+		(new Thread(timer)).start();
 	}
 
 
@@ -399,6 +402,10 @@ public class Editor implements Serializable{
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public void resetTimer() {
+		timer.reset();
 	}		
 }
 

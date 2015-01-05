@@ -270,6 +270,7 @@ public class GUI implements Serializable {
 			public void actionPerformed(ActionEvent e) {
 				editor.setEditorTime(0);
 				updateTime();
+				editor.resetTimer();
 			}
 		});
 

@@ -8,6 +8,8 @@ public class LightEvent implements Serializable{
 
 	Channel channel;
 	boolean on;
+	boolean effect;
+	int effectRate;
 
 	public LightEvent(Channel c, boolean turnOn) {
 		this.channel = c;

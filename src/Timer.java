@@ -56,36 +56,6 @@ public class Timer implements Runnable {
 	public void run()  {
 		long startTime = System.currentTimeMillis();
 		long editorStart = editor.getEditorTime();
-
-//		//
-//		// specify the sound to play
-//		// (assuming the sound can be played by the audio system)
-//		try {
-//		
-//		File soundFile = new File("Christmas_Eve-Sarajevo.wav");
-//		AudioInputStream sound = AudioSystem.getAudioInputStream(soundFile);
-//
-//		// load the sound into memory (a Clip)
-//		DataLine.Info info = new DataLine.Info(Clip.class, sound.getFormat());
-//		clip = (Clip) AudioSystem.getLine(info);
-//		clip.open(sound);
-//
-//		// due to bug in Java Sound, explicitly exit the VM when
-//		// the sound has stopped.
-//		clip.addLineListener(new LineListener() {
-//			public void update(LineEvent event) {
-//				if (event.getType() == LineEvent.Type.STOP) {
-//					event.getLine().close();
-//				}
-//			}
-//		});
-//
-//		// play the sound clip
-//		clip.start();
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//		}
 	
 		//Start audio
 		audioLine.start();

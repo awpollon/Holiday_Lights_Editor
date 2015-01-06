@@ -203,35 +203,48 @@ public class Editor implements Serializable{
 		final JPanel cuePanel = new JPanel();
 		
 		cuePanel.setLayout(new BoxLayout(cuePanel, BoxLayout.Y_AXIS));
-		final JPanel chPanel = new JPanel();
+//		final JPanel chPanel = new JPanel();
+		//May not need
+		
 		final JScrollPane scp = new JScrollPane(cuePanel);
 		scp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
-		cuePanel.add(chPanel);		
+		//Delete?
+//		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
+//		cuePanel.add(chPanel);		
+		
+		
+		
 		cueTime.setText("" + editorTime);
-		//			JTextField channel = new JTextField(5);
 
+		//Create first panel
+		JPanel firstPanel = new JPanel();
+		firstPanel.add(new JLabel("Cue Time:"));
+		firstPanel.add(cueTime);
+		cuePanel.add(firstPanel);
+		
 		final ArrayList<eventInput> events = new ArrayList<eventInput>();
 
 		//add initial event
-		events.add(new eventInput(song));
+		eventInput firstEvent = new eventInput(song);
+		events.add(firstEvent);
+		cuePanel.add(firstEvent.createChPanel());	
 
-		chPanel.add(new JLabel("Cue Time:"));
-		chPanel.add(cueTime);
-		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
+//Delete
 
-		chPanel.add(new JLabel("Channel:"));
-		chPanel.add(events.get(0).channel);
-		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
-		chPanel.add(new JLabel("State:"));
-		chPanel.add(events.get(0).state);
-		
+//		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
+//
+//		chPanel.add(new JLabel("Channel:"));
+//		chPanel.add(events.get(0).channel);
+//		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
+//		chPanel.add(new JLabel("State:"));
+//		chPanel.add(events.get(0).state);
+//End
 
 
 		JButton addEvent = new JButton("Add Channels");
 		
-		chPanel.add(addEvent);
+		firstPanel.add(addEvent);
 
 		addEvent.addActionListener(new ActionListener() {
 
@@ -284,11 +297,20 @@ public class Editor implements Serializable{
 			if(qTime >=0 && success) {
 				assert tmp != null;
 				for(int i=0; i<events.size(); i++) {
-					boolean on = false;
-					if(events.get(i).state.getSelectedItem().equals("On")) on = true;
+					boolean on = true;
+					boolean effect = false;					
+					eventInput ei = events.get(i);
+					int effectRate = ei.getEffectRate();
 
-					if(events.get(i).channel.getSelectedItem() != null) {
-						tmp.addEvent(new LightEvent(((Channel) events.get(i).channel.getSelectedItem()), on));
+					
+					if(ei.state.getSelectedItem().equals("Off")) on = false;
+					
+					//Check if effect
+					if(ei.state.getSelectedItem().equals("Effect")) effect = true;
+					
+
+					if(events.get(i).channel.getSelectedItem() != null && !(effect && effectRate <=0)) {
+						tmp.addEvent(new LightEvent(((Channel) events.get(i).channel.getSelectedItem()), on, effect, effectRate));
 					}
 					else {
 						System.err.println("Unable to add cue: Invalid Input.");
@@ -300,7 +322,7 @@ public class Editor implements Serializable{
 						success = false;
 					}
 				}
-				if(success) { //See if sucessfull so far, thn check if exists
+				if(success) { //See if sucessfull so far, then check if exists
 					//Check if cue already exists
 					for (int i=0; i<song.getCues().length; i++){
 						Cue c = song.getCues()[i];
@@ -412,7 +434,8 @@ public class Editor implements Serializable{
 class eventInput {
 	JComboBox channel;
 	JComboBox state;
-	String[] options = {"On", "Off"};
+	String[] options = {"On", "Off", "Effect"};
+	JTextField rateInput;
 	JButton rmvButton;
 	private JPanel newChPanel;
 
@@ -422,6 +445,8 @@ class eventInput {
 		
 		channel = new JComboBox(s.getChannels());
 		state = new JComboBox(options);
+		rateInput = new JTextField();
+		rateInput.setColumns(4);
 		rmvButton = new JButton("Remove");
 
 		
@@ -432,12 +457,36 @@ class eventInput {
 		
 	}
 	
+	public int getEffectRate() {
+		if(rateInput.getText() != null) {
+			try {
+				int effectRate = Integer.parseInt(rateInput.getText());
+				if (effectRate > 0) {
+					return effectRate;
+				}
+				else {
+					System.err.println("Invalid effect input, rate must be greater than 0");
+					return -1;
+				}
+			}
+			catch (Exception e) {
+				System.err.println("Exception: Invalid effect input");
+				return -1;
+			}
+		}
+		else {
+			System.err.println("No rate provided");
+			return -1;
+		}
+	}
+
 	JPanel createChPanel() {
 		newChPanel.add(new JLabel("Channel:"));
 		newChPanel.add(channel);
-//		newChPanel.add(Box.createHorizontalStrut(15)); // a spacer
 		newChPanel.add(new JLabel("State:"));
 		newChPanel.add(state);
+		newChPanel.add(new JLabel("Eff. Rate:"));
+		newChPanel.add(rateInput);
 		
 		//Remove Button
 		newChPanel.add(rmvButton);

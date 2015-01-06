@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -46,9 +47,9 @@ public class Editor implements Serializable{
 		this.song = s;
 		gui = new GUI(this);
 		setEditorTime(0);
-		
+
 		gui.printCues();
-		
+
 		timer = new Timer(this);
 	}
 
@@ -69,10 +70,10 @@ public class Editor implements Serializable{
 
 	public static void main(String[] args) {
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
-	    System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
 
-		
-		
+
+
 		Song s = new Song("Second Song");
 
 		s.addChannel(new Channel("White Tree", 1, 2));
@@ -135,25 +136,95 @@ public class Editor implements Serializable{
 
 			Object[] qs = song.getCues();
 
+			class ActiveEffect implements Comparable<ActiveEffect> {
+				LightEvent event;
+				double startTime;
+				double nextRun;
+				boolean lastStateOn;
+
+				public ActiveEffect(LightEvent e, double startTime) {
+					this.event = e;
+					this.startTime = this.nextRun = startTime;
+					this.lastStateOn = true;
+				}
+
+				@Override
+				public int compareTo(ActiveEffect o) {
+					if(this.nextRun > o.nextRun) return 1;
+					else if (this.nextRun < o.nextRun) return -1;
+					else return 0;
+				}
+			}
+
+			ArrayList<ActiveEffect> activeEffects = new ArrayList<ActiveEffect>(); //Store current running effects;
+
+			
+			//Insert first delay
+			Cue c = (Cue) qs[0];				
+			Arduino.writeDelay(bw, c.getRunTime());
+			
 			for(int i=0; i<qs.length; i++) {
-				Cue c = (Cue) qs[i];
+				c = (Cue) qs[i];				
 				for(int j=0; j<c.getEvents().size(); j++) {
 					LightEvent e = c.getEvents().get(j);
-					bw.append("digitalWrite(" +e.channel.getChNum() +", ");
-					if(e.on){
-						bw.append("HIGH);");
+					Arduino.digitalWrite(bw, e.getChannel().getArduinoPin(), e.isOn());
+
+					if(e.isOn() && e.isEffect()){
+						//Add to active effects
+						activeEffects.add(new ActiveEffect(e, c.getRunTime()));
 					}
 					else {
-						bw.append("LOW);");
+						//Check if channel is on active effects, if so remove
+						for (int k=0; k<activeEffects.size(); k++) {
+							if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
+								activeEffects.remove(k);
+								break;
+							}
+						}
 					}
-					//Go to next line
-					bw.append("\n");
+
 				}
+				//Sort Active Effects
+				Collections.sort(activeEffects);
+
+
 				//After each cue, place a delay equal to difference in timing
 				//Check if there is another cue
-				if(i<qs.length-1) {
-					double delayTime = ((Cue) qs[i+1]).getRunTime() - c.getRunTime();
-					bw.append("delay(" + delayTime +");\n");
+				Cue nextCue;
+				
+				if (i<qs.length-1) nextCue = (Cue) qs[i+1];
+				else nextCue = null;
+					
+				double lastRunTime = c.getRunTime();
+
+				//Compare timing of next effect with next cue
+				//See if there are any effects
+				if(!activeEffects.isEmpty()) {
+					ActiveEffect nextEffect = activeEffects.get(0);
+					while((activeEffects.size() >0) && (nextEffect.nextRun <= nextCue.getRunTime())) {
+						//Remove the next effect
+						activeEffects.remove(0);
+
+						//Print delay and write digitalwrite for effect
+						Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);					
+						Arduino.digitalWrite(bw, nextEffect.event.getChannel().getArduinoPin(), !activeEffects.get(0).lastStateOn);
+
+						//Set lastRunTime and nextRun
+						lastRunTime = nextEffect.nextRun;
+						nextEffect.nextRun += nextEffect.event.getEffectRate();
+
+						//Add back to effects list and resort
+						activeEffects.add(nextEffect);
+						Collections.sort(activeEffects);
+
+						//Get next effect in list
+						nextEffect = activeEffects.get(0);
+					}
+				}
+
+				//If there is another cue, write next delay
+				if(nextCue != null) {
+					Arduino.writeDelay(bw, nextCue.getRunTime() - lastRunTime);
 				}
 			}
 
@@ -198,23 +269,23 @@ public class Editor implements Serializable{
 
 	public boolean newCuePane() {		
 		JTextField cueTime = new JTextField(5);
-		
+
 		JLabel feedback; //Only initilized if error needs to be given to user
 		final JPanel cuePanel = new JPanel();
-		
+
 		cuePanel.setLayout(new BoxLayout(cuePanel, BoxLayout.Y_AXIS));
-//		final JPanel chPanel = new JPanel();
+		//		final JPanel chPanel = new JPanel();
 		//May not need
-		
+
 		final JScrollPane scp = new JScrollPane(cuePanel);
 		scp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 		//Delete?
-//		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
-//		cuePanel.add(chPanel);		
-		
-		
-		
+		//		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
+		//		cuePanel.add(chPanel);		
+
+
+
 		cueTime.setText("" + editorTime);
 
 		//Create first panel
@@ -222,7 +293,7 @@ public class Editor implements Serializable{
 		firstPanel.add(new JLabel("Cue Time:"));
 		firstPanel.add(cueTime);
 		cuePanel.add(firstPanel);
-		
+
 		final ArrayList<eventInput> events = new ArrayList<eventInput>();
 
 		//add initial event
@@ -230,20 +301,8 @@ public class Editor implements Serializable{
 		events.add(firstEvent);
 		cuePanel.add(firstEvent.createChPanel());	
 
-//Delete
-
-//		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
-//
-//		chPanel.add(new JLabel("Channel:"));
-//		chPanel.add(events.get(0).channel);
-//		chPanel.add(Box.createHorizontalStrut(15)); // a spacer
-//		chPanel.add(new JLabel("State:"));
-//		chPanel.add(events.get(0).state);
-//End
-
-
 		JButton addEvent = new JButton("Add Channels");
-		
+
 		firstPanel.add(addEvent);
 
 		addEvent.addActionListener(new ActionListener() {
@@ -251,13 +310,13 @@ public class Editor implements Serializable{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				final eventInput event = new eventInput(song);
-				
+
 				events.add(event);
-				
+
 				cuePanel.add(event.createChPanel());
-				
+
 				event.rmvButton.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						cuePanel.remove(event.getChPanel());
@@ -266,17 +325,17 @@ public class Editor implements Serializable{
 
 					}
 				});
-				
+
 				scp.validate();
 			}
 		});
 
 		JFrame cueFrame = new JFrame();
 		cueFrame.setResizable(true);
-		
+
 		int result = JOptionPane.showConfirmDialog(null, scp, 
 				"New Cue", JOptionPane.OK_CANCEL_OPTION);
-	
+
 
 		if (result == JOptionPane.OK_OPTION) {
 			//Validate input
@@ -302,12 +361,12 @@ public class Editor implements Serializable{
 					eventInput ei = events.get(i);
 					int effectRate = ei.getEffectRate();
 
-					
+
 					if(ei.state.getSelectedItem().equals("Off")) on = false;
-					
+
 					//Check if effect
 					if(ei.state.getSelectedItem().equals("Effect")) effect = true;
-					
+
 
 					if(events.get(i).channel.getSelectedItem() != null && !(effect && effectRate <=0)) {
 						tmp.addEvent(new LightEvent(((Channel) events.get(i).channel.getSelectedItem()), on, effect, effectRate));
@@ -391,7 +450,7 @@ public class Editor implements Serializable{
 			FileOutputStream fout = new FileOutputStream(song.getFilePath());
 			System.out.println("Saving file at: " + song.getFilePath());
 			ObjectOutputStream oos = new ObjectOutputStream(fout);
-			
+
 			//Write song object
 			oos.writeObject(song);
 
@@ -419,7 +478,7 @@ public class Editor implements Serializable{
 			JOptionPane.showConfirmDialog(null, "Error: File is not a song file.", "Invalid File", JOptionPane.DEFAULT_OPTION);
 			return false;
 		}
-		
+
 		catch(Exception e){
 			e.printStackTrace();
 			return false;
@@ -439,24 +498,24 @@ class eventInput {
 	JButton rmvButton;
 	private JPanel newChPanel;
 
-	
+
 	public eventInput(Song s) {
 		newChPanel = new JPanel();
-		
+
 		channel = new JComboBox(s.getChannels());
 		state = new JComboBox(options);
 		rateInput = new JTextField();
 		rateInput.setColumns(4);
 		rmvButton = new JButton("Remove");
 
-		
-//		newChPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
-//		int i = events.size()-1;
 
-//		newChPanel.add(Box.createHorizontalStrut(15)); // a spacer		
-		
+		//		newChPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
+		//		int i = events.size()-1;
+
+		//		newChPanel.add(Box.createHorizontalStrut(15)); // a spacer		
+
 	}
-	
+
 	public int getEffectRate() {
 		if(rateInput.getText() != null) {
 			try {
@@ -487,15 +546,15 @@ class eventInput {
 		newChPanel.add(state);
 		newChPanel.add(new JLabel("Eff. Rate:"));
 		newChPanel.add(rateInput);
-		
+
 		//Remove Button
 		newChPanel.add(rmvButton);
-		
+
 		return newChPanel;
 	}
-	
+
 	JPanel getChPanel() {
 		return newChPanel;
 	}
-	
+
 }

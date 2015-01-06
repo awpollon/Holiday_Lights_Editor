@@ -8,6 +8,7 @@ public class Channel implements Serializable {
 	private static final long serialVersionUID = -7257850489035330987L;
 	
 	private String chName;
+	private String chVar;
 	private String color;
 	private int chNum;
 	private int numLights;
@@ -27,6 +28,7 @@ public class Channel implements Serializable {
 
 	public void setChName(String chName) {
 		this.chName = chName;
+		this.chVar = chName.replaceAll("\\s+","");
 	}
 
 	public String getColor() {
@@ -64,5 +66,9 @@ public class Channel implements Serializable {
 	@Override
 	public String toString() {
 		return (chNum + ": " + chName);
+	}
+
+	public String getChVar() {
+		return chVar;
 	}
 }

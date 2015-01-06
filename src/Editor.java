@@ -123,7 +123,7 @@ public class Editor implements Serializable{
 			bw.append("void loop() {\n");
 
 			//Begin countdown
-			Arduino.writeCountdown(bw, 5);
+			Arduino.writeCountdown(bw, 10);
 			
 			Object[] qs = song.getCues();
 
@@ -163,6 +163,8 @@ public class Editor implements Serializable{
 					for(int j=0; j<c.getEvents().size(); j++) {
 						LightEvent e = c.getEvents().get(j);
 						Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
+						Arduino.printToSerial(bw, "Cue: " + c.toString());
+
 
 						if(e.isOn() && e.isEffect()){
 							//Add to active effects
@@ -201,7 +203,7 @@ public class Editor implements Serializable{
 							activeEffects.remove(0);
 
 							//Print delay and write digitalwrite for effect
-							Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);					
+							Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);	
 							Arduino.digitalWrite(bw, nextEffect.event.getChannel(), !(nextEffect.lastStateOn));
 
 							//Set lastRunTime and nextRun

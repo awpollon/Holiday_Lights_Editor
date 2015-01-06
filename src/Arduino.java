@@ -92,12 +92,25 @@ public class Arduino {
 			bw.append("for (int i = 0; i<" + start + "; i++){\n");
 			bw.append("Serial.println("+start + "-i);\n");
 			bw.append("delay(1000);\n");
+			bw.append("Serial.println(\"GO!\");\n");
 			bw.append("}\n");
 			bw.append("\n\n");
 
 			return true;
 		}
 		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+	}
+	public static boolean printToSerial(BufferedWriter bw, String out){
+		try {
+			bw.append("Serial.println(\""+out+"\");\n");
+			
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}

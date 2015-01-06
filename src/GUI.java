@@ -465,11 +465,19 @@ public class GUI implements Serializable {
 							LightEvent ev = evs.get(i);
 
 							eventPanel.add(new JLabel("Event: " + i));
-							eventPanel.add(new  JLabel("Channel: " + ev.channel.getChName()));
-							eventPanel.add(new  JLabel("Channel #: " + ev.channel.getChNum()));
+							eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
+							eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
 
-							if (ev.on){
-								eventPanel.add(new  JLabel("State: On"));
+							if (ev.isOn()){
+								
+								if(ev.isEffect()) {
+									eventPanel.add(new  JLabel("State: Effect"));
+									eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRate()));
+								}
+								else {
+									eventPanel.add(new  JLabel("State: On"));
+
+								}
 							}
 							else {
 								eventPanel.add(new  JLabel("State: Off"));

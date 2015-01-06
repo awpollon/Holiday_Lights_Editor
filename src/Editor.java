@@ -144,7 +144,8 @@ public class Editor implements Serializable{
 
 				public ActiveEffect(LightEvent e, double startTime) {
 					this.event = e;
-					this.startTime = this.nextRun = startTime;
+					this.startTime = startTime;
+					this.nextRun = startTime + e.getEffectRate();
 					this.lastStateOn = true;
 				}
 
@@ -198,8 +199,8 @@ public class Editor implements Serializable{
 				double lastRunTime = c.getRunTime();
 
 				//Compare timing of next effect with next cue
-				//See if there are any effects
-				if(!activeEffects.isEmpty()) {
+				//See if there are any effects (but must have one cue left to avoid infinite loop
+				if(!activeEffects.isEmpty() && nextCue!=null) {
 					ActiveEffect nextEffect = activeEffects.get(0);
 					while((activeEffects.size() >0) && (nextEffect.nextRun <= nextCue.getRunTime())) {
 						//Remove the next effect
@@ -207,18 +208,22 @@ public class Editor implements Serializable{
 
 						//Print delay and write digitalwrite for effect
 						Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);					
-						Arduino.digitalWrite(bw, nextEffect.event.getChannel().getArduinoPin(), !activeEffects.get(0).lastStateOn);
-
+						Arduino.digitalWrite(bw, nextEffect.event.getChannel().getArduinoPin(), !(nextEffect.lastStateOn));
+								
 						//Set lastRunTime and nextRun
 						lastRunTime = nextEffect.nextRun;
 						nextEffect.nextRun += nextEffect.event.getEffectRate();
 
+						//Toggle lastState
+						nextEffect.lastStateOn = !nextEffect.lastStateOn;
+						
 						//Add back to effects list and resort
 						activeEffects.add(nextEffect);
 						Collections.sort(activeEffects);
 
 						//Get next effect in list
 						nextEffect = activeEffects.get(0);
+						assert lastRunTime < 100000;
 					}
 				}
 

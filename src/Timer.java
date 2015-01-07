@@ -54,8 +54,6 @@ public class Timer implements Runnable {
 
 	@Override
 	public void run()  {
-		long startTime = System.currentTimeMillis();
-		long editorStart = editor.getEditorTime();
 	
 		//Start audio
 		audioLine.start();
@@ -64,15 +62,15 @@ public class Timer implements Runnable {
 		editor.isPlaying = true;
 
 		while(editor.isPlaying){
-			//Get new time and update editor
-			long currentTime = System.currentTimeMillis(); 
-			editor.setEditorTime((currentTime-startTime) + editorStart);
-			editor.gui.updateTime();
-			
+
 			//Play sound
 			try {
 				if ((bytesRead = audioStream.read(bytesBuffer)) != -1) {
 				    audioLine.write(bytesBuffer, 0, bytesRead);
+				    
+				    //Update timer
+					editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000));
+					editor.gui.updateTime();
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

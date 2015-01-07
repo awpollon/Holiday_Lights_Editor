@@ -55,6 +55,7 @@ public class Editor implements Serializable{
 
 	void stopTimer() {
 		isPlaying = false;
+		timer.audioLine.stop();
 		System.out.println("Stopped time: " + editorTime);
 	}
 

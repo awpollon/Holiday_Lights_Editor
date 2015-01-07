@@ -13,15 +13,17 @@ public class Song implements Serializable {
 	private ArrayList<Cue> cues;
 	private ArrayList<Channel> channels;
 	private String fileName;
+	private String audioFilePath;
 
 	private String fileLocation;	
 
-	public Song(String songTitle) {
+	public Song(String songTitle, String audioFilePath) {
 		this.title = songTitle;
 		this.fileName = this.title + ".ser"; //Hardcode as .ser file for now
 		cues = new ArrayList<Cue>();
 		channels = new ArrayList<Channel>();
 		fileLocation = "";//hardcode for local file
+		this.audioFilePath = audioFilePath;
 	}
 
 	boolean addCue(Cue c) {
@@ -76,6 +78,14 @@ public class Song implements Serializable {
 
 	public void setFileLocation(String fileLocation) {
 		this.fileLocation = fileLocation;
+	}
+
+	public String getAudioFilePath() {
+		return audioFilePath;
+	}
+
+	public void setAudioFilePath(String audioFilePath) {
+		this.audioFilePath = audioFilePath;
 	}
 }
 

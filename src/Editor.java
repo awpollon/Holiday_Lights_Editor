@@ -1,10 +1,3 @@
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dialog;
-import java.awt.Event;
-import java.awt.FileDialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,17 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Editor implements Serializable{
 	/**
@@ -37,8 +22,8 @@ public class Editor implements Serializable{
 
 	public static final String appName = "Song Editor";
 	private final String arduino_export_path = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/arduino_exports/";
-	
-	
+
+
 	private Song song;
 	private long editorTime;
 	boolean isPlaying;
@@ -77,25 +62,53 @@ public class Editor implements Serializable{
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
 
+		//Welcome screen
+		//		Welcome w = new Welcome();
+		boolean success = false;
 
 
-		Song s = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
+		while(!success) {
+			String[] buttons = {"Quit", "Open Song", "Create New Song" };
+			int selection = JOptionPane.showOptionDialog(null, "Welcome to the app!", "Welcome", JOptionPane.DEFAULT_OPTION, 0, null, buttons, buttons[2]);
 
-		s.addChannel(new Channel("White Tree", 1, 8));
-		s.addChannel(new Channel("Blue Tree", 2, 9));
-		s.addChannel(new Channel("Blues", 3, 3));
-		s.addChannel(new Channel("Whites", 4, 5));
-		s.addChannel(new Channel("Wreaths", 5, 2));
+			if(selection==2) {
+				//Create new song
+				success = true;
+			}
+			else if(selection == 1) {
+				//Open song
+				if(!Editor.openFile()) {
+					success = false;
+				}
+				else success = true;
+				
+			}
+			else {
+				//Exit app
+				success = true;
+				System.exit(0);
+			}
+		}
 
-		Editor e = new Editor(s);
+		//		Song s = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
 
-		e.gui.printCues();
+		//		Song s = w.getSong();
+		//
+		//		s.addChannel(new Channel("White Tree", 1, 8));
+		//		s.addChannel(new Channel("Blue Tree", 2, 9));
+		//		s.addChannel(new Channel("Blues", 3, 3));
+		//		s.addChannel(new Channel("Whites", 4, 5));
+		//		s.addChannel(new Channel("Wreaths", 5, 2));
+		//
+		//		Editor e = new Editor(s);
+
+		//		e.gui.printCues();
 
 	}
 
 	public boolean writeFile(){
 
-		
+
 		try {
 			File file = new File(arduino_export_path + song.getTitle());
 			if (!file.exists()) {
@@ -116,13 +129,13 @@ public class Editor implements Serializable{
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
 			Object[] chs = song.getChannels();
-	
+
 			//Defines
 			Arduino.writeDefines(bw, chs);
-			
+
 			//Intro comment
 			Arduino.writeIntro(bw);
-			
+
 			//Setup method
 			Arduino.writeSetup(bw, chs);
 
@@ -131,7 +144,7 @@ public class Editor implements Serializable{
 
 			//Begin countdown
 			Arduino.writeCountdown(bw, 10);
-			
+
 			Object[] qs = song.getCues();
 
 			class ActiveEffect implements Comparable<ActiveEffect> {
@@ -157,9 +170,9 @@ public class Editor implements Serializable{
 
 			//Check if any cues at all
 			if(qs.length >0){
-			
-			ArrayList<ActiveEffect> activeEffects = new ArrayList<ActiveEffect>(); //Store current running effects;
-			
+
+				ArrayList<ActiveEffect> activeEffects = new ArrayList<ActiveEffect>(); //Store current running effects;
+
 
 				//Insert first delay
 				Cue c = (Cue) qs[0];				
@@ -272,8 +285,8 @@ public class Editor implements Serializable{
 		//Handle button click to add new cue
 		CuePane cp = new CuePane(this, c);
 		Cue editedCue = cp.getCue();
-		
-		
+
+
 		if (editedCue != null) {
 			//remove current cue, add edited cue
 			if(song.removeCue(c)) {
@@ -297,10 +310,10 @@ public class Editor implements Serializable{
 		//Handle button click to add new cue
 		Cue tmp = new Cue(editorTime);
 		tmp.addEvent(new LightEvent(song.getChannels()[0], true, false, 0));
-		
+
 		CuePane cp = new CuePane(this, tmp);
 		Cue newCue = cp.getCue();
-		
+
 		if(newCue != null) {
 			if(song.addCue(newCue)) {
 				System.out.println("Cue added at " + newCue.getRunTime());
@@ -308,16 +321,16 @@ public class Editor implements Serializable{
 			else {
 				System.err.println("Error adding cue at " + newCue.getRunTime());
 			}
-		
+
 		}
 		gui.printCues();
-		
-//		if (newCuePane()){
-//			gui.printCues();
-//		}
-//		else {
-//			addNewCue();
-//		}
+
+		//		if (newCuePane()){
+		//			gui.printCues();
+		//		}
+		//		else {
+		//			addNewCue();
+		//		}
 	}
 
 	public boolean removeCue(Cue c) {
@@ -355,26 +368,39 @@ public class Editor implements Serializable{
 
 	}
 
-	public boolean openFile(File file) {
-		try {
-			FileInputStream fin = new FileInputStream(file);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			Song openSong = (Song) ois.readObject();
-			Editor newEditor = new Editor(openSong);
-			ois.close();
-			return true;
+	public static boolean openFile() {
+		System.out.println("Opening");
+		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
 
-		}
-		catch(ClassNotFoundException e){
-			System.err.println("File Not A Song File");
-			JOptionPane.showConfirmDialog(null, "Error: File is not a song file.", "Invalid File", JOptionPane.DEFAULT_OPTION);
-			return false;
+
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"Ser", "ser");
+		fc.setFileFilter(filter);					
+		int opened = fc.showDialog(null, "Open");
+		if (opened == JFileChooser.APPROVE_OPTION) {
+
+			try {
+				FileInputStream fin = new FileInputStream(fc.getSelectedFile());
+				ObjectInputStream ois = new ObjectInputStream(fin);
+				Song openSong = (Song) ois.readObject();
+				Editor newEditor = new Editor(openSong);
+				ois.close();
+				return true;
+
+			}
+			catch(ClassNotFoundException e){
+				System.err.println("File Not A Song File");
+				JOptionPane.showConfirmDialog(null, "Error: File is not a song file.", "Invalid File", JOptionPane.DEFAULT_OPTION);
+				return false;
+			}
+
+			catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}
 		}
 
-		catch(Exception e){
-			e.printStackTrace();
-			return false;
-		}
+		return false;
 	}
 
 	public void resetTimer() {

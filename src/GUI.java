@@ -124,25 +124,7 @@ public class GUI implements Serializable {
 			public void actionPerformed(ActionEvent ev) {
 				int confirmOpen = JOptionPane.showConfirmDialog(null, "Open New File?", "Open", JOptionPane.YES_NO_OPTION);
 				if (confirmOpen == JOptionPane.YES_OPTION){
-					System.out.println("Openng");
-					//					JFileChooser fc = new JFileChooser(e.getCurrentSong().getFilePath());
-					JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
-
-
-					FileNameExtensionFilter filter = new FileNameExtensionFilter(
-							"Ser", "ser");
-					fc.setFileFilter(filter);					
-					boolean success = false;
-					while(!success){
-
-						int opened = fc.showDialog(null, "Open");
-						if (opened == JFileChooser.APPROVE_OPTION) {
-							if(e.openFile(fc.getSelectedFile())) {
-								success = true;
-							}
-						}
-						else success = true;
-					}
+					Editor.openFile();
 				}
 			}
 		});

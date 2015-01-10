@@ -47,7 +47,7 @@ public class Cue implements Comparable<Cue>, Serializable {
 	}
 	@Override
 	public String toString() {
-		return (this.runTime + "");
+		return (this.getRuntTimeInSecs() + "");
 	}
 
 	public boolean isActive() {
@@ -56,6 +56,10 @@ public class Cue implements Comparable<Cue>, Serializable {
 	
 	public void setActive(boolean active) {
 		this.isActive = active;
+	}
+	
+	public double getRuntTimeInSecs(){
+		return (Math.floor((runTime /10)) /100.0);
 	}
 }
 

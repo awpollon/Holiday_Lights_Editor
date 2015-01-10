@@ -397,17 +397,17 @@ public class Editor implements Serializable{
 		if (editedCue != null) {
 			//remove current cue, add edited cue
 			if(song.removeCue(c)) {
-				System.out.println("Cue removed at " + c.getRunTime());
+				System.out.println("Cue removed at " + c.getRuntTimeInSecs());
 
 				if(song.addCue(editedCue)) {
-					System.out.println("Cue added at " + editedCue.getRunTime());
+					System.out.println("Cue added at " + editedCue.getRuntTimeInSecs());
 				}
 				else{
-					System.err.println("Error edadding cue at " + editedCue.getRunTime());
+					System.err.println("Error edadding cue at " + editedCue.getRuntTimeInSecs());
 				}
 			}
 			else{
-				System.err.println("Error removing cue at " + c.getRunTime());
+				System.err.println("Error removing cue at " + c.getRuntTimeInSecs());
 			}
 		}
 		gui.printCues();
@@ -423,10 +423,10 @@ public class Editor implements Serializable{
 
 		if(newCue != null) {
 			if(song.addCue(newCue)) {
-				System.out.println("Cue added at " + newCue.getRunTime());
+				System.out.println("Cue added at " + newCue.getRuntTimeInSecs());
 			}
 			else {
-				System.err.println("Error adding cue at " + newCue.getRunTime());
+				System.err.println("Error adding cue at " + newCue.getRuntTimeInSecs());
 			}
 
 		}

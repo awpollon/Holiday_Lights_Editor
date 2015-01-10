@@ -365,7 +365,9 @@ public class GUI implements Serializable {
 	}
 
 	void updateTime() {
-		timeText.setText("Time: " + e.getEditorTime() + " ms");	
+		double timeInSec = (e.getEditorTime() / 10) / 100.0; //displaying with two decimal places
+		
+		timeText.setText("Time: " + timeInSec + " s");	
 		f.validate();
 	}
 
@@ -467,7 +469,7 @@ public class GUI implements Serializable {
 					eventScrlPane = new JScrollPane(eventPanel);
 					p.add(eventScrlPane, BorderLayout.EAST);
 
-					eventPanel.add(new JLabel("Time: " + selected.getRunTime()));
+					eventPanel.add(new JLabel("Time: " + selected.getRuntTimeInSecs()));
 					eventPanel.add(Box.createVerticalStrut(15));
 					eventPanel.add(new JLabel("# of Events: " + selected.getEvents().size()));
 

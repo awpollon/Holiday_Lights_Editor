@@ -34,6 +34,14 @@ public class Editor implements Serializable{
 
 	public Editor(Song s) {		
 		this.song = s;
+
+		//Hardcode channels
+		s.addChannel(new Channel("White Tree", 1, 8));
+		s.addChannel(new Channel("Blue Tree", 2, 9));
+		s.addChannel(new Channel("Blues", 3, 3));
+		s.addChannel(new Channel("Whites", 4, 5));
+		s.addChannel(new Channel("Wreaths", 5, 2));
+
 		gui = new GUI(this);
 		setEditorTime(0);
 
@@ -97,11 +105,6 @@ public class Editor implements Serializable{
 
 		//		Song s = w.getSong();
 		//
-		//		s.addChannel(new Channel("White Tree", 1, 8));
-		//		s.addChannel(new Channel("Blue Tree", 2, 9));
-		//		s.addChannel(new Channel("Blues", 3, 3));
-		//		s.addChannel(new Channel("Whites", 4, 5));
-		//		s.addChannel(new Channel("Wreaths", 5, 2));
 		//
 		//		Editor e = new Editor(s);
 
@@ -122,7 +125,7 @@ public class Editor implements Serializable{
 		}
 		else return false;
 	}
-	
+
 	private static File promptAudioFile() {
 
 		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");

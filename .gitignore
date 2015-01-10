@@ -2,3 +2,6 @@
 *.wav
 WWTheme.wav
 /audio/
+/savedFiles/
+/arduino_exports/
+CueList.java

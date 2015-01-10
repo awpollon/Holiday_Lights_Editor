@@ -267,8 +267,8 @@ public class GUI implements Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				editor.setEditorTime(0);
-				updateTime();
+//				editor.setEditorTime(0); //Will now be called by editor to get currentCue
+//				updateTime(); Will also be called by editor
 				editor.resetTimer();
 			}
 		});

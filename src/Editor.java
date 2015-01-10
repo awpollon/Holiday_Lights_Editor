@@ -40,10 +40,10 @@ public class Editor implements Serializable{
 		//Set current and next cue for playback
 		this.currentCue = s.getCueList().get(0);
 		if(s.getCueList().size() > 1) {
-		this.nextCue = s.getCueList().get(1);
+			this.nextCue = s.getCueList().get(1);
 		}
 		else this.nextCue = null;
-		
+
 		//Instantiate GUI
 		gui = new GUI(this);
 		setEditorTime(0);
@@ -162,7 +162,7 @@ public class Editor implements Serializable{
 		if(soundFile != null){
 			Song newSong = new Song(songName, soundFile);
 			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
-			
+
 			//Hardcode channels
 			newSong.addChannel(new Channel("White Tree", 1, 8));
 			newSong.addChannel(new Channel("Blue Tree", 2, 9));
@@ -178,8 +178,8 @@ public class Editor implements Serializable{
 				firstCue.addEvent(new LightEvent(c, false, false, 0));
 			}
 			newSong.addCue(firstCue);
-			
-	
+
+
 			//Instantiate editor
 			Editor newEditor = new Editor(newSong);
 			//Save the file to start
@@ -432,8 +432,8 @@ public class Editor implements Serializable{
 		}
 		//Call set editor time to refresh cue list and active cue
 		setEditorTime(editorTime);
-		
-		
+
+
 		gui.printCues();
 
 		//		if (newCuePane()){
@@ -509,5 +509,16 @@ public class Editor implements Serializable{
 
 	public void resetTimer() {
 		timer.reset();
+		currentCue.setActive(false);
+		currentCue = song.getCueList().get(0);
+		currentCue.setActive(true);
+		if(song.getCueList().size() > 1) {
+			this.nextCue = song.getCueList().get(1);
+		}
+		else this.nextCue = null;	
+		
+		setEditorTime(0);
+		gui.printCues();
+		gui.updateTime();
 	}		
 }

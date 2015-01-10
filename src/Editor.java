@@ -36,7 +36,9 @@ public class Editor implements Serializable{
 	private static final long serialVersionUID = -7794921541255885374L;
 
 	public static final String appName = "Song Editor";
-
+	private final String arduino_export_path = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/arduino_exports/";
+	
+	
 	private Song song;
 	private long editorTime;
 	boolean isPlaying;
@@ -93,13 +95,15 @@ public class Editor implements Serializable{
 
 	public boolean writeFile(){
 
+		
 		try {
-			File file = new File(song.getTitle());
+			File file = new File(arduino_export_path + song.getTitle());
 			if (!file.exists()) {
 				if (file.mkdir()) {
 					System.out.println("Directory is created!");
 				} else {
 					System.out.println("Failed to create directory!");
+					return false;
 				}
 			}
 			file = new File(song.getTitle() +"/"+song.getTitle()+".txt");

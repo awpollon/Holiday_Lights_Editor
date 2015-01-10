@@ -106,7 +106,7 @@ public class Editor implements Serializable{
 					return false;
 				}
 			}
-			file = new File(song.getTitle() +"/"+song.getTitle()+".txt");
+			file = new File(arduino_export_path + song.getTitle() +"/"+song.getTitle()+".txt");
 
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
@@ -268,176 +268,56 @@ public class Editor implements Serializable{
 		this.editorTime = editorTime;
 	}
 
+	public void editCue(Cue c) {
+		//Handle button click to add new cue
+		CuePane cp = new CuePane(this, c);
+		Cue editedCue = cp.getCue();
+		
+		
+		if (editedCue != null) {
+			//remove current cue, add edited cue
+			if(song.removeCue(c)) {
+				System.out.println("Cue removed at " + c.getRunTime());
+
+				if(song.addCue(editedCue)) {
+					System.out.println("Cue added at " + editedCue.getRunTime());
+				}
+				else{
+					System.err.println("Error edadding cue at " + editedCue.getRunTime());
+				}
+			}
+			else{
+				System.err.println("Error removing cue at " + c.getRunTime());
+			}
+		}
+		gui.printCues();
+	}
 
 	public void addNewCue() {
 		//Handle button click to add new cue
-		if (newCuePane()){
-			gui.printCues();
-		}
-		else {
-			addNewCue();
-		}
-	}
-
-	public boolean newCuePane() {		
-		JTextField cueTime = new JTextField(5);
-
-		JLabel feedback; //Only initilized if error needs to be given to user
-		final JPanel cuePanel = new JPanel();
-
-		cuePanel.setLayout(new BoxLayout(cuePanel, BoxLayout.Y_AXIS));
-		//		final JPanel chPanel = new JPanel();
-		//May not need
-
-		final JScrollPane scp = new JScrollPane(cuePanel);
-		scp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-		//Delete?
-		//		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
-		//		cuePanel.add(chPanel);		
-
-
-
-		cueTime.setText("" + editorTime);
-
-		//Create first panel
-		JPanel firstPanel = new JPanel();
-		firstPanel.add(new JLabel("Cue Time:"));
-		firstPanel.add(cueTime);
-		cuePanel.add(firstPanel);
-
-		final ArrayList<eventInput> events = new ArrayList<eventInput>();
-
-		//add initial event
-		eventInput firstEvent = new eventInput(song);
-		events.add(firstEvent);
-		cuePanel.add(firstEvent.createChPanel());	
-
-		JButton addEvent = new JButton("Add Channels");
-
-		firstPanel.add(addEvent);
-
-		addEvent.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				final eventInput event = new eventInput(song);
-
-				events.add(event);
-
-				cuePanel.add(event.createChPanel());
-
-				event.rmvButton.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						cuePanel.remove(event.getChPanel());
-						events.remove(event);
-						scp.validate();
-
-					}
-				});
-
-				scp.validate();
-			}
-		});
-
-		JFrame cueFrame = new JFrame();
-		cueFrame.setResizable(true);
-
-		int result = JOptionPane.showConfirmDialog(null, scp, 
-				"New Cue", JOptionPane.OK_CANCEL_OPTION);
-
-
-		if (result == JOptionPane.OK_OPTION) {
-			//Validate input
-			boolean success = true;
-			double qTime = -1;
-			Cue tmp = null;
-			try{
-				qTime = Double.parseDouble(cueTime.getText());
-				tmp = new Cue(qTime);
-
-			}
-			catch(Exception e) {
-				success = false;
-				System.err.println("Cannot parseDouble time");
-
-			}
-
-			if(qTime >=0 && success) {
-				assert tmp != null;
-				for(int i=0; i<events.size(); i++) {
-					boolean on = true;
-					boolean effect = false;					
-					eventInput ei = events.get(i);
-					int effectRate = ei.getEffectRate();
-
-
-					if(ei.state.getSelectedItem().equals("Off")) on = false;
-
-					//Check if effect
-					if(ei.state.getSelectedItem().equals("Effect")) effect = true;
-
-
-					if(events.get(i).channel.getSelectedItem() != null && !(effect && effectRate <=0)) {
-						tmp.addEvent(new LightEvent(((Channel) events.get(i).channel.getSelectedItem()), on, effect, effectRate));
-					}
-					else {
-						System.err.println("Unable to add cue: Invalid Input.");
-						feedback = new JLabel("Unable to add cue: Invalid Input.");
-						feedback.setForeground(Color.red);
-						cuePanel.add(feedback);
-						JOptionPane.showMessageDialog(null, "Unable to add cue: Invalid Input.");
-
-						success = false;
-					}
-				}
-				if(success) { //See if sucessfull so far, then check if exists
-					//Check if cue already exists
-					for (int i=0; i<song.getCues().length; i++){
-						Cue c = song.getCues()[i];
-						//If runtime is less than current cue to check, end search
-						if(tmp.getRunTime() < c.getRunTime()) break;
-						else if (tmp.getRunTime() == c.getRunTime()) {
-							//Cue already exists
-							success = false;
-							System.err.println("Cue already exists at that time");
-
-							feedback = new JLabel("Unable to add cue: Cue already exists at that time.");
-							feedback.setForeground(Color.red);
-							cuePanel.add(feedback);
-							JOptionPane.showMessageDialog(null, "Unable to add cue: Cue already exists at that time.");
-
-						}
-					}
-				}
-			}
-
-			else {
-				System.err.println("Unable to add cue: Invalid Cue Time.");
-				success = false;
-
-				feedback = new JLabel("Unable to add cue: Invalid Cue Time.");
-				feedback.setForeground(Color.red);
-				cuePanel.add(feedback);
-				JOptionPane.showMessageDialog(null, "Unable to add cue: Invalid Cue Time.");
-			}
-
-
-			if(success) {
-				//If input is valid, add cue and refresh
-				song.addCue(tmp);
-				System.out.println("Cue added.");
-				return true;
+		Cue tmp = new Cue(editorTime);
+		tmp.addEvent(new LightEvent(song.getChannels()[0], true, false, 0));
+		
+		CuePane cp = new CuePane(this, tmp);
+		Cue newCue = cp.getCue();
+		
+		if(newCue != null) {
+			if(song.addCue(newCue)) {
+				System.out.println("Cue added at " + newCue.getRunTime());
 			}
 			else {
-				System.err.println("Cue not added.");
-				return false;
+				System.err.println("Error adding cue at " + newCue.getRunTime());
 			}
+		
 		}
-		//If ok wasn't selected, return true to confirm valid input
-		return true;
+		gui.printCues();
+		
+//		if (newCuePane()){
+//			gui.printCues();
+//		}
+//		else {
+//			addNewCue();
+//		}
 	}
 
 	public boolean removeCue(Cue c) {
@@ -500,73 +380,4 @@ public class Editor implements Serializable{
 	public void resetTimer() {
 		timer.reset();
 	}		
-}
-
-class eventInput {
-	JComboBox channel;
-	JComboBox state;
-	String[] options = {"On", "Off", "Effect"};
-	JTextField rateInput;
-	JButton rmvButton;
-	private JPanel newChPanel;
-
-
-	public eventInput(Song s) {
-		newChPanel = new JPanel();
-
-		channel = new JComboBox(s.getChannels());
-		state = new JComboBox(options);
-		rateInput = new JTextField();
-		rateInput.setColumns(4);
-		rmvButton = new JButton("Remove");
-
-
-		//		newChPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
-		//		int i = events.size()-1;
-
-		//		newChPanel.add(Box.createHorizontalStrut(15)); // a spacer		
-
-	}
-
-	public int getEffectRate() {
-		if(rateInput.getText() != null) {
-			try {
-				int effectRate = Integer.parseInt(rateInput.getText());
-				if (effectRate > 0) {
-					return effectRate;
-				}
-				else {
-					System.err.println("Invalid effect input, rate must be greater than 0");
-					return -1;
-				}
-			}
-			catch (Exception e) {
-				System.err.println("Exception: Invalid effect input");
-				return -1;
-			}
-		}
-		else {
-			System.err.println("No rate provided");
-			return -1;
-		}
-	}
-
-	JPanel createChPanel() {
-		newChPanel.add(new JLabel("Channel:"));
-		newChPanel.add(channel);
-		newChPanel.add(new JLabel("State:"));
-		newChPanel.add(state);
-		newChPanel.add(new JLabel("Eff. Rate:"));
-		newChPanel.add(rateInput);
-
-		//Remove Button
-		newChPanel.add(rmvButton);
-
-		return newChPanel;
-	}
-
-	JPanel getChPanel() {
-		return newChPanel;
-	}
-
 }

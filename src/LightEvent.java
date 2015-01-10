@@ -24,7 +24,6 @@ public class LightEvent implements Serializable{
 	}
 
 	public int getEffectRate() {
-		// TODO Auto-generated method stub
 		return effectRate;
 	}
 

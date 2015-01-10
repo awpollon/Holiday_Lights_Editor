@@ -69,6 +69,7 @@ public class GUI implements Serializable {
 	JButton start;
 	JButton reset;
 	JButton addCue;
+	JButton editCue;
 	JButton removeCue;
 
 	private Object[] cues;
@@ -79,7 +80,7 @@ public class GUI implements Serializable {
 
 		f = new JFrame("Show Editor: \"" + e.getCurrentSong().getTitle() +"\"");
 		f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		f.setBounds(50, 100, 500, 400);
+		f.setBounds(50, 100, 800, 400);
 		f.setVisible(true);
 
 
@@ -124,7 +125,7 @@ public class GUI implements Serializable {
 				int confirmOpen = JOptionPane.showConfirmDialog(null, "Open New File?", "Open", JOptionPane.YES_NO_OPTION);
 				if (confirmOpen == JOptionPane.YES_OPTION){
 					System.out.println("Openng");
-//					JFileChooser fc = new JFileChooser(e.getCurrentSong().getFilePath());
+					//					JFileChooser fc = new JFileChooser(e.getCurrentSong().getFilePath());
 					JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
 
 
@@ -304,6 +305,16 @@ public class GUI implements Serializable {
 			}
 		});
 
+		editCue = new JButton("Edit Cue");
+		//Will only be enbaled when a cue is selected
+		editCue.setEnabled(false);
+		editCue.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				editor.editCue((Cue) list.getSelectedValue());
+			}
+		});
 
 		removeCue = new JButton("Remove Cue");
 		//Will only be enbaled when a cue is selected
@@ -336,6 +347,7 @@ public class GUI implements Serializable {
 		buttonPanel.add(reset);
 
 		buttonPanel.add(addCue);
+		buttonPanel.add(editCue);
 		buttonPanel.add(removeCue);
 		p.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -439,9 +451,10 @@ public class GUI implements Serializable {
 			public void valueChanged(ListSelectionEvent e) {
 				if(!e.getValueIsAdjusting()) {
 					System.out.println(e);
-					//Enable remove cue button
+					//Enable remove and edit cue buttons
 					removeCue.setEnabled(true);
-
+					editCue.setEnabled(true);
+					
 					Cue selected = (Cue) list.getSelectedValue();
 
 					//Clear current panel
@@ -470,16 +483,15 @@ public class GUI implements Serializable {
 							eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
 							eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
 
-							if (ev.isOn()){
-								
-								if(ev.isEffect()) {
-									eventPanel.add(new  JLabel("State: Effect"));
-									eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRate()));
-								}
-								else {
-									eventPanel.add(new  JLabel("State: On"));
+							if(ev.isEffect()) {
+								eventPanel.add(new  JLabel("State: Effect"));
+								eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRate()));
+							}
 
-								}
+							else if (ev.isOn()){
+
+								eventPanel.add(new  JLabel("State: On"));
+
 							}
 							else {
 								eventPanel.add(new  JLabel("State: Off"));

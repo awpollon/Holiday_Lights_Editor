@@ -31,17 +31,20 @@ public class Editor implements Serializable{
 	boolean isPlaying;
 	GUI gui;
 	Timer timer;
+	private Cue currentCue;
+	private Cue nextCue;
 
 	public Editor(Song s) {		
 		this.song = s;
 
-		//Hardcode channels
-		s.addChannel(new Channel("White Tree", 1, 8));
-		s.addChannel(new Channel("Blue Tree", 2, 9));
-		s.addChannel(new Channel("Blues", 3, 3));
-		s.addChannel(new Channel("Whites", 4, 5));
-		s.addChannel(new Channel("Wreaths", 5, 2));
-
+		//Set current and next cue for playback
+		this.currentCue = s.getCueList().get(0);
+		if(s.getCueList().size() > 1) {
+		this.nextCue = s.getCueList().get(1);
+		}
+		else this.nextCue = null;
+		
+		//Instantiate GUI
 		gui = new GUI(this);
 		setEditorTime(0);
 
@@ -128,7 +131,7 @@ public class Editor implements Serializable{
 
 	private static File promptAudioFile() {
 
-		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
+		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio");
 
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"WAV", "wav");
@@ -159,6 +162,24 @@ public class Editor implements Serializable{
 		if(soundFile != null){
 			Song newSong = new Song(songName, soundFile);
 			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
+			
+			//Hardcode channels
+			newSong.addChannel(new Channel("White Tree", 1, 8));
+			newSong.addChannel(new Channel("Blue Tree", 2, 9));
+			newSong.addChannel(new Channel("Blues", 3, 3));
+			newSong.addChannel(new Channel("Whites", 4, 5));
+			newSong.addChannel(new Channel("Wreaths", 5, 2));
+
+			//Start with a cue at 0.0 with everything off
+			Cue firstCue = new Cue(0);
+			firstCue.setActive(true);
+
+			for(Channel c: newSong.getChannels()) {
+				firstCue.addEvent(new LightEvent(c, false, false, 0));
+			}
+			newSong.addCue(firstCue);
+			
+	
 			//Instantiate editor
 			Editor newEditor = new Editor(newSong);
 			//Save the file to start
@@ -344,6 +365,27 @@ public class Editor implements Serializable{
 
 	public void setEditorTime(long editorTime) {
 		this.editorTime = editorTime;
+
+		//Always look for next cue in case a cue was added before to change number
+		int currentIndex = song.getCueList().indexOf(currentCue);
+		if(currentIndex+1 == song.getCueList().size()) {
+			nextCue = null;
+		}
+
+		else {
+			nextCue = song.getCueList().get(currentIndex+1);
+
+
+			//See if time should update
+			if(editorTime >= nextCue.getRunTime()) {
+				//			gui.removeHighlightCue(currentCue);
+				//			gui.highlightCue(nextCue);
+				currentCue.setActive(false);
+				nextCue.setActive(true);
+				currentCue = nextCue;
+				gui.printCues();
+			}
+		}
 	}
 
 	public void editCue(Cue c) {
@@ -388,6 +430,10 @@ public class Editor implements Serializable{
 			}
 
 		}
+		//Call set editor time to refresh cue list and active cue
+		setEditorTime(editorTime);
+		
+		
 		gui.printCues();
 
 		//		if (newCuePane()){
@@ -428,7 +474,7 @@ public class Editor implements Serializable{
 
 	public static boolean openFile() {
 		System.out.println("Opening");
-		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
+		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/SavedFiles");
 
 
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(

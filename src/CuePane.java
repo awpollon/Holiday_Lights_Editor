@@ -41,7 +41,9 @@ public class CuePane {
 		//		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
 		//		cuePanel.add(chPanel);		
 
-		cueTime.setText("" + cue.getRunTime());
+		
+		
+		cueTime.setText("" + cue.getRuntTimeInSecs());
 
 		//Create first panel
 		JPanel firstPanel = new JPanel();
@@ -111,7 +113,9 @@ public class CuePane {
 			Cue tmp = null;
 			try{
 				qTime = Double.parseDouble(cueTime.getText());
-				tmp = new Cue(qTime);
+				
+				
+				tmp = new Cue(qTime*1000); //Convert to millis
 
 			}
 			catch(Exception e) {

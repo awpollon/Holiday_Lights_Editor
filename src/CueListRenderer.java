@@ -22,7 +22,8 @@ public class CueListRenderer extends JLabel implements ListCellRenderer {
 			int index, boolean isSelected, boolean cellHasFocus) {
 		
 		Cue cue = (Cue) value;
-		setText(cue.getRunTime() + "");
+		
+		setText(cue.getRuntTimeInSecs() + "");
 
 
 		if (isSelected) {

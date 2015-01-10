@@ -18,7 +18,7 @@ public class Timer implements Runnable {
 	SourceDataLine audioLine;
 	AudioFormat format;
 	int BUFFER_SIZE = 4096;
-	String audioFilePath = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Christmas_Eve-Sarajevo.wav";
+//	String audioFilePath = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Christmas_Eve-Sarajevo.wav";
 	File audioFile;
 	DataLine.Info info;
 	
@@ -29,7 +29,7 @@ public class Timer implements Runnable {
 		//Load song
 		
 		try {
-		audioFile = new File(audioFilePath);
+		audioFile = new File(e.getCurrentSong().getAudioFilePath());
 		 
 		audioStream = AudioSystem.getAudioInputStream(audioFile);
 		 

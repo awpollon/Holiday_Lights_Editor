@@ -77,7 +77,7 @@ public class Editor implements Serializable{
 
 
 
-		Song s = new Song("Let It Go", null);
+		Song s = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
 
 		s.addChannel(new Channel("White Tree", 1, 8));
 		s.addChannel(new Channel("Blue Tree", 2, 9));
@@ -445,8 +445,8 @@ public class Editor implements Serializable{
 
 	}
 
-	public void createNewFile(String fileName) {
-		Song newSong = new Song(fileName);
+	public void createNewFile(String fileName, String audioPath) {
+		Song newSong = new Song(fileName, audioPath);
 		newSong.copySong(this.song);
 		Editor newEditor = new Editor(newSong);
 		newEditor.saveFile();

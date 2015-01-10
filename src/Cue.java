@@ -14,10 +14,12 @@ public class Cue implements Comparable<Cue>, Serializable {
 	}
 
 	private double runTime;
+	private boolean isActive; //Is the current cue in playback
 
 	public Cue(double time) {
 		this.setRunTime(time);
 		events = new ArrayList<LightEvent>();
+		this.isActive = false;
 	}
 
 	boolean addEvent(LightEvent e) {
@@ -46,6 +48,14 @@ public class Cue implements Comparable<Cue>, Serializable {
 	@Override
 	public String toString() {
 		return (this.runTime + "");
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+	
+	public void setActive(boolean active) {
+		this.isActive = active;
 	}
 }
 

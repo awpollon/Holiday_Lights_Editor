@@ -245,6 +245,7 @@ public class GUI implements Serializable {
 		list = new JList(e.getCurrentSong().getCues());
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
+		list.setCellRenderer(new CueListRenderer());
 		list.setVisibleRowCount(-1);
 
 
@@ -266,8 +267,8 @@ public class GUI implements Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				editor.setEditorTime(0);
-				updateTime();
+//				editor.setEditorTime(0); //Will now be called by editor to get currentCue
+//				updateTime(); Will also be called by editor
 				editor.resetTimer();
 			}
 		});
@@ -377,6 +378,7 @@ public class GUI implements Serializable {
 
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
+		list.setCellRenderer(new CueListRenderer());
 		list.setVisibleRowCount(-1);
 
 		list.addMouseListener(new MouseListener() {
@@ -514,4 +516,10 @@ public class GUI implements Serializable {
 		//Disable remove cue since no cue will be selected
 		removeCue.setEnabled(false);
 	}
+//	public void removeHighlightCue(Cue currentCue) {
+//	}
+//	
+//	public void highlightCue(Cue nextCue) {
+//		list.setCellRenderer(new CueListRenderer());
+//	}
 }

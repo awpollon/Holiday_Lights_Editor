@@ -65,6 +65,11 @@ public class Song implements Serializable {
 		Collections.sort(this.cues);
 		return cues.toArray(new Cue[this.cues.size()]);
 	}
+	
+	public ArrayList<Cue> getCueList() {
+		Collections.sort(this.cues);
+		return cues;
+	}
 
 	public void copySong(Song song) {
 		this.channels = song.channels;

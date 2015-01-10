@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -73,7 +75,8 @@ public class Editor implements Serializable{
 
 			if(selection==2) {
 				//Create new song
-				success = true;
+				if(Editor.createNewSong()) success = true;
+				else success = false;
 			}
 			else if(selection == 1) {
 				//Open song
@@ -81,7 +84,7 @@ public class Editor implements Serializable{
 					success = false;
 				}
 				else success = true;
-				
+
 			}
 			else {
 				//Exit app
@@ -103,6 +106,43 @@ public class Editor implements Serializable{
 		//		Editor e = new Editor(s);
 
 		//		e.gui.printCues();
+
+	}
+
+	private static boolean createNewSong() {
+		boolean validName = false;
+		String songName = null;
+		while(!validName) {
+			songName = JOptionPane.showInputDialog("Enter Song Name");
+
+
+			if (songName == null) return false;
+			else if (songName.equals("")) {
+				JOptionPane.showMessageDialog(null, "Please enter a song title.");
+				validName = false;
+			}
+			else validName = true;
+		}
+		
+		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
+
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"WAV", "wav");
+		fc.setFileFilter(filter);					
+		int opened = fc.showDialog(null, "Open");
+		if (opened == JFileChooser.APPROVE_OPTION) {
+			File soundFile = fc.getSelectedFile();
+
+			Song newSong = new Song(songName, soundFile);
+			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
+			//Instantiate editor
+			Editor newEditor = new Editor(newSong);
+			//Save the file to start
+			newEditor.saveFile();
+
+			return true;
+		}
+		return false;
 
 	}
 
@@ -342,13 +382,6 @@ public class Editor implements Serializable{
 
 	}
 
-	public void createNewFile(String fileName, String audioPath) {
-		Song newSong = new Song(fileName, audioPath);
-		newSong.copySong(this.song);
-		Editor newEditor = new Editor(newSong);
-		newEditor.saveFile();
-		gui.f.setVisible(false);
-	}
 
 	public boolean saveFile() {
 		try{

@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,17 +14,19 @@ public class Song implements Serializable {
 	private ArrayList<Cue> cues;
 	private ArrayList<Channel> channels;
 	private String fileName;
-	private String audioFilePath;
+//	private String audioFilePath;
+	private File audioFile;
 
 	private String fileLocation;	
 
-	public Song(String songTitle, String audioFilePath) {
+	public Song(String songTitle, File audio) {
 		this.title = songTitle;
 		this.fileName = this.title + ".ser"; //Hardcode as .ser file for now
 		cues = new ArrayList<Cue>();
 		channels = new ArrayList<Channel>();
-		fileLocation = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/savedFiles/";//hardcode for local file
-		this.audioFilePath = audioFilePath;
+//		fileLocation = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/savedFiles/";//hardcode for local file
+//		this.audioFilePath = audioFilePath;
+		this.audioFile = audio;
 	}
 
 	boolean addCue(Cue c) {
@@ -80,12 +83,13 @@ public class Song implements Serializable {
 		this.fileLocation = fileLocation;
 	}
 
-	public String getAudioFilePath() {
-		return audioFilePath;
+	public File getAudioFile() {
+		return audioFile;
 	}
 
-	public void setAudioFilePath(String audioFilePath) {
-		this.audioFilePath = audioFilePath;
+	public void setAudioFile(File newAudioFile) {
+		this.audioFile = newAudioFile;
+		//Will need to reload instantiate timer
 	}
 }
 

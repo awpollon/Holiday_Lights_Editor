@@ -63,7 +63,7 @@ public class Welcome {
 	}
 
 	 void createNewSong() {
-		song = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
+//		song = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
 
 	}
 

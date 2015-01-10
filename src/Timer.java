@@ -29,7 +29,7 @@ public class Timer implements Runnable {
 		//Load song
 		
 		try {
-		audioFile = new File(e.getCurrentSong().getAudioFilePath());
+		audioFile = e.getCurrentSong().getAudioFile();
 		 
 		audioStream = AudioSystem.getAudioInputStream(audioFile);
 		 

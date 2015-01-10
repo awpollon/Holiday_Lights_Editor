@@ -112,7 +112,7 @@ public class GUI implements Serializable {
 			public void actionPerformed(ActionEvent arg0) {
 				String fileName = JOptionPane.showInputDialog("Enter file name");
 				if(fileName != null){
-					e.createNewFile(fileName, e.getCurrentSong().getAudioFilePath()); //Uses current audio file
+//					e.createNewFile(fileName, e.getCurrentSong().getAudioFilePath()); //Uses current audio file
 				}
 			}
 		});

@@ -18,7 +18,7 @@ public class Timer implements Runnable {
 	SourceDataLine audioLine;
 	AudioFormat format;
 	int BUFFER_SIZE = 4096;
-	String audioFilePath = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Christmas_Eve-Sarajevo.wav";
+//	String audioFilePath = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Christmas_Eve-Sarajevo.wav";
 	File audioFile;
 	DataLine.Info info;
 	
@@ -29,7 +29,7 @@ public class Timer implements Runnable {
 		//Load song
 		
 		try {
-		audioFile = new File(audioFilePath);
+		audioFile = new File(e.getCurrentSong().getAudioFilePath());
 		 
 		audioStream = AudioSystem.getAudioInputStream(audioFile);
 		 
@@ -54,8 +54,6 @@ public class Timer implements Runnable {
 
 	@Override
 	public void run()  {
-		long startTime = System.currentTimeMillis();
-		long editorStart = editor.getEditorTime();
 	
 		//Start audio
 		audioLine.start();
@@ -64,15 +62,15 @@ public class Timer implements Runnable {
 		editor.isPlaying = true;
 
 		while(editor.isPlaying){
-			//Get new time and update editor
-			long currentTime = System.currentTimeMillis(); 
-			editor.setEditorTime((currentTime-startTime) + editorStart);
-			editor.gui.updateTime();
-			
+
 			//Play sound
 			try {
 				if ((bytesRead = audioStream.read(bytesBuffer)) != -1) {
 				    audioLine.write(bytesBuffer, 0, bytesRead);
+				    
+				    //Update timer
+					editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000));
+					editor.gui.updateTime();
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

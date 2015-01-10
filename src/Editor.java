@@ -55,6 +55,9 @@ public class Editor implements Serializable{
 
 	void stopTimer() {
 		isPlaying = false;
+		timer.audioLine.stop();
+		//set editor time to stopped time
+		setEditorTime(timer.audioLine.getMicrosecondPosition() / 1000);
 		System.out.println("Stopped time: " + editorTime);
 	}
 
@@ -74,13 +77,13 @@ public class Editor implements Serializable{
 
 
 
-		Song s = new Song("Second Song");
+		Song s = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
 
-		s.addChannel(new Channel("White Tree", 1, 2));
-		s.addChannel(new Channel("Blue Tree", 2, 3));
-		s.addChannel(new Channel("Blues", 3, 4));
+		s.addChannel(new Channel("White Tree", 1, 8));
+		s.addChannel(new Channel("Blue Tree", 2, 9));
+		s.addChannel(new Channel("Blues", 3, 3));
 		s.addChannel(new Channel("Whites", 4, 5));
-		s.addChannel(new Channel("Wreaths", 5, 6));
+		s.addChannel(new Channel("Wreaths", 5, 2));
 
 		Editor e = new Editor(s);
 
@@ -442,8 +445,8 @@ public class Editor implements Serializable{
 
 	}
 
-	public void createNewFile(String fileName) {
-		Song newSong = new Song(fileName);
+	public void createNewFile(String fileName, String audioPath) {
+		Song newSong = new Song(fileName, audioPath);
 		newSong.copySong(this.song);
 		Editor newEditor = new Editor(newSong);
 		newEditor.saveFile();

@@ -58,6 +58,7 @@ public class GUI implements Serializable {
 	JMenuItem quit;
 
 	JMenu edit;
+	JMenuItem newAudio;
 	JMenuItem renameSong;
 	JMenuItem editChannels;
 	JMenuItem duplicateCue;
@@ -168,6 +169,18 @@ public class GUI implements Serializable {
 		file.add(quit);
 
 		edit = new JMenu("Edit");
+		
+		newAudio = new JMenuItem("Change Audio");
+		newAudio.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			editor.changeAudio();	
+			}
+		});
+		
+		edit.add(newAudio);
+		
 		editChannels = new JMenuItem("Channels");
 		editChannels.addActionListener(new ActionListener() {
 
@@ -351,7 +364,8 @@ public class GUI implements Serializable {
 	}
 
 	void updateTime() {
-		timeText.setText("Time: " + e.getEditorTime() + " ms");		
+		timeText.setText("Time: " + e.getEditorTime() + " ms");	
+		f.validate();
 	}
 
 	void printCues() {

@@ -109,6 +109,34 @@ public class Editor implements Serializable{
 
 	}
 
+	public boolean changeAudio() {
+		File newAudio = promptAudioFile();
+		if (newAudio != null) {
+			//If new file was chosen, change file on song
+			this.song.setAudioFile(newAudio);
+			//Restart the timer
+			timer = new Timer(this);
+			setEditorTime(0);
+			gui.updateTime();
+			return true;
+		}
+		else return false;
+	}
+	
+	private static File promptAudioFile() {
+
+		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
+
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"WAV", "wav");
+		fc.setFileFilter(filter);					
+		int opened = fc.showDialog(null, "Open");
+		if (opened == JFileChooser.APPROVE_OPTION) {
+			return fc.getSelectedFile();
+		}
+		else return null;
+	}
+
 	private static boolean createNewSong() {
 		boolean validName = false;
 		String songName = null;
@@ -123,16 +151,9 @@ public class Editor implements Serializable{
 			}
 			else validName = true;
 		}
-		
-		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator");
+		File soundFile = promptAudioFile();
 
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"WAV", "wav");
-		fc.setFileFilter(filter);					
-		int opened = fc.showDialog(null, "Open");
-		if (opened == JFileChooser.APPROVE_OPTION) {
-			File soundFile = fc.getSelectedFile();
-
+		if(soundFile != null){
 			Song newSong = new Song(songName, soundFile);
 			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
 			//Instantiate editor
@@ -142,6 +163,7 @@ public class Editor implements Serializable{
 
 			return true;
 		}
+
 		return false;
 
 	}

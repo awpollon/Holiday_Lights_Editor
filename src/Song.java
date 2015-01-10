@@ -24,7 +24,7 @@ public class Song implements Serializable {
 		this.fileName = this.title + ".ser"; //Hardcode as .ser file for now
 		cues = new ArrayList<Cue>();
 		channels = new ArrayList<Channel>();
-//		fileLocation = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/savedFiles/";//hardcode for local file
+		fileLocation = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/savedFiles/";//hardcode for local file
 //		this.audioFilePath = audioFilePath;
 		this.audioFile = audio;
 	}

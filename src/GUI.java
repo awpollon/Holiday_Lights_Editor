@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -74,6 +75,7 @@ public class GUI implements Serializable {
 	JButton addCue;
 	JButton editCue;
 	JButton removeCue;
+	JCheckBox setLiveBox;
 
 	private Object[] cues;
 
@@ -344,6 +346,20 @@ public class GUI implements Serializable {
 				}
 			}
 		});
+		
+		setLiveBox = new JCheckBox();
+		editor.setShowLive(false); //Initially unchecked
+		setLiveBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if(setLiveBox.isSelected()) {
+					editor.setShowLive(true);
+				}
+				else editor.setShowLive(false);
+			}
+		});
+		
 		eventPanel = new JPanel();
 		eventScrlPane = new JScrollPane(eventPanel);
 
@@ -356,6 +372,8 @@ public class GUI implements Serializable {
 		buttonPanel.add(addCue);
 		buttonPanel.add(editCue);
 		buttonPanel.add(removeCue);
+		buttonPanel.add(new JLabel("Show Live: "));
+		buttonPanel.add(setLiveBox);
 		p.add(buttonPanel, BorderLayout.PAGE_END);
 
 		//Initialize statePanel
@@ -517,11 +535,13 @@ public class GUI implements Serializable {
 						}
 					}
 
-					//Get current channel states for this cue
-					GUI.this.e.getCurrentSong().setChStates(selected);
-
-					//Print current states to center
-					printStates();
+					//Get current channel states for this cue if not in live view
+					if(!GUI.this.e.showLive()) {
+						GUI.this.e.getCurrentSong().setChStates(selected);
+						
+						//Print current states to center
+						printStates();
+					}
 
 					f.validate();
 				}

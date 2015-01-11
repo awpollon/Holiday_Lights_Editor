@@ -35,6 +35,8 @@ public class Editor implements Serializable{
 	private Cue currentCue;
 	private Cue nextCue;
 
+	private boolean showLive;
+
 	public Editor(Song s) {		
 		this.song = s;
 
@@ -52,6 +54,8 @@ public class Editor implements Serializable{
 		gui.printCues();
 
 		timer = new Timer(this);
+
+		this.showLive = true;
 	}
 
 	void stopTimer() {
@@ -377,7 +381,7 @@ public class Editor implements Serializable{
 			nextCue = song.getCueList().get(currentIndex+1);
 
 
-			//See if time should update
+			//See if cue list should update
 			if(editorTime >= nextCue.getRunTime()) {
 				//			gui.removeHighlightCue(currentCue);
 				//			gui.highlightCue(nextCue);
@@ -385,6 +389,12 @@ public class Editor implements Serializable{
 				nextCue.setActive(true);
 				currentCue = nextCue;
 				gui.printCues();
+
+				//If mode is show live, update states list.
+				if(showLive()) {
+					song.setChStates(currentCue);
+					gui.printStates();
+				}
 			}
 		}
 	}
@@ -489,10 +499,10 @@ public class Editor implements Serializable{
 				ObjectInputStream ois = new ObjectInputStream(fin);
 				Song openSong = (Song) ois.readObject();
 				Editor newEditor = new Editor(openSong);
-				
+
 				//Update file path in song file
 				openSong.setFileLocation(fc.getSelectedFile().getParent());
-				
+
 				ois.close();
 				return true;
 
@@ -521,9 +531,22 @@ public class Editor implements Serializable{
 			this.nextCue = song.getCueList().get(1);
 		}
 		else this.nextCue = null;	
-		
+
 		setEditorTime(0);
+
+		if(showLive()) {
+			song.setChStates(currentCue);
+			gui.printStates();
+		}
 		gui.printCues();
 		gui.updateTime();
-	}		
+	}
+
+	public boolean showLive() {
+		return showLive;
+	}	
+
+	public void setShowLive(boolean live) {
+		this.showLive = live;
+	}	
 }

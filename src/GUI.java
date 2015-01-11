@@ -44,7 +44,7 @@ public class GUI implements Serializable {
 	JPanel buttonPanel;
 	JPanel eventPanel;
 	JScrollPane eventScrlPane;
-	
+
 	JPanel statePanel;
 
 
@@ -115,7 +115,7 @@ public class GUI implements Serializable {
 			public void actionPerformed(ActionEvent arg0) {
 				String fileName = JOptionPane.showInputDialog("Enter file name");
 				if(fileName != null){
-//					e.createNewFile(fileName, e.getCurrentSong().getAudioFilePath()); //Uses current audio file
+					//					e.createNewFile(fileName, e.getCurrentSong().getAudioFilePath()); //Uses current audio file
 				}
 			}
 		});
@@ -171,28 +171,28 @@ public class GUI implements Serializable {
 		file.add(quit);
 
 		edit = new JMenu("Edit");
-		
+
 		newAudio = new JMenuItem("Change Audio");
 		newAudio.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-			editor.changeAudio();	
+				editor.changeAudio();	
 			}
 		});
-		
+
 		edit.add(newAudio);
-		
+
 		checkFile = new JMenuItem("Error Check File");
 		checkFile.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Song.checkFile(editor.getCurrentSong());
 			}
 		});
 		edit.add(checkFile);
-		
+
 		editChannels = new JMenuItem("Channels");
 		editChannels.addActionListener(new ActionListener() {
 
@@ -279,8 +279,8 @@ public class GUI implements Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				editor.setEditorTime(0); //Will now be called by editor to get currentCue
-//				updateTime(); Will also be called by editor
+				//				editor.setEditorTime(0); //Will now be called by editor to get currentCue
+				//				updateTime(); Will also be called by editor
 				editor.resetTimer();
 			}
 		});
@@ -317,7 +317,7 @@ public class GUI implements Serializable {
 		//Will only be enabled when a cue is selected
 		editCue.setEnabled(false);
 		editCue.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				editor.editCue((Cue) list.getSelectedValue());
@@ -360,9 +360,9 @@ public class GUI implements Serializable {
 
 		//Initialize statePanel
 		statePanel = new JPanel();
-//		statePanel.add(new JTextField("Current Channel States"));
-	
-		
+		//		statePanel.add(new JTextField("Current Channel States"));
+
+
 		p.add(statePanel, BorderLayout.CENTER);
 
 		f.validate();
@@ -384,7 +384,7 @@ public class GUI implements Serializable {
 
 	void updateTime() {
 		double timeInSec = (e.getEditorTime() / 10) / 100.0; //displaying with two decimal places
-		
+
 		timeText.setText("Time: " + timeInSec + " s");	
 		f.validate();
 	}
@@ -431,34 +431,34 @@ public class GUI implements Serializable {
 			public void mouseClicked(MouseEvent me) {
 				///If cue is double clicked, ope up edit dialog
 				if (me.getClickCount() >= 2) {
-//					int index = list.locationToIndex(me.getPoint());
-//					Cue selectedCue = e.getCurrentSong().getCues()[index];
+					//					int index = list.locationToIndex(me.getPoint());
+					//					Cue selectedCue = e.getCurrentSong().getCues()[index];
 					e.editCue((Cue) list.getSelectedValue());
-					
-					
-//					boolean success = false;
-//					double newTime = -1;
-//
-//					String input = JOptionPane.showInputDialog("Enter new cue time");
-//
-//					if (input != null){
-//						while(!success){
-//							try{
-//								newTime = Double.parseDouble(input);
-//								success = true;
-//							}
-//							catch (Exception e) {
-//								System.out.println("Invalid Input");
-//								success = false;
-//								input = JOptionPane.showInputDialog("Enter new cue time");
-//							}
-//						}
-//						//Valid input
-//						System.out.println("New Time: " + newTime);
-//						selectedCue.setRunTime(newTime);
-//						//Update GUI
-//						printCues();
-//					}
+
+
+					//					boolean success = false;
+					//					double newTime = -1;
+					//
+					//					String input = JOptionPane.showInputDialog("Enter new cue time");
+					//
+					//					if (input != null){
+					//						while(!success){
+					//							try{
+					//								newTime = Double.parseDouble(input);
+					//								success = true;
+					//							}
+					//							catch (Exception e) {
+					//								System.out.println("Invalid Input");
+					//								success = false;
+					//								input = JOptionPane.showInputDialog("Enter new cue time");
+					//							}
+					//						}
+					//						//Valid input
+					//						System.out.println("New Time: " + newTime);
+					//						selectedCue.setRunTime(newTime);
+					//						//Update GUI
+					//						printCues();
+					//					}
 				}
 			}
 		});
@@ -472,7 +472,7 @@ public class GUI implements Serializable {
 					//Enable remove and edit cue buttons
 					removeCue.setEnabled(true);
 					editCue.setEnabled(true);
-					
+
 					Cue selected = (Cue) list.getSelectedValue();
 
 					//Clear current panel
@@ -516,13 +516,13 @@ public class GUI implements Serializable {
 							}
 						}
 					}
-					
+
 					//Get current channel states for this cue
 					GUI.this.e.getCurrentSong().setChStates(selected);
 
 					//Print current states to center
 					printStates();
-					
+
 					f.validate();
 				}
 			}
@@ -542,29 +542,42 @@ public class GUI implements Serializable {
 		//Disable remove cue since no cue will be selected
 		removeCue.setEnabled(false);
 	}
-//	public void removeHighlightCue(Cue currentCue) {
-//	}
-//	
-//	public void highlightCue(Cue nextCue) {
-//		list.setCellRenderer(new CueListRenderer());
-//	}
+	//	public void removeHighlightCue(Cue currentCue) {
+	//	}
+	//	
+	//	public void highlightCue(Cue nextCue) {
+	//		list.setCellRenderer(new CueListRenderer());
+	//	}
 	protected void printStates() {
 		statePanel.removeAll();
 		statePanel.setLayout(new GridLayout(4, 2));
-//		statePanel.add(new JLabel("Current Channel States"));
-		
-//		f.add(statePanel, BorderLayout.CENTER);
+		//		statePanel.add(new JLabel("Current Channel States"));
 
-		
+		//		f.add(statePanel, BorderLayout.CENTER);
+
+
 		for(Channel ch: e.getCurrentSong().getChannels()) {
 			JPanel chStatePanel = new JPanel();
-			chStatePanel.setLayout(new BoxLayout(chStatePanel, BoxLayout.LINE_AXIS));
+			chStatePanel.setLayout(new BoxLayout(chStatePanel, BoxLayout.PAGE_AXIS));
 			chStatePanel.add(new JLabel(ch.getChNum() +": " + ch.getChName()));
-			chStatePanel.add(new JLabel("State: " + ch.getCurrentState()));
-			
+			chStatePanel.add(new JLabel("State: " + ch.getCurrentStateString()));
+
+			if(ch.getCurrentState() == LightEvent.ON_STATE) {
+				chStatePanel.setBackground(ch.getColor());
+			}
+			else if (ch.getCurrentState() == LightEvent.EFFECT_STATE) {
+				chStatePanel.add(new JLabel("Effect Rate: " + ch.getCurrentEffectRateInSecs()));
+				chStatePanel.setBackground(ch.getColor());
+			}
+			else if (ch.getCurrentState() == LightEvent.OFF_STATE) {
+				chStatePanel.setBackground(Color.gray);
+			}
+			else System.err.println("Error: invalid current state");
+
+			chStatePanel.add(new JLabel("Cue Last Changed: " + ch.getCueLastChanged().toString()));
 			statePanel.add(chStatePanel);
 		}
-		
-//		statePanel.validate();
+
+		//		statePanel.validate();
 	}
 }

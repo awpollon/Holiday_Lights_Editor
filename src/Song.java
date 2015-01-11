@@ -109,7 +109,7 @@ public class Song implements Serializable {
 				for(LightEvent ev: cues.get(i).getEvents()) {
 					if(ev.getChannel().equals(ch)) {
 						found = true;
-						ch.setCurrentState(ev.getState());
+						ch.setCurrentState(ev.getState(), cues.get(i), ev.getEffectRate());
 						System.out.println("State of " + ch.getChName() + " in cue " + c + ": " + ch.getCurrentState() +", set in cue " + cues.get(i).getRuntTimeInSecs()); 
 						break;
 					}

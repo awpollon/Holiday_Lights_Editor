@@ -6,9 +6,9 @@ public class LightEvent implements Serializable{
 	 */
 	private static final long serialVersionUID = 4635984324931825931L;
 
-	private static final int ON_STATE = 1;
-	private static final int OFF_STATE = 2;
-	private static final int EFFECT_STATE = 3;
+	public static final int ON_STATE = 1;
+	public static final int OFF_STATE = 2;
+	public static final int EFFECT_STATE = 3;
 
 	
 	private Channel channel;

@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -164,11 +165,11 @@ public class Editor implements Serializable{
 			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
 
 			//Hardcode channels
-			newSong.addChannel(new Channel("White Tree", 1, 8));
-			newSong.addChannel(new Channel("Blue Tree", 2, 9));
-			newSong.addChannel(new Channel("Blues", 3, 3));
-			newSong.addChannel(new Channel("Whites", 4, 5));
-			newSong.addChannel(new Channel("Wreaths", 5, 2));
+			newSong.addChannel(new Channel("White Tree", 1, 8, Color.WHITE));
+			newSong.addChannel(new Channel("Blue Tree", 2, 9, Color.blue));
+			newSong.addChannel(new Channel("Blues", 3, 3, Color.blue));
+			newSong.addChannel(new Channel("Whites", 4, 5, Color.white));
+			newSong.addChannel(new Channel("Wreaths", 5, 2, Color.orange));
 
 			//Start with a cue at 0.0 with everything off
 			Cue firstCue = new Cue(0);

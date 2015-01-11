@@ -113,8 +113,10 @@ public class Song implements Serializable {
 						System.out.println("State of " + ch.getChName() + " in cue " + c + ": " + ch.getCurrentState() +", set in cue " + cues.get(i).getRuntTimeInSecs()); 
 						break;
 					}
+					//If last state changed has been found, stop looking
 					if(found) break;
 				}
+				if(found) break;
 			}
 		}
 	}
@@ -122,7 +124,7 @@ public class Song implements Serializable {
 	public static void checkFile(Song song) {
 		//Checks the current file for missing data
 
-		
+
 		{ //Check for missing events state values
 			boolean errFound = false;
 			for(Cue q: song.getCueList()) {
@@ -145,7 +147,7 @@ public class Song implements Serializable {
 					}
 				}
 			}
-				
+
 		}
 	}
 }

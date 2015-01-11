@@ -57,4 +57,15 @@ public class LightEvent implements Serializable{
 	public int getState() {
 		return state;
 	}
+
+	public void setState() {
+		//Sets state based on boolean values
+		if(this.isEffect) {
+			this.state = EFFECT_STATE;
+		}
+		else {
+			if(this.on) this.state = ON_STATE;
+			else this.state = OFF_STATE;
+		}
+	}
 }

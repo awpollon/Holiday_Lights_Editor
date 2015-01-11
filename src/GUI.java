@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -62,6 +63,7 @@ public class GUI implements Serializable {
 	JMenuItem renameSong;
 	JMenuItem editChannels;
 	JMenuItem duplicateCue;
+	JMenuItem checkFile;
 
 	JMenu help;
 	JMenuItem info;
@@ -180,6 +182,16 @@ public class GUI implements Serializable {
 		});
 		
 		edit.add(newAudio);
+		
+		checkFile = new JMenuItem("Error Check File");
+		checkFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Song.checkFile(editor.getCurrentSong());
+			}
+		});
+		edit.add(checkFile);
 		
 		editChannels = new JMenuItem("Channels");
 		editChannels.addActionListener(new ActionListener() {
@@ -302,7 +314,7 @@ public class GUI implements Serializable {
 		});
 
 		editCue = new JButton("Edit Cue");
-		//Will only be enbaled when a cue is selected
+		//Will only be enabled when a cue is selected
 		editCue.setEnabled(false);
 		editCue.addActionListener(new ActionListener() {
 			
@@ -313,7 +325,7 @@ public class GUI implements Serializable {
 		});
 
 		removeCue = new JButton("Remove Cue");
-		//Will only be enbaled when a cue is selected
+		//Will only be enabled when a cue is selected
 		removeCue.setEnabled(false);
 		removeCue.addActionListener(new ActionListener() {
 
@@ -332,7 +344,6 @@ public class GUI implements Serializable {
 				}
 			}
 		});
-
 		eventPanel = new JPanel();
 		eventScrlPane = new JScrollPane(eventPanel);
 
@@ -345,7 +356,14 @@ public class GUI implements Serializable {
 		buttonPanel.add(addCue);
 		buttonPanel.add(editCue);
 		buttonPanel.add(removeCue);
-		p.add(buttonPanel, BorderLayout.SOUTH);
+		p.add(buttonPanel, BorderLayout.PAGE_END);
+
+		//Initialize statePanel
+		statePanel = new JPanel();
+//		statePanel.add(new JTextField("Current Channel States"));
+	
+		
+		p.add(statePanel, BorderLayout.CENTER);
 
 		f.validate();
 
@@ -467,7 +485,7 @@ public class GUI implements Serializable {
 					eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
 					eventPanel.setBackground(Color.WHITE);
 					eventScrlPane = new JScrollPane(eventPanel);
-					p.add(eventScrlPane, BorderLayout.EAST);
+					p.add(eventScrlPane, BorderLayout.LINE_END);
 
 					eventPanel.add(new JLabel("Time: " + selected.getRuntTimeInSecs()));
 					eventPanel.add(Box.createVerticalStrut(15));
@@ -503,7 +521,7 @@ public class GUI implements Serializable {
 					GUI.this.e.getCurrentSong().setChStates(selected);
 
 					//Print current states to center
-					
+					printStates();
 					
 					f.validate();
 				}
@@ -513,7 +531,7 @@ public class GUI implements Serializable {
 		JScrollPane listScroller = new JScrollPane(list);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 
-		p.add(list, BorderLayout.WEST);
+		p.add(list, BorderLayout.LINE_START); 
 
 		f.validate();
 
@@ -530,4 +548,23 @@ public class GUI implements Serializable {
 //	public void highlightCue(Cue nextCue) {
 //		list.setCellRenderer(new CueListRenderer());
 //	}
+	protected void printStates() {
+		statePanel.removeAll();
+		statePanel.setLayout(new GridLayout(4, 2));
+//		statePanel.add(new JLabel("Current Channel States"));
+		
+//		f.add(statePanel, BorderLayout.CENTER);
+
+		
+		for(Channel ch: e.getCurrentSong().getChannels()) {
+			JPanel chStatePanel = new JPanel();
+			chStatePanel.setLayout(new BoxLayout(chStatePanel, BoxLayout.LINE_AXIS));
+			chStatePanel.add(new JLabel(ch.getChNum() +": " + ch.getChName()));
+			chStatePanel.add(new JLabel("State: " + ch.getCurrentState()));
+			
+			statePanel.add(chStatePanel);
+		}
+		
+//		statePanel.validate();
+	}
 }

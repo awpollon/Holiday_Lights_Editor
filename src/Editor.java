@@ -488,6 +488,10 @@ public class Editor implements Serializable{
 				ObjectInputStream ois = new ObjectInputStream(fin);
 				Song openSong = (Song) ois.readObject();
 				Editor newEditor = new Editor(openSong);
+				
+				//Update file path in song file
+				openSong.setFileLocation(fc.getSelectedFile().getParent());
+				
 				ois.close();
 				return true;
 

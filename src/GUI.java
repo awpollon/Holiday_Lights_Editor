@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -27,7 +26,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class GUI implements Serializable {
@@ -45,6 +43,8 @@ public class GUI implements Serializable {
 	JPanel buttonPanel;
 	JPanel eventPanel;
 	JScrollPane eventScrlPane;
+	
+	JPanel statePanel;
 
 
 	JList list;
@@ -411,36 +411,36 @@ public class GUI implements Serializable {
 
 			@Override
 			public void mouseClicked(MouseEvent me) {
-
-				JList clicked = (JList) me.getSource();
-
+				///If cue is double clicked, ope up edit dialog
 				if (me.getClickCount() >= 2) {
-					int index = list.locationToIndex(me.getPoint());
-					Cue selectedCue = e.getCurrentSong().getCues()[index];
-
-					boolean success = false;
-					double newTime = -1;
-
-					String input = JOptionPane.showInputDialog("Enter new cue time");
-
-					if (input != null){
-						while(!success){
-							try{
-								newTime = Double.parseDouble(input);
-								success = true;
-							}
-							catch (Exception e) {
-								System.out.println("Invalid Input");
-								success = false;
-								input = JOptionPane.showInputDialog("Enter new cue time");
-							}
-						}
-						//Valid input
-						System.out.println("New Time: " + newTime);
-						selectedCue.setRunTime(newTime);
-						//Update GUI
-						printCues();
-					}
+//					int index = list.locationToIndex(me.getPoint());
+//					Cue selectedCue = e.getCurrentSong().getCues()[index];
+					e.editCue((Cue) list.getSelectedValue());
+					
+					
+//					boolean success = false;
+//					double newTime = -1;
+//
+//					String input = JOptionPane.showInputDialog("Enter new cue time");
+//
+//					if (input != null){
+//						while(!success){
+//							try{
+//								newTime = Double.parseDouble(input);
+//								success = true;
+//							}
+//							catch (Exception e) {
+//								System.out.println("Invalid Input");
+//								success = false;
+//								input = JOptionPane.showInputDialog("Enter new cue time");
+//							}
+//						}
+//						//Valid input
+//						System.out.println("New Time: " + newTime);
+//						selectedCue.setRunTime(newTime);
+//						//Update GUI
+//						printCues();
+//					}
 				}
 			}
 		});
@@ -485,7 +485,7 @@ public class GUI implements Serializable {
 
 							if(ev.isEffect()) {
 								eventPanel.add(new  JLabel("State: Effect"));
-								eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRate()));
+								eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRateInSecs()));
 							}
 
 							else if (ev.isOn()){
@@ -498,7 +498,13 @@ public class GUI implements Serializable {
 							}
 						}
 					}
+					
+					//Get current channel states for this cue
+					GUI.this.e.getCurrentSong().setChStates(selected);
 
+					//Print current states to center
+					
+					
 					f.validate();
 				}
 			}

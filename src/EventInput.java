@@ -1,3 +1,6 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -6,9 +9,9 @@ import javax.swing.JTextField;
 
 
 public class EventInput {
-	private final String onText = "On";
-	private final String offText = "Off";
-	private final String effectText = "Effect";
+	public static final String onText = "On";
+	public static final String offText = "Off";
+	public static final String effectText = "Effect";
 
 	
 	private JComboBox channel;
@@ -17,16 +20,28 @@ public class EventInput {
 	private JTextField rateInput;
 	private JButton rmvButton;
 	private JPanel newChPanel;
+	
+	private CuePane cuePane;
 
 
-	public EventInput(Song s) {
+	public EventInput(Song s, CuePane qPane) {
+		this.cuePane = qPane;
+		
 		newChPanel = new JPanel();
 
 		channel = new JComboBox(s.getChannels());
 		state = new JComboBox(options);
 		rateInput = new JTextField();
 		rateInput.setColumns(4);
-		setRmvButton(new JButton("Remove"));
+		rmvButton = new JButton("Remove");
+		
+		rmvButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removeEvent();				
+			}
+		});
 
 
 		//		newChPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
@@ -36,12 +51,18 @@ public class EventInput {
 
 	}
 
+	protected void removeEvent() {
+		cuePane.removeEvent(this);	
+	}
+
 	public int getEffectRate() {
 		if(rateInput.getText() != null) {
 			try {
-				int effectRate = Integer.parseInt(rateInput.getText());
-				if (effectRate > 0) {
-					return effectRate;
+				double effectRateinSecs = Double.parseDouble(rateInput.getText());
+				if (effectRateinSecs > 0) {
+					
+					
+					return (int) (Math.floor(effectRateinSecs * 1000));
 				}
 				else {
 					System.err.println("Invalid effect input, rate must be greater than 0");
@@ -68,7 +89,7 @@ public class EventInput {
 		newChPanel.add(rateInput);
 
 		//Remove Button
-		newChPanel.add(getRmvButton());
+		newChPanel.add(rmvButton);
 
 		return newChPanel;
 	}
@@ -112,16 +133,16 @@ public class EventInput {
 		return rateInput.getText();
 	}
 
-	public void setRateInput(int rate) {
+	public void setRateInput(double rate) {
 		rateInput.setText(rate + "");
 	}
 
-	public JButton getRmvButton() {
-		return rmvButton;
-	}
+//	public JButton getRmvButton() {
+//		return rmvButton;
+//	}
 
-	public void setRmvButton(JButton rmvButton) {
-		this.rmvButton = rmvButton;
-	}
+//	public void setRmvButton(JButton rmvButton) {
+//		this.rmvButton = rmvButton;
+//	}
 
 }

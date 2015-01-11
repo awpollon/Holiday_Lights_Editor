@@ -19,16 +19,16 @@ public class CuePane {
 	JLabel feedback; //Only initilized if error needs to be given to user
 	final JPanel cuePanel;
 	final JScrollPane scp;
-	
+
 	//Data
 	final ArrayList<EventInput> events = new ArrayList<EventInput>();
 	Editor editor = null;
 	Cue newCue;
 
-	
+
 	public CuePane(final Editor ed, Cue cue) {
 		this.editor = ed;
-		
+
 		cuePanel = new JPanel();
 		cuePanel.setLayout(new BoxLayout(cuePanel, BoxLayout.Y_AXIS));
 
@@ -41,16 +41,16 @@ public class CuePane {
 		//		chPanel.setLayout(new BoxLayout(chPanel, BoxLayout.X_AXIS));
 		//		cuePanel.add(chPanel);		
 
-		
-		
-		cueTime.setText("" + cue.getRuntTimeInSecs());
 
+
+		cueTime.setText("" + cue.getRuntTimeInSecs());
+		
 		//Create first panel
 		JPanel firstPanel = new JPanel();
 		firstPanel.add(new JLabel("Cue Time:"));
 		firstPanel.add(cueTime);
 		cuePanel.add(firstPanel);
-	
+
 		JButton addEvent = new JButton("Add Channels");
 
 		firstPanel.add(addEvent);
@@ -59,62 +59,55 @@ public class CuePane {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				final EventInput event = new EventInput(editor.getCurrentSong());
+				addEventInput();
 
-				events.add(event);
-
-				cuePanel.add(event.createChPanel());
-
-				event.getRmvButton().addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						cuePanel.remove(event.getChPanel());
-						events.remove(event);
-						scp.validate();
-
-					}
-				});
-				
-				scp.validate();
 			}
 		});
 
 		//Go through each event and set values
-		
+
 		for(LightEvent e: cue.getEvents()) {
-			EventInput eIn = new EventInput(editor.getCurrentSong());
+			EventInput eIn = new EventInput(editor.getCurrentSong(), this);
 			eIn.setChannel(e.getChannel());
 			eIn.setState(e);
-			eIn.setRateInput(e.getEffectRate());
-			
+			eIn.setRateInput(e.getEffectRateInSecs());
+
 			events.add(eIn);
 			cuePanel.add(eIn.createChPanel());
 		}
-		
-//		//add initial event
-//		EventInput firstEvent = new EventInput(editor.getCurrentSong());
-//		events.add(firstEvent);
-//		cuePanel.add(firstEvent.createChPanel());
-		
+
+		//		//add initial event
+		//		EventInput firstEvent = new EventInput(editor.getCurrentSong());
+		//		events.add(firstEvent);
+		//		cuePanel.add(firstEvent.createChPanel());
+
 		while(!getInput());
 	}
-	
+
+	private void addEventInput() {
+		final EventInput event = new EventInput(editor.getCurrentSong(), this);
+		
+		events.add(event);
+
+		cuePanel.add(event.createChPanel());
+		scp.validate();	
+	}
+
 	private boolean getInput(){
 		int result = JOptionPane.showConfirmDialog(null, scp, 
 				"New Cue", JOptionPane.OK_CANCEL_OPTION);
 
 
 		if (result == JOptionPane.OK_OPTION) {
-			
+
 			//Validate input
 			boolean success = true;
 			double qTime = -1;
 			Cue tmp = null;
 			try{
 				qTime = Double.parseDouble(cueTime.getText());
-				
-				
+
+
 				tmp = new Cue(qTime*1000); //Convert to millis
 
 			}
@@ -134,7 +127,7 @@ public class CuePane {
 
 					//Check if effect
 					if(ei.getStateisEffect()) effect = true;
-					
+
 					if(ei.getStateisOn()) on = true;
 
 					Channel getCh = events.get(i).getChannel();
@@ -152,25 +145,25 @@ public class CuePane {
 						success = false;
 					}
 				}
-//				if(success) { //See if sucessfull so far, then check if exists
-//					//Check if cue already exists
-//					for (int i=0; i<editor.getCurrentSong().getCues().length; i++){
-//						Cue c = editor.getCurrentSong().getCues()[i];
-//						//If runtime is less than current cue to check, end search
-//						if(tmp.getRunTime() < c.getRunTime()) break;
-//						else if (tmp.getRunTime() == c.getRunTime()) {
-//							//Cue already exists
-//							success = false;
-//							System.err.println("Cue already exists at that time");
-//
-//							feedback = new JLabel("Unable to add cue: Cue already exists at that time.");
-//							feedback.setForeground(Color.red);
-//							cuePanel.add(feedback);
-//							JOptionPane.showMessageDialog(null, "Unable to add cue: Cue already exists at that time.");
-//
-//						}
-//					}
-//				}
+				//				if(success) { //See if sucessfull so far, then check if exists
+				//					//Check if cue already exists
+				//					for (int i=0; i<editor.getCurrentSong().getCues().length; i++){
+				//						Cue c = editor.getCurrentSong().getCues()[i];
+				//						//If runtime is less than current cue to check, end search
+				//						if(tmp.getRunTime() < c.getRunTime()) break;
+				//						else if (tmp.getRunTime() == c.getRunTime()) {
+				//							//Cue already exists
+				//							success = false;
+				//							System.err.println("Cue already exists at that time");
+				//
+				//							feedback = new JLabel("Unable to add cue: Cue already exists at that time.");
+				//							feedback.setForeground(Color.red);
+				//							cuePanel.add(feedback);
+				//							JOptionPane.showMessageDialog(null, "Unable to add cue: Cue already exists at that time.");
+				//
+				//						}
+				//					}
+				//				}
 			}
 
 			else {
@@ -201,6 +194,12 @@ public class CuePane {
 
 	public Cue getCue() {
 		return this.newCue;
+	}
+
+	public void removeEvent(EventInput event) {
+		cuePanel.remove(event.getChPanel());
+		events.remove(event);
+		scp.validate();
 	}
 
 }

@@ -14,6 +14,8 @@ public class Channel implements Serializable {
 	private int numLights;
 	private int arduinoPin;
 	
+	private int currentState; //storing current state in the editor
+	
 	public Channel(String name, int channel, int pin) {
 		this.setChName(name);
 		this.setColor(color);
@@ -70,5 +72,13 @@ public class Channel implements Serializable {
 
 	public String getChVar() {
 		return chVar;
+	}
+
+	public int getCurrentState() {
+		return currentState;
+	}
+
+	public void setCurrentState(int i) {
+		this.currentState = i;
 	}
 }

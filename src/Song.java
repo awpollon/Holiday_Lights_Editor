@@ -96,5 +96,25 @@ public class Song implements Serializable {
 		this.audioFile = newAudioFile;
 		//Will need to reload instantiate timer
 	}
+	
+	public void setChStates(Cue c) {
+		//Will set the state of each channel based on cue provided		
+		for(Channel ch: channels) {
+			boolean found = false;
+			
+			//Go backwards through each cue, starting with current
+			for(int i=cues.indexOf(c); i>=0; i--){
+				for(LightEvent ev: cues.get(i).getEvents()) {
+					if(ev.getChannel().equals(ch)) {
+						found = true;
+						ch.setCurrentState(ev.getState());
+						System.out.println("State of " + ch.getChName() + " in cue " + c + ": " + ch.getCurrentState() +", set in cue " + cues.get(i).getRuntTimeInSecs()); 
+						break;
+					}
+					if(found) break;
+				}
+			}
+		}
+	}
 }
 

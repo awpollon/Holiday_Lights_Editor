@@ -535,8 +535,7 @@ public class Editor implements Serializable{
 		setEditorTime(0);
 
 		if(showLive()) {
-			song.setChStates(currentCue);
-			gui.printStates();
+			updateChDisplays();
 		}
 		gui.printCues();
 		gui.updateTime();
@@ -571,7 +570,7 @@ public class Editor implements Serializable{
 		if(showLive()) {
 			gui.updateEventPanel(currentCue);
 		}
-		else gui.updateEventPanel(selectedCue);
+		else if(selectedCue != null) gui.updateEventPanel(selectedCue);
 		
 	}
 	

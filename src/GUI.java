@@ -357,6 +357,9 @@ public class GUI implements Serializable {
 					editor.setShowLive(true);
 				}
 				else editor.setShowLive(false);
+				
+				editor.updateChDisplays();
+				editor.updateGUIEventPanel();
 			}
 		});
 		
@@ -486,61 +489,19 @@ public class GUI implements Serializable {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if(!e.getValueIsAdjusting()) {
-					System.out.println(e);
 					//Enable remove and edit cue buttons
 					removeCue.setEnabled(true);
 					editCue.setEnabled(true);
 
 					Cue selected = (Cue) list.getSelectedValue();
+					GUI.this.e.setSelectedCue(selected);
 
-					//Clear current panel
-					eventPanel.removeAll();
-					eventScrlPane.setVisible(false);
-					p.remove(eventScrlPane);
-
-					//Create event info panel
-					eventPanel = new JPanel();
-					eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
-					eventPanel.setBackground(Color.WHITE);
-					eventScrlPane = new JScrollPane(eventPanel);
-					p.add(eventScrlPane, BorderLayout.LINE_END);
-
-					eventPanel.add(new JLabel("Time: " + selected.getRuntTimeInSecs()));
-					eventPanel.add(Box.createVerticalStrut(15));
-					eventPanel.add(new JLabel("# of Events: " + selected.getEvents().size()));
-
-					if(selected.getEvents().size()>0){
-						ArrayList<LightEvent> evs = selected.getEvents();
-						for(int i=0; i<evs.size(); i++) {
-							eventPanel.add(Box.createVerticalStrut(15));
-							LightEvent ev = evs.get(i);
-
-							eventPanel.add(new JLabel("Event: " + i));
-							eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
-							eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
-
-							if(ev.isEffect()) {
-								eventPanel.add(new  JLabel("State: Effect"));
-								eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRateInSecs()));
-							}
-
-							else if (ev.isOn()){
-
-								eventPanel.add(new  JLabel("State: On"));
-
-							}
-							else {
-								eventPanel.add(new  JLabel("State: Off"));
-							}
-						}
-					}
-
-					//Get current channel states for this cue if not in live view
+					
+					//Update cue displays for this cue if not in live view
+				
 					if(!GUI.this.e.showLive()) {
-						GUI.this.e.getCurrentSong().setChStates(selected);
-						
-						//Print current states to center
-						printStates();
+						GUI.this.e.updateChDisplays();
+						GUI.this.e.updateGUIEventPanel();					
 					}
 
 					f.validate();
@@ -562,6 +523,53 @@ public class GUI implements Serializable {
 		//Disable remove cue since no cue will be selected
 		removeCue.setEnabled(false);
 	}
+	
+	protected void updateEventPanel(Cue cue) {
+		//Clear current panel
+		eventPanel.removeAll();
+		eventScrlPane.setVisible(false);
+		p.remove(eventScrlPane);
+
+		//Create event info panel
+		eventPanel = new JPanel();
+		eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
+		eventPanel.setBackground(Color.WHITE);
+		eventScrlPane = new JScrollPane(eventPanel);
+		p.add(eventScrlPane, BorderLayout.LINE_END);
+
+		eventPanel.add(new JLabel("Time: " + cue.getRuntTimeInSecs()));
+		eventPanel.add(Box.createVerticalStrut(15));
+		eventPanel.add(new JLabel("# of Events: " + cue.getEvents().size()));
+
+		if(cue.getEvents().size()>0){
+			ArrayList<LightEvent> evs = cue.getEvents();
+			for(int i=0; i<evs.size(); i++) {
+				eventPanel.add(Box.createVerticalStrut(15));
+				LightEvent ev = evs.get(i);
+
+				eventPanel.add(new JLabel("Event: " + i));
+				eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
+				eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
+
+				if(ev.isEffect()) {
+					eventPanel.add(new  JLabel("State: Effect"));
+					eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRateInSecs()));
+				}
+
+				else if (ev.isOn()){
+
+					eventPanel.add(new  JLabel("State: On"));
+
+				}
+				else {
+					eventPanel.add(new  JLabel("State: Off"));
+				}
+			}
+		}
+		
+	}
+	
+	
 	//	public void removeHighlightCue(Cue currentCue) {
 	//	}
 	//	

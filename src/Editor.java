@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -37,6 +35,8 @@ public class Editor implements Serializable{
 
 	private boolean showLive;
 
+	private Cue selectedCue;
+
 	public Editor(Song s) {		
 		this.song = s;
 
@@ -55,7 +55,7 @@ public class Editor implements Serializable{
 
 		timer = new Timer(this);
 
-		this.showLive = true;
+//		this.showLive = true;
 	}
 
 	void stopTimer() {
@@ -392,8 +392,8 @@ public class Editor implements Serializable{
 
 				//If mode is show live, update states list.
 				if(showLive()) {
-					song.setChStates(currentCue);
-					gui.printStates();
+					updateChDisplays();
+					updateGUIEventPanel();
 				}
 			}
 		}
@@ -548,5 +548,32 @@ public class Editor implements Serializable{
 
 	public void setShowLive(boolean live) {
 		this.showLive = live;
-	}	
+	}
+
+	public void updateChDisplays() {
+		if(showLive()) {
+			song.setChStates(currentCue);
+		}
+		else song.setChStates(selectedCue);
+
+		gui.printStates();
+	}
+
+	public Cue getSelectedCue() {
+		return selectedCue;
+	}
+
+	public void setSelectedCue(Cue selectedCue) {
+		this.selectedCue = selectedCue;
+	}
+
+	public void updateGUIEventPanel() {
+		if(showLive()) {
+			gui.updateEventPanel(currentCue);
+		}
+		else gui.updateEventPanel(selectedCue);
+		
+	}
+	
+	
 }

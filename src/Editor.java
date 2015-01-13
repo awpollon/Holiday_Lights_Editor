@@ -41,21 +41,20 @@ public class Editor implements Serializable{
 		this.song = s;
 
 		//Set current and next cue for playback
-		this.currentCue = s.getCueList().get(0);
-		if(s.getCueList().size() > 1) {
-			this.nextCue = s.getCueList().get(1);
+//		this.currentCue = s.getCueList().get(0); first cue should be null until reached in plaback
+		this.currentCue = null;
+		if(s.getCueList().size() > 0) {
+			this.nextCue = s.getCueList().get(0);
 		}
 		else this.nextCue = null;
 
 		//Instantiate GUI
 		gui = new GUI(this);
-		setEditorTime(0);
+//		setEditorTime(0); would like timer to call
 
 		gui.printCues();
 
 		timer = new Timer(this);
-
-//		this.showLive = true;
 	}
 
 	void stopTimer() {
@@ -128,7 +127,7 @@ public class Editor implements Serializable{
 			//Restart the timer
 			timer = new Timer(this);
 			setEditorTime(0);
-			gui.updateTime();
+//			gui.updateTime();
 			return true;
 		}
 		else return false;
@@ -370,6 +369,8 @@ public class Editor implements Serializable{
 
 	public void setEditorTime(long editorTime) {
 		this.editorTime = editorTime;
+		//Update gui
+		gui.updateTime();
 
 		//Always look for next cue in case a cue was added before to change number
 		int currentIndex = song.getCueList().indexOf(currentCue);
@@ -385,7 +386,7 @@ public class Editor implements Serializable{
 			if(editorTime >= nextCue.getRunTime()) {
 				//			gui.removeHighlightCue(currentCue);
 				//			gui.highlightCue(nextCue);
-				currentCue.setActive(false);
+				if(currentCue != null) currentCue.setActive(false);
 				nextCue.setActive(true);
 				currentCue = nextCue;
 				gui.printCues();
@@ -444,15 +445,9 @@ public class Editor implements Serializable{
 		//Call set editor time to refresh cue list and active cue
 		setEditorTime(editorTime);
 
-
+		//Update cue list
 		gui.printCues();
 
-		//		if (newCuePane()){
-		//			gui.printCues();
-		//		}
-		//		else {
-		//			addNewCue();
-		//		}
 	}
 
 	public boolean removeCue(Cue c) {
@@ -525,20 +520,19 @@ public class Editor implements Serializable{
 	public void resetTimer() {
 		timer.reset();
 		currentCue.setActive(false);
-		currentCue = song.getCueList().get(0);
-		currentCue.setActive(true);
+		currentCue = null;
 		if(song.getCueList().size() > 1) {
-			this.nextCue = song.getCueList().get(1);
+			this.nextCue = song.getCueList().get(0);
 		}
 		else this.nextCue = null;	
 
-		setEditorTime(0);
+//		setEditorTime(0); would like timer to call at song load
 
 		if(showLive()) {
 			updateChDisplays();
 		}
 		gui.printCues();
-		gui.updateTime();
+//		gui.updateTime();
 	}
 
 	public boolean showLive() {

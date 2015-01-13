@@ -466,7 +466,6 @@ public class GUI implements Serializable {
 			list.setSelectedValue(e.getSelectedCue(), true);
 		}
 
-//		f.validate();
 
 		//Disable remove cue since no cue will be selected
 //		removeCue.setEnabled(false);

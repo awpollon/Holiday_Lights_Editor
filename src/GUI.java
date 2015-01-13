@@ -367,7 +367,11 @@ public class GUI implements Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				editor.editCue((Cue) list.getSelectedValue());
+				Cue tmp = (Cue) list.getSelectedValue();
+				if(tmp != null) {
+					editor.editCue(tmp);
+				}
+				else System.err.println("Error: No cue select");
 			}
 		});
 
@@ -378,17 +382,22 @@ public class GUI implements Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+
 				Cue tmp = (Cue) list.getSelectedValue();
-				int confirm = JOptionPane.showConfirmDialog(p, "Remove cue at " + tmp.getRunTime() + " ms?", "Remove Cue", JOptionPane.OK_CANCEL_OPTION);
-				if(confirm == JOptionPane.OK_OPTION) {
-					System.out.println("Removing cue at " + tmp.getRunTime());
-					if (e.removeCue(tmp)) {
-						System.out.println("Cue removed");
-					}
-					else {
-						System.err.println("Unable to remove cue");
+
+				if(tmp != null) {
+					int confirm = JOptionPane.showConfirmDialog(p, "Remove cue at " + tmp.getRunTime() + " ms?", "Remove Cue", JOptionPane.OK_CANCEL_OPTION);
+					if(confirm == JOptionPane.OK_OPTION) {
+						System.out.println("Removing cue at " + tmp.getRunTime());
+						if (e.removeCue(tmp)) {
+							System.out.println("Cue removed");
+						}
+						else {
+							System.err.println("Unable to remove cue");
+						}
 					}
 				}
+				else System.err.println("Error: No cue select");
 			}
 		});
 
@@ -515,7 +524,7 @@ public class GUI implements Serializable {
 				}
 			}
 		}
-		
+
 		//refresh panel
 		p.validate();
 	}

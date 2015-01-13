@@ -15,11 +15,11 @@ public class Channel implements Serializable {
 	private int numLights;
 	private int arduinoPin;
 	
-	private int currentState; //storing current state in the editor
+	private transient int currentState; //storing current state in the editor
 
-	private Cue cueStateLastChanged;
+	private transient Cue cueStateLastChanged;
 
-	private double currentEffectRate;
+	private transient double currentEffectRate;
 	
 	public Channel(String name, int channel, int pin, Color col) {
 		this.setChName(name);

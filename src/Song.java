@@ -1,5 +1,7 @@
+import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -148,6 +150,27 @@ public class Song implements Serializable {
 				}
 			}
 
+		}
+
+
+		//check for colors
+		{
+			for(Channel ch: song.getChannels()) {
+				if(ch.getColor() == null) {
+					System.err.println("Error: Ch. " + ch.toString() + " missing color");
+					String input = JOptionPane.showInputDialog("type color name");
+					Field f;
+					try {
+						f = Color.class.getField(input);
+						System.out.println(f.get(null));
+						ch.setColor((Color) f.get(null));
+
+					} catch (Exception e) {
+						System.err.println("Error: unable to set color");
+					} 
+				} 
+
+			}
 		}
 	}
 }

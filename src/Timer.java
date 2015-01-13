@@ -11,54 +11,56 @@ import javax.sound.sampled.SourceDataLine;
 
 public class Timer implements Runnable {
 	Clip clip;
-	
+
 	byte[] bytesBuffer;
 	int bytesRead;
 	AudioInputStream audioStream;
 	SourceDataLine audioLine;
 	AudioFormat format;
 	int BUFFER_SIZE = 4096;
-//	String audioFilePath = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Christmas_Eve-Sarajevo.wav";
+	//	String audioFilePath = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Christmas_Eve-Sarajevo.wav";
 	File audioFile;
 	DataLine.Info info;
-	
+
 	Editor editor;
 	public Timer(Editor e) {
 		this.editor = e;
-		
+
 		//Load song
-		
+
 		try {
-		audioFile = e.getCurrentSong().getAudioFile();
-		 
-		audioStream = AudioSystem.getAudioInputStream(audioFile);
-		 
-		format = audioStream.getFormat();
-				 
-		info = new DataLine.Info(SourceDataLine.class, format);
-		 
-		audioLine = (SourceDataLine) AudioSystem.getLine(info);
-		
-		audioLine.open(format);
-				 
-		bytesBuffer = new byte[BUFFER_SIZE];
-		bytesRead = -1;
-		
-		
+			audioFile = e.getCurrentSong().getAudioFile();
+
+			audioStream = AudioSystem.getAudioInputStream(audioFile);
+
+			format = audioStream.getFormat();
+
+			info = new DataLine.Info(SourceDataLine.class, format);
+
+			audioLine = (SourceDataLine) AudioSystem.getLine(info);
+
+			audioLine.open(format);
+
+			bytesBuffer = new byte[BUFFER_SIZE];
+			bytesRead = -1;
+
+			//set editor time when loaded
+			editor.setEditorTime(audioLine.getMicrosecondPosition() / 1000);
+
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
 	public void run()  {
-	
+
 		//Start audio
 		audioLine.start();
 
-	
+
 		editor.isPlaying = true;
 
 		while(editor.isPlaying){
@@ -66,38 +68,43 @@ public class Timer implements Runnable {
 			//Play sound
 			try {
 				if ((bytesRead = audioStream.read(bytesBuffer)) != -1) {
-				    audioLine.write(bytesBuffer, 0, bytesRead);
-				    
-				    //Update timer
-					editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000));
-					editor.gui.updateTime();
+					audioLine.write(bytesBuffer, 0, bytesRead);
+
+					//Update timer
+					editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000)); //Conver to millis
+//					editor.gui.updateTime(); now done in setEditorTime method
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}	
-		 
+
 		audioLine.stop();
-		 
+
 	}
-	
+
 	void reset() {
 		try {
 			audioStream.close();
 			audioLine.close();
-			
+
 			audioStream = AudioSystem.getAudioInputStream(audioFile);
 			audioLine = (SourceDataLine) AudioSystem.getLine(info);
 
 			audioLine.open();
+			
+			
+			//set editor time at start
+			editor.setEditorTime(audioLine.getMicrosecondPosition() / 1000);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 		bytesBuffer = new byte[BUFFER_SIZE];
 		bytesRead =-1;
 	}

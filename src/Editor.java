@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -35,19 +33,24 @@ public class Editor implements Serializable{
 	private Cue currentCue;
 	private Cue nextCue;
 
+	private boolean showLive;
+
+	private Cue selectedCue;
+
 	public Editor(Song s) {		
 		this.song = s;
 
 		//Set current and next cue for playback
-		this.currentCue = s.getCueList().get(0);
-		if(s.getCueList().size() > 1) {
-			this.nextCue = s.getCueList().get(1);
+//		this.currentCue = s.getCueList().get(0); first cue should be null until reached in plaback
+		this.currentCue = null;
+		if(s.getCueList().size() > 0) {
+			this.nextCue = s.getCueList().get(0);
 		}
 		else this.nextCue = null;
 
 		//Instantiate GUI
 		gui = new GUI(this);
-		setEditorTime(0);
+//		setEditorTime(0); would like timer to call
 
 		gui.printCues();
 
@@ -124,7 +127,7 @@ public class Editor implements Serializable{
 			//Restart the timer
 			timer = new Timer(this);
 			setEditorTime(0);
-			gui.updateTime();
+//			gui.updateTime();
 			return true;
 		}
 		else return false;
@@ -366,6 +369,8 @@ public class Editor implements Serializable{
 
 	public void setEditorTime(long editorTime) {
 		this.editorTime = editorTime;
+		//Update gui
+		gui.updateTime();
 
 		//Always look for next cue in case a cue was added before to change number
 		int currentIndex = song.getCueList().indexOf(currentCue);
@@ -377,14 +382,20 @@ public class Editor implements Serializable{
 			nextCue = song.getCueList().get(currentIndex+1);
 
 
-			//See if time should update
+			//See if cue list should update
 			if(editorTime >= nextCue.getRunTime()) {
 				//			gui.removeHighlightCue(currentCue);
 				//			gui.highlightCue(nextCue);
-				currentCue.setActive(false);
+				if(currentCue != null) currentCue.setActive(false);
 				nextCue.setActive(true);
 				currentCue = nextCue;
 				gui.printCues();
+
+				//If mode is show live, update states list.
+				if(showLive()) {
+					updateChDisplays();
+					updateGUIEventPanel();
+				}
 			}
 		}
 	}
@@ -434,15 +445,9 @@ public class Editor implements Serializable{
 		//Call set editor time to refresh cue list and active cue
 		setEditorTime(editorTime);
 
-
+		//Update cue list
 		gui.printCues();
 
-		//		if (newCuePane()){
-		//			gui.printCues();
-		//		}
-		//		else {
-		//			addNewCue();
-		//		}
 	}
 
 	public boolean removeCue(Cue c) {
@@ -489,10 +494,10 @@ public class Editor implements Serializable{
 				ObjectInputStream ois = new ObjectInputStream(fin);
 				Song openSong = (Song) ois.readObject();
 				Editor newEditor = new Editor(openSong);
-				
+
 				//Update file path in song file
 				openSong.setFileLocation(fc.getSelectedFile().getParent());
-				
+
 				ois.close();
 				return true;
 
@@ -515,15 +520,53 @@ public class Editor implements Serializable{
 	public void resetTimer() {
 		timer.reset();
 		currentCue.setActive(false);
-		currentCue = song.getCueList().get(0);
-		currentCue.setActive(true);
+		currentCue = null;
 		if(song.getCueList().size() > 1) {
-			this.nextCue = song.getCueList().get(1);
+			this.nextCue = song.getCueList().get(0);
 		}
 		else this.nextCue = null;	
-		
-		setEditorTime(0);
+
+//		setEditorTime(0); would like timer to call at song load
+
+		if(showLive()) {
+			updateChDisplays();
+		}
 		gui.printCues();
-		gui.updateTime();
-	}		
+//		gui.updateTime();
+	}
+
+	public boolean showLive() {
+		return showLive;
+	}	
+
+	public void setShowLive(boolean live) {
+		this.showLive = live;
+	}
+
+	public void updateChDisplays() {
+		if(showLive()) {
+			song.setChStates(currentCue);
+		}
+		else song.setChStates(selectedCue);
+
+		gui.printStates();
+	}
+
+	public Cue getSelectedCue() {
+		return selectedCue;
+	}
+
+	public void setSelectedCue(Cue selectedCue) {
+		this.selectedCue = selectedCue;
+	}
+
+	public void updateGUIEventPanel() {
+		if(showLive()) {
+			gui.updateEventPanel(currentCue);
+		}
+		else if(selectedCue != null) gui.updateEventPanel(selectedCue);
+		
+	}
+	
+	
 }

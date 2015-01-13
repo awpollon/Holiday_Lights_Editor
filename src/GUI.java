@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -74,6 +75,7 @@ public class GUI implements Serializable {
 	JButton addCue;
 	JButton editCue;
 	JButton removeCue;
+	JCheckBox setLiveBox;
 
 	private Object[] cues;
 
@@ -255,15 +257,60 @@ public class GUI implements Serializable {
 
 
 		list = new JList(e.getCurrentSong().getCues());
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+		list.setFixedCellWidth(60);
+
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL_WRAP);
 		list.setCellRenderer(new CueListRenderer());
 		list.setVisibleRowCount(-1);
+	
+		list.addMouseListener(new MouseListener() {
 
+			@Override
+			public void mouseReleased(MouseEvent arg0) {}
+			public void mousePressed(MouseEvent arg0) {}
+			public void mouseExited(MouseEvent arg0) {}
+			public void mouseEntered(MouseEvent arg0) {}
 
-		//		JScrollPane listScroller = new JScrollPane(list);
-		p.add(list,BorderLayout.CENTER);
+			@Override
+			public void mouseClicked(MouseEvent me) {
+				///If cue is double clicked, ope up edit dialog
+				if (me.getClickCount() >= 2) {
+					e.editCue((Cue) list.getSelectedValue());
+				}
+			}
+		});
 
+		list.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				//Check it is done changing and there is a value selected
+				if(!e.getValueIsAdjusting() && list.getSelectedValue() != null) {
+					//Enable remove and edit cue buttons
+					removeCue.setEnabled(true);
+					editCue.setEnabled(true);
+
+					Cue selected = (Cue) list.getSelectedValue();
+					GUI.this.e.setSelectedCue(selected);
+					
+					//Update cue displays for this cue if not in live view
+				
+					if(!GUI.this.e.showLive()) {
+						GUI.this.e.updateChDisplays();
+						GUI.this.e.updateGUIEventPanel();					
+					}
+
+					f.validate();
+				}
+			}
+		});
+
+		JScrollPane listScroller = new JScrollPane(list);
+		listScroller.setPreferredSize(new Dimension(250, 80));
+
+		p.add(list, BorderLayout.LINE_START); 
 
 		start = new JButton("Play");
 		start.addActionListener(new ActionListener() {
@@ -344,6 +391,23 @@ public class GUI implements Serializable {
 				}
 			}
 		});
+		
+		setLiveBox = new JCheckBox();
+		editor.setShowLive(false); //Initially unchecked
+		setLiveBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if(setLiveBox.isSelected()) {
+					editor.setShowLive(true);
+				}
+				else editor.setShowLive(false);
+				
+				editor.updateChDisplays();
+				editor.updateGUIEventPanel();
+			}
+		});
+		
 		eventPanel = new JPanel();
 		eventScrlPane = new JScrollPane(eventPanel);
 
@@ -356,6 +420,8 @@ public class GUI implements Serializable {
 		buttonPanel.add(addCue);
 		buttonPanel.add(editCue);
 		buttonPanel.add(removeCue);
+		buttonPanel.add(new JLabel("Show Live: "));
+		buttonPanel.add(setLiveBox);
 		p.add(buttonPanel, BorderLayout.PAGE_END);
 
 		//Initialize statePanel
@@ -366,8 +432,8 @@ public class GUI implements Serializable {
 		p.add(statePanel, BorderLayout.CENTER);
 
 		f.validate();
-
 	}
+	
 	protected void handleButtonClick(JButton b) {
 		if(b.getText() == "Play") {
 			e.startTimer();
@@ -391,157 +457,66 @@ public class GUI implements Serializable {
 
 	void printCues() {
 		this.cues= e.getCurrentSong().getCues();
-		list.setVisible(false);
-		list = new JList(e.getCurrentSong().getCues());
+		list.clearSelection();
+		list.setListData(cues);
+		list.validate();
+		
+//		//persist currently selected cue
+		if(e.getSelectedCue() != null) {
+			list.setSelectedValue(e.getSelectedCue(), true);
+		}
 
-		list.setFixedCellWidth(60);
-
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setLayoutOrientation(JList.VERTICAL_WRAP);
-		list.setCellRenderer(new CueListRenderer());
-		list.setVisibleRowCount(-1);
-
-		list.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent me) {
-				///If cue is double clicked, ope up edit dialog
-				if (me.getClickCount() >= 2) {
-					//					int index = list.locationToIndex(me.getPoint());
-					//					Cue selectedCue = e.getCurrentSong().getCues()[index];
-					e.editCue((Cue) list.getSelectedValue());
-
-
-					//					boolean success = false;
-					//					double newTime = -1;
-					//
-					//					String input = JOptionPane.showInputDialog("Enter new cue time");
-					//
-					//					if (input != null){
-					//						while(!success){
-					//							try{
-					//								newTime = Double.parseDouble(input);
-					//								success = true;
-					//							}
-					//							catch (Exception e) {
-					//								System.out.println("Invalid Input");
-					//								success = false;
-					//								input = JOptionPane.showInputDialog("Enter new cue time");
-					//							}
-					//						}
-					//						//Valid input
-					//						System.out.println("New Time: " + newTime);
-					//						selectedCue.setRunTime(newTime);
-					//						//Update GUI
-					//						printCues();
-					//					}
-				}
-			}
-		});
-
-		list.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if(!e.getValueIsAdjusting()) {
-					System.out.println(e);
-					//Enable remove and edit cue buttons
-					removeCue.setEnabled(true);
-					editCue.setEnabled(true);
-
-					Cue selected = (Cue) list.getSelectedValue();
-
-					//Clear current panel
-					eventPanel.removeAll();
-					eventScrlPane.setVisible(false);
-					p.remove(eventScrlPane);
-
-					//Create event info panel
-					eventPanel = new JPanel();
-					eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
-					eventPanel.setBackground(Color.WHITE);
-					eventScrlPane = new JScrollPane(eventPanel);
-					p.add(eventScrlPane, BorderLayout.LINE_END);
-
-					eventPanel.add(new JLabel("Time: " + selected.getRuntTimeInSecs()));
-					eventPanel.add(Box.createVerticalStrut(15));
-					eventPanel.add(new JLabel("# of Events: " + selected.getEvents().size()));
-
-					if(selected.getEvents().size()>0){
-						ArrayList<LightEvent> evs = selected.getEvents();
-						for(int i=0; i<evs.size(); i++) {
-							eventPanel.add(Box.createVerticalStrut(15));
-							LightEvent ev = evs.get(i);
-
-							eventPanel.add(new JLabel("Event: " + i));
-							eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
-							eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
-
-							if(ev.isEffect()) {
-								eventPanel.add(new  JLabel("State: Effect"));
-								eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRateInSecs()));
-							}
-
-							else if (ev.isOn()){
-
-								eventPanel.add(new  JLabel("State: On"));
-
-							}
-							else {
-								eventPanel.add(new  JLabel("State: Off"));
-							}
-						}
-					}
-
-					//Get current channel states for this cue
-					GUI.this.e.getCurrentSong().setChStates(selected);
-
-					//Print current states to center
-					printStates();
-
-					f.validate();
-				}
-			}
-		});
-
-		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setPreferredSize(new Dimension(250, 80));
-
-		p.add(list, BorderLayout.LINE_START); 
-
-		f.validate();
-
-		//		for (int i=0; i<cues.length; i++) {
-		//			System.out.println(cues[i]);
-		//		}
 
 		//Disable remove cue since no cue will be selected
-		removeCue.setEnabled(false);
+//		removeCue.setEnabled(false);
 	}
+	
+	protected void updateEventPanel(Cue cue) {
+		//Clear current panel
+		eventPanel.removeAll();
+		eventScrlPane.setVisible(false);
+		p.remove(eventScrlPane);
+
+		//Create event info panel
+		eventPanel = new JPanel();
+		eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
+		eventPanel.setBackground(Color.WHITE);
+		eventScrlPane = new JScrollPane(eventPanel);
+		p.add(eventScrlPane, BorderLayout.LINE_END);
+
+		eventPanel.add(new JLabel("Time: " + cue.getRuntTimeInSecs()));
+		eventPanel.add(Box.createVerticalStrut(15));
+		eventPanel.add(new JLabel("# of Events: " + cue.getEvents().size()));
+
+		if(cue.getEvents().size()>0){
+			ArrayList<LightEvent> evs = cue.getEvents();
+			for(int i=0; i<evs.size(); i++) {
+				eventPanel.add(Box.createVerticalStrut(15));
+				LightEvent ev = evs.get(i);
+
+				eventPanel.add(new JLabel("Event: " + i));
+				eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
+				eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
+
+				if(ev.isEffect()) {
+					eventPanel.add(new  JLabel("State: Effect"));
+					eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRateInSecs()));
+				}
+
+				else if (ev.isOn()){
+
+					eventPanel.add(new  JLabel("State: On"));
+
+				}
+				else {
+					eventPanel.add(new  JLabel("State: Off"));
+				}
+			}
+		}
+		
+	}
+	
+	
 	//	public void removeHighlightCue(Cue currentCue) {
 	//	}
 	//	
@@ -577,7 +552,6 @@ public class GUI implements Serializable {
 			chStatePanel.add(new JLabel("Cue Last Changed: " + ch.getCueLastChanged().toString()));
 			statePanel.add(chStatePanel);
 		}
-
 		//		statePanel.validate();
 	}
 }

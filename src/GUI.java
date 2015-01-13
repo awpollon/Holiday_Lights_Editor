@@ -515,6 +515,9 @@ public class GUI implements Serializable {
 				}
 			}
 		}
+		
+		//refresh panel
+		p.validate();
 	}
 
 

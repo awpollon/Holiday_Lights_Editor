@@ -457,7 +457,8 @@ public class GUI implements Serializable {
 
 	void printCues() {
 		this.cues= e.getCurrentSong().getCues();
-		list.setListData(this.cues);
+		list.clearSelection();
+		list.setListData(cues);
 		list.validate();
 		
 //		//persist currently selected cue

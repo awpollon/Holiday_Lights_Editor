@@ -15,7 +15,7 @@ public class Cue implements Comparable<Cue>, Serializable {
 	}
 
 	private double runTime;
-	private boolean isActive; //Is the current cue in playback
+	private transient boolean isActive; //Is the current cue in playback
 
 	public Cue(double time) {
 		this.setRunTime(time);
@@ -62,5 +62,7 @@ public class Cue implements Comparable<Cue>, Serializable {
 	public double getRuntTimeInSecs(){
 		return (Math.floor((runTime /10)) /100.0);
 	}
+	
+
 }
 

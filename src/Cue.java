@@ -9,13 +9,13 @@ public class Cue implements Comparable<Cue>, Serializable {
 	 */
 	private static final long serialVersionUID = -7498455730594590728L;
 	
+	private double runTime;
+	private transient boolean isActive; //Is the current cue in playback
+	
 	private ArrayList<LightEvent> events;
 	public ArrayList<LightEvent> getEvents() {
 		return events;
 	}
-
-	private double runTime;
-	private transient boolean isActive; //Is the current cue in playback
 
 	public Cue(double time) {
 		this.setRunTime(time);

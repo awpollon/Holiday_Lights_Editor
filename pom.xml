@@ -32,7 +32,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>Users.AaronPollon.Documents.Projects.Arduino_Song_Generator.bin.Editor</mainClass>
+							<mainClass>Editor</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

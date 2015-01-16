@@ -386,7 +386,7 @@ public class GUI {
 				Cue tmp = (Cue) list.getSelectedValue();
 
 				if(tmp != null) {
-					int confirm = JOptionPane.showConfirmDialog(p, "Remove cue at " + tmp.getRunTime() + " ms?", "Remove Cue", JOptionPane.OK_CANCEL_OPTION);
+					int confirm = JOptionPane.showConfirmDialog(p, "Remove cue " + tmp.toString()+ "?", "Remove Cue", JOptionPane.OK_CANCEL_OPTION);
 					if(confirm == JOptionPane.OK_OPTION) {
 						System.out.println("Removing cue at " + tmp.getRunTime());
 						if (e.removeCue(tmp)) {

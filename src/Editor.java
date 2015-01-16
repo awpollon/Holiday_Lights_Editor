@@ -269,16 +269,15 @@ public class Editor {
 				Arduino.writeDelay(bw, c.getRunTime());
 
 				for(int i=0; i<qs.length; i++) {
-					c = (Cue) qs[i];				
+					c = (Cue) qs[i];	
+					Arduino.printToSerial(bw, "Cue: " + c.toString());
+
 					for(int j=0; j<c.getEvents().size(); j++) {
 						LightEvent e = c.getEvents().get(j);
-						Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
-						Arduino.printToSerial(bw, "Cue: " + c.toString());
-
-
-						if(e.isOn() && e.isEffect()){
+						if(e.getState() == LightEvent.EFFECT_STATE){
 							//Add to active effects
 							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
+							Arduino.digitalWrite(bw, e.getChannel(), true);
 						}
 						else {
 							//Check if channel is on active effects, if so remove
@@ -288,6 +287,8 @@ public class Editor {
 									break;
 								}
 							}
+							//Write channel based on isOn
+							Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
 						}
 
 					}

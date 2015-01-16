@@ -7,6 +7,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
+import javax.swing.SwingUtilities;
 
 
 public class Timer implements Runnable {
@@ -45,7 +46,13 @@ public class Timer implements Runnable {
 			bytesRead = -1;
 
 			//set editor time when loaded
-			editor.setEditorTime(audioLine.getMicrosecondPosition() / 1000);
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					editor.setEditorTime(audioLine.getMicrosecondPosition() / 1000);					
+				}
+			});
 
 		}
 		catch (Exception ex) {
@@ -61,9 +68,9 @@ public class Timer implements Runnable {
 		audioLine.start();
 
 
-		editor.isPlaying = true;
+		editor.setIsPlaying(true);
 
-		while(editor.isPlaying){
+		while(editor.isPlaying()){
 
 			//Play sound
 			try {
@@ -71,8 +78,13 @@ public class Timer implements Runnable {
 					audioLine.write(bytesBuffer, 0, bytesRead);
 
 					//Update timer
-					editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000)); //Conver to millis
-//					editor.gui.updateTime(); now done in setEditorTime method
+					SwingUtilities.invokeLater(new Runnable() {
+						
+						@Override
+						public void run() {
+							editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000)); //Conver to millis							
+						}
+					});
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -97,7 +109,13 @@ public class Timer implements Runnable {
 			
 			
 			//set editor time at start
-			editor.setEditorTime(audioLine.getMicrosecondPosition() / 1000);
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					editor.setEditorTime(audioLine.getMicrosecondPosition() / 1000);					
+				}
+			});
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

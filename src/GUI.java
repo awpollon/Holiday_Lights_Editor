@@ -48,7 +48,7 @@ public class GUI {
 
 	JPanel statePanel;
 
-
+	JPanel leftPanel;
 	JList list;
 
 	JMenuBar menubar;
@@ -252,6 +252,11 @@ public class GUI {
 		timeText.setEditable(false);
 		timeText.setColumns(9);
 
+		
+		leftPanel = new JPanel();
+		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+		
+		
 		//Test: print cue list
 		cues= e.getCurrentSong().getCues();
 
@@ -307,9 +312,11 @@ public class GUI {
 			}
 		});
 
-		JScrollPane listScroller = new JScrollPane(list);
-		listScroller.setPreferredSize(new Dimension(250, 80));
-
+//		JScrollPane listScroller = new JScrollPane(list);
+//		listScroller.setPreferredSize(new Dimension(150, 40));
+//		leftPanel.add(new JLabel("Cue List"));
+//		leftPanel.add(listScroller);
+//		p.add(leftPanel, BorderLayout.LINE_START); 
 		p.add(list, BorderLayout.LINE_START); 
 
 		start = new JButton("Play");

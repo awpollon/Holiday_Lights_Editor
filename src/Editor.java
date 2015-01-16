@@ -27,7 +27,7 @@ public class Editor {
 
 	private Song song;
 	private long editorTime;
-	boolean isPlaying;
+	private boolean isPlaying;
 	GUI gui;
 	Timer timer;
 	private Cue currentCue;
@@ -566,6 +566,14 @@ public class Editor {
 		}
 		else if(selectedCue != null) gui.updateEventPanel(selectedCue);
 		
+	}
+
+	public synchronized boolean isPlaying() {
+		return isPlaying;
+	}
+
+	public synchronized void setIsPlaying(boolean b) {
+		this.isPlaying = b;
 	}
 	
 	

@@ -92,8 +92,8 @@ public class Arduino {
 			bw.append("for (int i = 0; i<" + start + "; i++){\n");
 			bw.append("Serial.println("+start + "-i);\n");
 			bw.append("delay(1000);\n");
-			bw.append("Serial.println(\"GO!\");\n");
 			bw.append("}\n");
+			bw.append("Serial.println(\"GO!\");\n");
 			bw.append("\n\n");
 
 			return true;

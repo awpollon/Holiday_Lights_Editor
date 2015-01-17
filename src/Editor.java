@@ -26,7 +26,7 @@ public class Editor {
 
 
 	private Song song;
-	private long editorTime;
+	private double editorTime;
 	private boolean isPlaying;
 	GUI gui;
 	Timer timer;
@@ -368,12 +368,12 @@ public class Editor {
 		return song;
 	}
 
-	public long getEditorTime() {
+	public double getEditorTime() {
 		return editorTime;
 	}
 
 	//Will be called by timer thread
-	public synchronized void setEditorTime(long editorTime) {
+	public synchronized void setEditorTime(double editorTime) {
 		this.editorTime = editorTime;
 		//Update gui
 		gui.updateTime();

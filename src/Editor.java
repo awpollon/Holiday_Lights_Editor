@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dialog;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -41,7 +43,7 @@ public class Editor {
 		this.song = s;
 
 		//Set current and next cue for playback
-//		this.currentCue = s.getCueList().get(0); first cue should be null until reached in plaback
+		//		this.currentCue = s.getCueList().get(0); first cue should be null until reached in plaback
 		this.currentCue = null;
 		if(s.getCueList().size() > 0) {
 			this.nextCue = s.getCueList().get(0);
@@ -50,7 +52,7 @@ public class Editor {
 
 		//Instantiate GUI
 		gui = new GUI(this);
-//		setEditorTime(0); would like timer to call
+		//		setEditorTime(0); would like timer to call
 
 		gui.printCues();
 
@@ -60,11 +62,11 @@ public class Editor {
 	void stopTimer() {
 		isPlaying = false;
 		timer.audioLine.stop(); //Called directly due to threading issue		
-		
-		
+
+
 		//set editor time to stopped time
 		setEditorTime(timer.audioLine.getMicrosecondPosition() / 1000);
-				
+
 		timer.stopAudio();	//Currently only prints time to console to confirm thread synchronization	
 
 	}
@@ -82,7 +84,7 @@ public class Editor {
 	public static void main(String[] args) {
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
-		
+
 		//Welcome screen
 		//		Welcome w = new Welcome();
 		boolean success = false;
@@ -131,7 +133,7 @@ public class Editor {
 			//Restart the timer
 			timer = new Timer(this);
 			setEditorTime(0);
-//			gui.updateTime();
+			//			gui.updateTime();
 			return true;
 		}
 		else return false;
@@ -524,7 +526,29 @@ public class Editor {
 	}
 
 	public void resetTimer() {
-		timer.reset();
+		boolean valid = false;
+		String input;
+		double percent = -1;
+		while(!valid) {
+			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
+
+			//Check if cancel wasn't chosen (i.e. input isn't null)
+			if(input != null) {
+				try{
+					percent = Double.parseDouble(input);
+					if(percent>=0 && percent <1) valid = true;
+					else JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
+				}
+				catch(NumberFormatException e) {
+					
+					JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
+				}
+			}
+			//If cancel is chosen, leave method
+			else return;
+		}
+		
+		timer.reset(percent);
 		currentCue.setActive(false);
 		currentCue = null;
 		if(song.getCueList().size() > 1) {
@@ -532,13 +556,13 @@ public class Editor {
 		}
 		else this.nextCue = null;	
 
-//		setEditorTime(0); would like timer to call at song load
+		//		setEditorTime(0); would like timer to call at song load
 
 		if(showLive()) {
 			updateChDisplays();
 		}
 		gui.printCues();
-//		gui.updateTime();
+		//		gui.updateTime();
 	}
 
 	public boolean showLive() {
@@ -571,7 +595,7 @@ public class Editor {
 			gui.updateEventPanel(currentCue);
 		}
 		else if(selectedCue != null) gui.updateEventPanel(selectedCue);
-		
+
 	}
 
 	public synchronized boolean isPlaying() {
@@ -581,6 +605,6 @@ public class Editor {
 	public synchronized void setIsPlaying(boolean b) {
 		this.isPlaying = b;
 	}
-	
-	
+
+
 }

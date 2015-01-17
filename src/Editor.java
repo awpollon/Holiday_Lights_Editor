@@ -59,10 +59,14 @@ public class Editor {
 
 	void stopTimer() {
 		isPlaying = false;
-		timer.audioLine.stop();
+		timer.audioLine.stop(); //Called directly due to threading issue		
+		
+		
 		//set editor time to stopped time
 		setEditorTime(timer.audioLine.getMicrosecondPosition() / 1000);
-		System.out.println("Stopped time: " + editorTime);
+				
+		timer.stopAudio();	//Currently only prints time to console to confirm thread synchronization	
+
 	}
 
 	void startTimer() {
@@ -368,7 +372,8 @@ public class Editor {
 		return editorTime;
 	}
 
-	public void setEditorTime(long editorTime) {
+	//Will be called by timer thread
+	public synchronized void setEditorTime(long editorTime) {
 		this.editorTime = editorTime;
 		//Update gui
 		gui.updateTime();

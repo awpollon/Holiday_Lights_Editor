@@ -465,7 +465,7 @@ public class GUI {
 	}
 
 	void updateTime() {
-		double timeInSec = (e.getEditorTime() / 10) / 100.0; //displaying with two decimal places
+		double timeInSec = Math.floor((e.getEditorTime() / 10)) / 100.0; //displaying with two decimal places
 
 		timeText.setText("Time: " + timeInSec + " s");	
 		f.validate();

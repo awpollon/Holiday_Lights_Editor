@@ -23,6 +23,7 @@ public class Timer implements Runnable {
 	private DataLine.Info info;
 	
 	private double songLengthInMillis;
+	public double resetOffsetMillis;
 
 	Editor editor;
 	public Timer(Editor e) {
@@ -66,7 +67,8 @@ public class Timer implements Runnable {
 
 			@Override
 			public void run() {
-				editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000)); //Convert to millis							
+				//get current position plus the offset from reset.
+				editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000) + resetOffsetMillis); //Convert to millis							
 			}
 		});		
 	}
@@ -94,10 +96,11 @@ public class Timer implements Runnable {
 
 			setAudioPlace(percent);
 			audioLine.open();
-			editor.setEditorTime(songLengthInMillis * percent);
 
+			resetOffsetMillis = percent * songLengthInMillis;
+					
 			//set editor time at start
-//			updateEditorTime();
+			updateEditorTime();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,8 +136,8 @@ public class Timer implements Runnable {
 			bytesBuffer = new byte[BUFFER_SIZE];
 			bytesRead = -1;
 
-			songLengthInMillis = audioStream.getFrameLength() / 44100.00; //44,100 frames/sec standard
-
+			songLengthInMillis = audioStream.getFrameLength() / 44.10; //44.100 frames/millis standard
+			resetOffsetMillis = 0;
 			
 			return true;			
 		}
@@ -151,7 +154,6 @@ public class Timer implements Runnable {
 
 			if (setNextSoundByte(targetBytes)) {
 				System.out.println("Skipping to " + targetBytes);
-				updateEditorTime();
 				return true;
 			}
 			else {
@@ -170,17 +172,16 @@ public class Timer implements Runnable {
 		try {
 			audioStream.skip(numBytes);
 			
-			Control[] controls = audioLine.getControls();
-			FloatControl sampleRate = (FloatControl) audioLine.getControl(controls[3].getType());
-			audioLine.getLineInfo();
-			sampleRate.setValue(2000);
-			System.out.println(" " + audioLine.getLongFramePosition());
-			System.out.println(audioStream.getFrameLength());
-			long songLength = audioStream.getFrameLength() / 44100;
-			System.out.println("Song lenght in secs: " + songLength);
-			audioLine.getMicrosecondPosition();
+//			Control[] controls = audioLine.getControls();
+//			FloatControl sampleRate = (FloatControl) audioLine.getControl(controls[3].getType());
+//			audioLine.getLineInfo();
+//			sampleRate.setValue(2000);
+//			System.out.println(" " + audioLine.getLongFramePosition());
+//			System.out.println(audioStream.getFrameLength());
+//			long songLength = audioStream.getFrameLength() / 44100;
+//			System.out.println("Song lenght in secs: " + songLength);
+//			audioLine.getMicrosecondPosition();
 			
-			updateEditorTime();
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

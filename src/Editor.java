@@ -549,14 +549,14 @@ public class Editor {
 		}
 		
 		timer.reset(percent);
+		
+		//need to revisit these
 		currentCue.setActive(false);
 		currentCue = null;
 		if(song.getCueList().size() > 1) {
 			this.nextCue = song.getCueList().get(0);
 		}
 		else this.nextCue = null;	
-
-		//		setEditorTime(0); would like timer to call at song load
 
 		if(showLive()) {
 			updateChDisplays();

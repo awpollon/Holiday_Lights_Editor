@@ -114,7 +114,7 @@ public class Timer implements Runnable {
 		//		audioLine.stop(); //Called by editor due threading issue
 		//		editor.setIsPlaying(false);
 		//		updateEditorTime();
-		System.out.println("Stopped time: " + editor.getEditorTime());
+		System.out.println("Stopped time: " + (editor.getEditorTime() + resetOffsetMillis));
 
 	}
 

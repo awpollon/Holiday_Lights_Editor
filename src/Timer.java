@@ -51,6 +51,7 @@ public class Timer implements Runnable {
 
 			if(playNextSoundByte()) {
 				updateEditorTime();
+				setSliderValue(editor.getEditorTime());
 			}
 			else {
 				System.err.println("Error: Unable to play sound byte");
@@ -195,6 +196,17 @@ public class Timer implements Runnable {
 		}
 		else {
 			System.err.println("Error: Invalid percent in setResetOffset");
+			return false;
+		}
+	}
+	
+	public boolean setSliderValue(double timeInMillis) {
+		if(timeInMillis >=0 && timeInMillis <= songLengthInMillis) {
+			double perc = (timeInMillis / songLengthInMillis);
+			return editor.gui.setSliderPosition(perc);
+		}
+		else {
+			System.err.println("Error: Invalid time in setSliderValue");
 			return false;
 		}
 	}

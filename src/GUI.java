@@ -436,7 +436,11 @@ public class GUI {
 			
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				editor.resetTimer();
+				//Make sure change is made by user
+				if(audioSlider.isEnabled()){
+					System.out.println("Slider val: " + audioSlider.getValue());
+					editor.resetTimer();
+				}
 			}
 		});
 		
@@ -607,4 +611,19 @@ public class GUI {
 	public double getSliderValue() {
 		return audioSlider.getValue();
 	}
+
+	public boolean setSliderPosition(double perc) {
+		if(perc >= 0 && perc <=1){
+			System.out.println("Perc: " + perc);
+			audioSlider.setValue((int) Math.floor(perc * 100));
+			audioSlider.validate();
+			return true;
+		}
+		else {
+			System.err.println("Error: Invalid percent in setSliderPosition");
+			return false;
+		}
+	}
+	
+
 }

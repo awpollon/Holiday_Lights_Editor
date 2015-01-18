@@ -43,6 +43,8 @@ public class GUI {
 	JFrame f;
 
 	JPanel buttonPanel;
+	JPanel topButtonPanel;
+	JPanel bottomButtonPanel;
 	JPanel eventPanel;
 	JScrollPane eventScrlPane;
 
@@ -429,15 +431,23 @@ public class GUI {
 
 		//Initialize button panel
 		buttonPanel = new JPanel();
-		buttonPanel.add(timeText);
-		buttonPanel.add(start);
-		buttonPanel.add(reset);
+		topButtonPanel = new JPanel();
+		bottomButtonPanel = new JPanel();		
+		
+		topButtonPanel.add(timeText);
+		topButtonPanel.add(start);
+		topButtonPanel.add(reset);
+		topButtonPanel.add(new JLabel("Show Live: "));
+		topButtonPanel.add(setLiveBox);
 
-		buttonPanel.add(addCue);
-		buttonPanel.add(editCue);
-		buttonPanel.add(removeCue);
-		buttonPanel.add(new JLabel("Show Live: "));
-		buttonPanel.add(setLiveBox);
+		bottomButtonPanel.add(addCue);
+		bottomButtonPanel.add(editCue);
+		bottomButtonPanel.add(removeCue);
+		
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		buttonPanel.add(topButtonPanel);
+		buttonPanel.add(bottomButtonPanel);
+
 		p.add(buttonPanel, BorderLayout.PAGE_END);
 
 		//Initialize statePanel

@@ -540,29 +540,36 @@ public class Editor {
 					else JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
 				}
 				catch(NumberFormatException e) {
-					
+
 					JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
 				}
 			}
 			//If cancel is chosen, leave method
 			else return;
 		}
-		
+
 		timer.reset(percent);
-		
+
 		//need to revisit these
 		currentCue.setActive(false);
-		currentCue = null;
-		if(song.getCueList().size() > 1) {
-			this.nextCue = song.getCueList().get(0);
+
+		//Find nearest cue before new time
+		currentCue = getActiveCue(editorTime);
+		currentCue.setActive(true);
+
+		//Get position of current cue
+		int currentCueIndex = song.getCueList().indexOf(currentCue);
+		//See if this is the last cue
+		if(currentCueIndex < (song.getCueList().size()-1)) {
+			this.nextCue = song.getCueList().get(currentCueIndex+1);
 		}
 		else this.nextCue = null;	
 
+		//Update display if in live mode
 		if(showLive()) {
 			updateChDisplays();
 		}
 		gui.printCues();
-		//		gui.updateTime();
 	}
 
 	public boolean showLive() {
@@ -604,6 +611,20 @@ public class Editor {
 
 	public synchronized void setIsPlaying(boolean b) {
 		this.isPlaying = b;
+	}
+
+	private Cue getActiveCue(double time) {
+		if(song.getCueList().isEmpty()) return null;
+		//If the there are no cues before time, return null
+		else if (song.getCueList().get(0).getRunTime() > time) return null;
+		else {
+			Cue prevCue = song.getCueList().get(0);
+			for(Cue cue: song.getCueList()) {
+				if(cue.getRunTime() > time) break;
+				else prevCue = cue;
+			}
+			return prevCue;
+		}
 	}
 
 

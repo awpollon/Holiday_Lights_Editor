@@ -436,6 +436,7 @@ public class GUI {
 			
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
+				editor.resetTimer();
 			}
 		});
 		
@@ -477,12 +478,16 @@ public class GUI {
 	protected void handleButtonClick(JButton b) {
 		if(b.getText() == "Play") {
 			e.startTimer();
+			
+			//Disable slider from being moved by user
 			reset.setEnabled(false);
+			audioSlider.setEnabled(false);
 			b.setText("Stop");
 		}
 		else if (b.getText() == "Stop") {
 			e.stopTimer();
 			reset.setEnabled(true);
+			audioSlider.setEnabled(true);
 
 			b.setText("Play");
 		}

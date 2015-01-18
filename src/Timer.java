@@ -97,7 +97,7 @@ public class Timer implements Runnable {
 			setAudioPlace(percent);
 			audioLine.open();
 
-			resetOffsetMillis = percent * songLengthInMillis;
+			setResetOffset(percent);
 					
 			//set editor time at start
 			updateEditorTime();
@@ -137,8 +137,7 @@ public class Timer implements Runnable {
 			bytesRead = -1;
 
 			songLengthInMillis = audioStream.getFrameLength() / 44.10; //44.100 frames/millis standard
-			resetOffsetMillis = 0;
-			
+			setResetOffset(0);
 			return true;			
 		}
 
@@ -185,6 +184,17 @@ public class Timer implements Runnable {
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean setResetOffset(double percent){
+		if(percent >=0 && percent <=1){
+			resetOffsetMillis = percent * songLengthInMillis;
+			return true;
+		}
+		else {
+			System.err.println("Error: Invalid percent in setResetOffset");
 			return false;
 		}
 	}

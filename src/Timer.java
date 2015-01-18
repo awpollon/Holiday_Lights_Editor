@@ -149,7 +149,7 @@ public class Timer implements Runnable {
 	}
 
 	public boolean setAudioPlace(double percent) {
-		if(percent >=0 && percent <1){	
+		if(percent >=0 && percent <=1){	
 			long targetBytes = (long) (percent * audioFile.length());
 
 			if (setNextSoundByte(targetBytes)) {

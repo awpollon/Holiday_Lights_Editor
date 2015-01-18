@@ -23,9 +23,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -78,6 +82,7 @@ public class GUI {
 	JButton editCue;
 	JButton removeCue;
 	JCheckBox setLiveBox;
+	JSlider audioSlider;
 
 	private Object[] cues;
 
@@ -426,6 +431,14 @@ public class GUI {
 			}
 		});
 
+		audioSlider = new JSlider(0, 100, 0);
+		audioSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+			}
+		});
+		
 		eventPanel = new JPanel();
 		eventScrlPane = new JScrollPane(eventPanel);
 
@@ -435,6 +448,7 @@ public class GUI {
 		bottomButtonPanel = new JPanel();		
 		
 		topButtonPanel.add(timeText);
+		topButtonPanel.add(audioSlider);
 		topButtonPanel.add(start);
 		topButtonPanel.add(reset);
 		topButtonPanel.add(new JLabel("Show Live: "));
@@ -583,5 +597,9 @@ public class GUI {
 			statePanel.add(chStatePanel);
 		}
 		//		statePanel.validate();
+	}
+
+	public double getSliderValue() {
+		return audioSlider.getValue();
 	}
 }

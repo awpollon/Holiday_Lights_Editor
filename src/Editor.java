@@ -529,24 +529,27 @@ public class Editor {
 		boolean valid = false;
 		String input;
 		double percent = -1;
-		while(!valid) {
-			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
-
-			//Check if cancel wasn't chosen (i.e. input isn't null)
-			if(input != null) {
-				try{
-					percent = Double.parseDouble(input);
-					if(percent>=0 && percent <1) valid = true;
-					else JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
-				}
-				catch(NumberFormatException e) {
-
-					JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
-				}
-			}
-			//If cancel is chosen, leave method
-			else return;
-		}
+//		while(!valid) {
+//			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
+//
+//			//Check if cancel wasn't chosen (i.e. input isn't null)
+//			if(input != null) {
+//				try{
+//					percent = Double.parseDouble(input);
+//					if(percent>=0 && percent <1) valid = true;
+//					else JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
+//				}
+//				catch(NumberFormatException e) {
+//
+//					JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
+//				}
+//			}
+//			//If cancel is chosen, leave method
+//			else return;
+//		}
+		
+		//Get input from slider
+		percent = gui.getSliderValue() / 100.00;
 
 		timer.reset(percent);
 

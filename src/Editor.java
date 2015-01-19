@@ -65,7 +65,7 @@ public class Editor {
 
 
 		//set editor time to stopped time
-		setEditorTime(timer.audioLine.getMicrosecondPosition() / 1000);
+		setEditorTime((timer.audioLine.getMicrosecondPosition() / 1000) + timer.resetOffsetMillis);
 
 		timer.stopAudio();	//Currently only prints time to console to confirm thread synchronization	
 

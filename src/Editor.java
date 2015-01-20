@@ -549,7 +549,8 @@ public class Editor {
 //		}
 		
 		//Get input from slider
-		percent = gui.getSliderValue() / 100.00;
+		System.out.println(gui.getSliderValue());
+		percent = gui.getSliderValue();
 
 		timer.reset(percent);
 

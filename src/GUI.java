@@ -83,6 +83,8 @@ public class GUI {
 	JButton removeCue;
 	JCheckBox setLiveBox;
 	JSlider audioSlider;
+	
+	private final int sliderMaxVal = 100;
 
 	private Object[] cues;
 
@@ -431,7 +433,7 @@ public class GUI {
 			}
 		});
 
-		audioSlider = new JSlider(0, 100, 0);
+		audioSlider = new JSlider(0, sliderMaxVal, 0);
 		audioSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -609,12 +611,13 @@ public class GUI {
 	}
 
 	public double getSliderValue() {
-		return audioSlider.getValue();
+//		System.out.println(audioSlider.getValue());
+		return (double) audioSlider.getValue() / sliderMaxVal;
 	}
 
 	public boolean setSliderPosition(double perc) {
 		if(perc >= 0 && perc <=1){
-			System.out.println("Perc: " + perc);
+//			System.out.println("Perc: " + perc);
 			audioSlider.setValue((int) Math.floor(perc * 100));
 			audioSlider.validate();
 			return true;

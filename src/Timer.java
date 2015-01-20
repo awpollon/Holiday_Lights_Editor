@@ -85,6 +85,7 @@ public class Timer implements Runnable {
 	}
 
 	void reset(double percent) {
+		System.out.println("Percent: " + percent);
 		try {
 			audioStream.close();
 			audioLine.close();

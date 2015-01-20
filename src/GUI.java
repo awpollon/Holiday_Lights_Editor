@@ -23,9 +23,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -43,6 +47,8 @@ public class GUI {
 	JFrame f;
 
 	JPanel buttonPanel;
+	JPanel topButtonPanel;
+	JPanel bottomButtonPanel;
 	JPanel eventPanel;
 	JScrollPane eventScrlPane;
 
@@ -76,6 +82,7 @@ public class GUI {
 	JButton editCue;
 	JButton removeCue;
 	JCheckBox setLiveBox;
+	JSlider audioSlider;
 
 	private Object[] cues;
 
@@ -424,20 +431,42 @@ public class GUI {
 			}
 		});
 
+		audioSlider = new JSlider(0, 100, 0);
+		audioSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				//Make sure change is made by user
+				if(audioSlider.isEnabled()){
+					System.out.println("Slider val: " + audioSlider.getValue());
+					editor.resetTimer();
+				}
+			}
+		});
+		
 		eventPanel = new JPanel();
 		eventScrlPane = new JScrollPane(eventPanel);
 
 		//Initialize button panel
 		buttonPanel = new JPanel();
-		buttonPanel.add(timeText);
-		buttonPanel.add(start);
-		buttonPanel.add(reset);
+		topButtonPanel = new JPanel();
+		bottomButtonPanel = new JPanel();		
+		
+		topButtonPanel.add(timeText);
+		topButtonPanel.add(audioSlider);
+		topButtonPanel.add(start);
+		topButtonPanel.add(reset);
+		topButtonPanel.add(new JLabel("Show Live: "));
+		topButtonPanel.add(setLiveBox);
 
-		buttonPanel.add(addCue);
-		buttonPanel.add(editCue);
-		buttonPanel.add(removeCue);
-		buttonPanel.add(new JLabel("Show Live: "));
-		buttonPanel.add(setLiveBox);
+		bottomButtonPanel.add(addCue);
+		bottomButtonPanel.add(editCue);
+		bottomButtonPanel.add(removeCue);
+		
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+		buttonPanel.add(topButtonPanel);
+		buttonPanel.add(bottomButtonPanel);
+
 		p.add(buttonPanel, BorderLayout.PAGE_END);
 
 		//Initialize statePanel
@@ -453,12 +482,16 @@ public class GUI {
 	protected void handleButtonClick(JButton b) {
 		if(b.getText() == "Play") {
 			e.startTimer();
+			
+			//Disable slider from being moved by user
 			reset.setEnabled(false);
+			audioSlider.setEnabled(false);
 			b.setText("Stop");
 		}
 		else if (b.getText() == "Stop") {
 			e.stopTimer();
 			reset.setEnabled(true);
+			audioSlider.setEnabled(true);
 
 			b.setText("Play");
 		}
@@ -574,4 +607,23 @@ public class GUI {
 		}
 		//		statePanel.validate();
 	}
+
+	public double getSliderValue() {
+		return audioSlider.getValue();
+	}
+
+	public boolean setSliderPosition(double perc) {
+		if(perc >= 0 && perc <=1){
+			System.out.println("Perc: " + perc);
+			audioSlider.setValue((int) Math.floor(perc * 100));
+			audioSlider.validate();
+			return true;
+		}
+		else {
+			System.err.println("Error: Invalid percent in setSliderPosition");
+			return false;
+		}
+	}
+	
+
 }

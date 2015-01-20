@@ -4,10 +4,7 @@ import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Control;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.SwingUtilities;
 
@@ -51,6 +48,7 @@ public class Timer implements Runnable {
 
 			if(playNextSoundByte()) {
 				updateEditorTime();
+				setSliderValue(editor.getEditorTime());
 			}
 			else {
 				System.err.println("Error: Unable to play sound byte");
@@ -97,7 +95,7 @@ public class Timer implements Runnable {
 			setAudioPlace(percent);
 			audioLine.open();
 
-			resetOffsetMillis = percent * songLengthInMillis;
+			setResetOffset(percent);
 					
 			//set editor time at start
 			updateEditorTime();
@@ -137,8 +135,7 @@ public class Timer implements Runnable {
 			bytesRead = -1;
 
 			songLengthInMillis = audioStream.getFrameLength() / 44.10; //44.100 frames/millis standard
-			resetOffsetMillis = 0;
-			
+			setResetOffset(0);
 			return true;			
 		}
 
@@ -149,7 +146,7 @@ public class Timer implements Runnable {
 	}
 
 	public boolean setAudioPlace(double percent) {
-		if(percent >=0 && percent <1){	
+		if(percent >=0 && percent <=1){	
 			long targetBytes = (long) (percent * audioFile.length());
 
 			if (setNextSoundByte(targetBytes)) {
@@ -185,6 +182,28 @@ public class Timer implements Runnable {
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean setResetOffset(double percent){
+		if(percent >=0 && percent <=1){
+			resetOffsetMillis = percent * songLengthInMillis;
+			return true;
+		}
+		else {
+			System.err.println("Error: Invalid percent in setResetOffset");
+			return false;
+		}
+	}
+	
+	public boolean setSliderValue(double timeInMillis) {
+		if(timeInMillis >=0 && timeInMillis <= songLengthInMillis) {
+			double perc = (timeInMillis / songLengthInMillis);
+			return editor.gui.setSliderPosition(perc);
+		}
+		else {
+			System.err.println("Error: Invalid time in setSliderValue");
 			return false;
 		}
 	}

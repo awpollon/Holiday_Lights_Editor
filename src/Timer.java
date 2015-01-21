@@ -18,11 +18,14 @@ public class Timer implements Runnable {
 	private int BUFFER_SIZE = 4096;
 	private File audioFile;
 	private DataLine.Info info;
+	
+	private double songLengthInMillis;
+	public double resetOffsetMillis;
 
 	Editor editor;
 	public Timer(Editor e) {
 		this.editor = e;
-
+		
 		//Load song
 		if(loadAudioFile()) {
 			//set editor time when loaded
@@ -31,6 +34,7 @@ public class Timer implements Runnable {
 		else {
 			System.err.println("Unable to load file");
 		}
+
 	}
 
 	@Override
@@ -41,9 +45,10 @@ public class Timer implements Runnable {
 		editor.setIsPlaying(true);
 
 		while(editor.isPlaying()){
-			
+
 			if(playNextSoundByte()) {
 				updateEditorTime();
+				setSliderValue(editor.getEditorTime());
 			}
 			else {
 				System.err.println("Error: Unable to play sound byte");
@@ -60,7 +65,8 @@ public class Timer implements Runnable {
 
 			@Override
 			public void run() {
-				editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000)); //Convert to millis							
+				//get current position plus the offset from reset.
+				editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000) + resetOffsetMillis); //Convert to millis							
 			}
 		});		
 	}
@@ -78,7 +84,8 @@ public class Timer implements Runnable {
 		}
 	}
 
-	void reset() {
+	void reset(double percent) {
+		System.out.println("Percent: " + percent);
 		try {
 			audioStream.close();
 			audioLine.close();
@@ -86,9 +93,11 @@ public class Timer implements Runnable {
 			audioStream = AudioSystem.getAudioInputStream(audioFile);
 			audioLine = (SourceDataLine) AudioSystem.getLine(info);
 
+			setAudioPlace(percent);
 			audioLine.open();
 
-
+			setResetOffset(percent);
+					
 			//set editor time at start
 			updateEditorTime();
 
@@ -99,15 +108,15 @@ public class Timer implements Runnable {
 		bytesBuffer = new byte[BUFFER_SIZE];
 		bytesRead =-1;
 	}
-	
+
 	public void stopAudio(){
-//		audioLine.stop(); //Called by editor due threading issue
-//		editor.setIsPlaying(false);
-//		updateEditorTime();
-		System.out.println("Stopped time: " + editor.getEditorTime());
+		//		audioLine.stop(); //Called by editor due threading issue
+		//		editor.setIsPlaying(false);
+		//		updateEditorTime();
+		System.out.println("Stopped time: " + (editor.getEditorTime() + resetOffsetMillis));
 
 	}
-	
+
 	private boolean loadAudioFile() {
 
 		try {
@@ -126,11 +135,76 @@ public class Timer implements Runnable {
 			bytesBuffer = new byte[BUFFER_SIZE];
 			bytesRead = -1;
 
+			songLengthInMillis = audioStream.getFrameLength() / 44.10; //44.100 frames/millis standard
+			setResetOffset(0);
 			return true;			
 		}
 
 		catch (Exception ex) {
 			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean setAudioPlace(double percent) {
+		if(percent >=0 && percent <=1){	
+			long targetBytes = (long) (percent * audioFile.length());
+
+			if (setNextSoundByte(targetBytes)) {
+				System.out.println("Skipping to " + targetBytes);
+				return true;
+			}
+			else {
+				System.err.println("Unable to skip in song");
+				return false;
+			}
+		}
+		else {
+			System.err.println("Error: Invalid percent. Must be between 0 and 1");
+			return false;
+		}
+
+	}
+
+	private synchronized boolean setNextSoundByte(long numBytes) {
+		try {
+			audioStream.skip(numBytes);
+			
+//			Control[] controls = audioLine.getControls();
+//			FloatControl sampleRate = (FloatControl) audioLine.getControl(controls[3].getType());
+//			audioLine.getLineInfo();
+//			sampleRate.setValue(2000);
+//			System.out.println(" " + audioLine.getLongFramePosition());
+//			System.out.println(audioStream.getFrameLength());
+//			long songLength = audioStream.getFrameLength() / 44100;
+//			System.out.println("Song lenght in secs: " + songLength);
+//			audioLine.getMicrosecondPosition();
+			
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean setResetOffset(double percent){
+		if(percent >=0 && percent <=1){
+			resetOffsetMillis = percent * songLengthInMillis;
+			return true;
+		}
+		else {
+			System.err.println("Error: Invalid percent in setResetOffset");
+			return false;
+		}
+	}
+	
+	public boolean setSliderValue(double timeInMillis) {
+		if(timeInMillis >=0 && timeInMillis <= songLengthInMillis) {
+			double perc = (timeInMillis / songLengthInMillis);
+			return editor.gui.setSliderPosition(perc);
+		}
+		else {
+			System.err.println("Error: Invalid time in setSliderValue");
 			return false;
 		}
 	}

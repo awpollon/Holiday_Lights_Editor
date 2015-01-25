@@ -83,7 +83,7 @@ public class GUI {
 	JButton removeCue;
 	JCheckBox setLiveBox;
 	JSlider audioSlider;
-	
+
 	private final int sliderMaxVal = 100;
 
 	private Object[] cues;
@@ -261,11 +261,11 @@ public class GUI {
 		timeText.setEditable(false);
 		timeText.setColumns(9);
 
-		
+
 		leftPanel = new JPanel();
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		
-		
+
+
 		//Test: print cue list
 		cues= e.getCurrentSong().getCues();
 
@@ -321,11 +321,11 @@ public class GUI {
 			}
 		});
 
-//		JScrollPane listScroller = new JScrollPane(list);
-//		listScroller.setPreferredSize(new Dimension(150, 40));
-//		leftPanel.add(new JLabel("Cue List"));
-//		leftPanel.add(listScroller);
-//		p.add(leftPanel, BorderLayout.LINE_START); 
+		//		JScrollPane listScroller = new JScrollPane(list);
+		//		listScroller.setPreferredSize(new Dimension(150, 40));
+		//		leftPanel.add(new JLabel("Cue List"));
+		//		leftPanel.add(listScroller);
+		//		p.add(leftPanel, BorderLayout.LINE_START); 
 		p.add(list, BorderLayout.LINE_START); 
 
 		start = new JButton("Play");
@@ -435,7 +435,7 @@ public class GUI {
 
 		audioSlider = new JSlider(0, sliderMaxVal, 0);
 		audioSlider.addChangeListener(new ChangeListener() {
-			
+
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				//Make sure change is made by user
@@ -445,7 +445,7 @@ public class GUI {
 				}
 			}
 		});
-		
+
 		eventPanel = new JPanel();
 		eventScrlPane = new JScrollPane(eventPanel);
 
@@ -453,7 +453,7 @@ public class GUI {
 		buttonPanel = new JPanel();
 		topButtonPanel = new JPanel();
 		bottomButtonPanel = new JPanel();		
-		
+
 		topButtonPanel.add(timeText);
 		topButtonPanel.add(audioSlider);
 		topButtonPanel.add(start);
@@ -464,7 +464,7 @@ public class GUI {
 		bottomButtonPanel.add(addCue);
 		bottomButtonPanel.add(editCue);
 		bottomButtonPanel.add(removeCue);
-		
+
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		buttonPanel.add(topButtonPanel);
 		buttonPanel.add(bottomButtonPanel);
@@ -484,22 +484,10 @@ public class GUI {
 	protected void handleButtonClick(JButton b) {
 		if(b.getText() == "Play") {
 			System.out.println("Play button pressed");
-			
-			//Disable slider from being moved by user
-			reset.setEnabled(false);
-			audioSlider.setEnabled(false);
-			
 			e.startTimer();
-			
-
-			b.setText("Stop");
 		}
 		else if (b.getText() == "Stop") {
 			e.stopTimer();
-			reset.setEnabled(true);
-			audioSlider.setEnabled(true);
-
-			b.setText("Play");
 		}
 	}
 
@@ -615,13 +603,13 @@ public class GUI {
 	}
 
 	public double getSliderValue() {
-//		System.out.println(audioSlider.getValue());
+		//		System.out.println(audioSlider.getValue());
 		return (double) audioSlider.getValue() / sliderMaxVal;
 	}
 
 	public boolean setSliderPosition(double perc) {
 		if(perc >= 0 && perc <=1){
-//			System.out.println("Perc: " + perc);
+			//			System.out.println("Perc: " + perc);
 			audioSlider.setValue((int) Math.floor(perc * 100));
 			audioSlider.validate();
 			return true;
@@ -631,6 +619,23 @@ public class GUI {
 			return false;
 		}
 	}
-	
+
+	public void togglePlayButton() {
+		if(start.getText() == "Play") {
+			start.setText("Stop");
+			
+			//Disable slider from being moved by user
+			reset.setEnabled(false);
+			audioSlider.setEnabled(false);
+		}
+		else {
+			start.setText("Play");
+			
+			//Enable slider and reset
+			reset.setEnabled(true);
+			audioSlider.setEnabled(true);
+		}
+	}
+
 
 }

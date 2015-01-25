@@ -112,7 +112,7 @@ public class Song implements Serializable {
 					if(ev.getChannel().equals(ch)) {
 						found = true;
 						ch.setCurrentState(ev.getState(), cues.get(i), ev.getEffectRate());
-						System.out.println("State of " + ch.getChName() + " in cue " + c + ": " + ch.getCurrentState() +", set in cue " + cues.get(i).getRuntTimeInSecs()); 
+//						System.out.println("State of " + ch.getChName() + " in cue " + c + ": " + ch.getCurrentState() +", set in cue " + cues.get(i).getRuntTimeInSecs()); 
 						break;
 					}
 					//If last state changed has been found, stop looking

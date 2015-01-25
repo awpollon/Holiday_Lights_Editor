@@ -68,16 +68,15 @@ public class Editor {
 		setEditorTime((timer.audioLine.getMicrosecondPosition() / 1000) + timer.resetOffsetMillis);
 
 		timer.stopAudio();	//Currently only prints time to console to confirm thread synchronization	
-
+		gui.togglePlayButton();
 	}
 
 	void startTimer() {
 		System.out.println("Starting new thread");
 
-
 		(new Thread(timer)).start();
 		System.out.println(Thread.activeCount());
-
+		gui.togglePlayButton();
 	}
 
 

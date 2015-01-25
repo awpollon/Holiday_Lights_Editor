@@ -54,21 +54,14 @@ public class Timer implements Runnable {
 		audioLine.start();
 		editor.setIsPlaying(true);
 		
-		while(editor.isPlaying()){
-			try {
-				System.out.println(audioStream.available());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+		while(editor.isPlaying()){			
 			if(playNextSoundByte()) {
 				updateEditorTime();
 				setSliderValue(editor.getEditorTime());
 			}
 			else {
 				System.err.println("Error: Unable to play sound byte");
-				editor.setIsPlaying(false);
+				editor.stopTimer();
 			}
 		}	
 

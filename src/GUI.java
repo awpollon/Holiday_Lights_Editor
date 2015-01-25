@@ -483,11 +483,15 @@ public class GUI {
 
 	protected void handleButtonClick(JButton b) {
 		if(b.getText() == "Play") {
-			e.startTimer();
+			System.out.println("Play button pressed");
 			
 			//Disable slider from being moved by user
 			reset.setEnabled(false);
 			audioSlider.setEnabled(false);
+			
+			e.startTimer();
+			
+
 			b.setText("Stop");
 		}
 		else if (b.getText() == "Stop") {

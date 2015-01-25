@@ -62,7 +62,7 @@ public class Editor {
 	void stopTimer() {
 		isPlaying = false;
 		timer.audioLine.stop(); //Called directly due to threading issue		
-
+	
 
 		//set editor time to stopped time
 		setEditorTime((timer.audioLine.getMicrosecondPosition() / 1000) + timer.resetOffsetMillis);
@@ -72,7 +72,12 @@ public class Editor {
 	}
 
 	void startTimer() {
+		System.out.println("Starting new thread");
+
+
 		(new Thread(timer)).start();
+		System.out.println(Thread.activeCount());
+
 	}
 
 
@@ -82,6 +87,10 @@ public class Editor {
 	}
 
 	public static void main(String[] args) {
+		//Start memore check thread
+//		Thread mc = new Thread(new Memory_Check());
+//		mc.start();
+		
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
 
@@ -529,25 +538,25 @@ public class Editor {
 		boolean valid = false;
 		String input;
 		double percent = -1;
-//		while(!valid) {
-//			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
-//
-//			//Check if cancel wasn't chosen (i.e. input isn't null)
-//			if(input != null) {
-//				try{
-//					percent = Double.parseDouble(input);
-//					if(percent>=0 && percent <1) valid = true;
-//					else JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
-//				}
-//				catch(NumberFormatException e) {
-//
-//					JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
-//				}
-//			}
-//			//If cancel is chosen, leave method
-//			else return;
-//		}
-		
+		//		while(!valid) {
+		//			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
+		//
+		//			//Check if cancel wasn't chosen (i.e. input isn't null)
+		//			if(input != null) {
+		//				try{
+		//					percent = Double.parseDouble(input);
+		//					if(percent>=0 && percent <1) valid = true;
+		//					else JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
+		//				}
+		//				catch(NumberFormatException e) {
+		//
+		//					JOptionPane.showMessageDialog(null, "Invalid Input. Please enter a value between 0 and 1");
+		//				}
+		//			}
+		//			//If cancel is chosen, leave method
+		//			else return;
+		//		}
+
 		//Get input from slider
 		System.out.println(gui.getSliderValue());
 		percent = gui.getSliderValue();

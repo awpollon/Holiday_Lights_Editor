@@ -5,6 +5,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.SwingUtilities;
 
@@ -35,28 +37,42 @@ public class Timer implements Runnable {
 			System.err.println("Unable to load file");
 		}
 
+		audioLine.addLineListener(new LineListener() {
+			
+			@Override
+			public void update(LineEvent arg0) {
+				System.out.println(arg0);
+				
+			}
+		});
 	}
 
 	@Override
 	public void run()  {
-
+		
 		//Start audio
 		audioLine.start();
 		editor.setIsPlaying(true);
-
+		
 		while(editor.isPlaying()){
-
+			try {
+				System.out.println(audioStream.available());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			if(playNextSoundByte()) {
 				updateEditorTime();
 				setSliderValue(editor.getEditorTime());
 			}
 			else {
 				System.err.println("Error: Unable to play sound byte");
+				editor.setIsPlaying(false);
 			}
 		}	
 
 		audioLine.stop();
-
 	}
 
 	public void updateEditorTime() {
@@ -72,9 +88,28 @@ public class Timer implements Runnable {
 	}
 
 	private boolean playNextSoundByte() {
-		try {
+		try {		
+			if (audioStream.available() == 0) {
+				System.err.println("Audio stream unavailable");
+				return false;
+			}
+
 			if ((bytesRead = audioStream.read(bytesBuffer)) != -1) {
-				audioLine.write(bytesBuffer, 0, bytesRead);
+				System.out.println("Bytes to write: " + bytesRead);
+				System.out.println("bytesbuffer size: " + bytesBuffer.length);
+				System.out.println("Bytes available: " + audioLine.available());
+				long bytesWritten = audioLine.write(bytesBuffer, 0, bytesRead);
+				System.out.println("bytes actually written: " + bytesWritten);
+				if(bytesWritten == 0) {
+					return false;
+				}
+
+			}
+			else {
+				System.err.println("Unable to read bytes");
+				
+				System.err.println(Thread.currentThread().getStackTrace().toString());
+				return false;
 			}
 			return true;
 		}
@@ -84,7 +119,7 @@ public class Timer implements Runnable {
 		}
 	}
 
-	void reset(double percent) {
+	 void reset(double percent) {
 		System.out.println("Percent: " + percent);
 		try {
 			audioStream.close();
@@ -95,11 +130,11 @@ public class Timer implements Runnable {
 
 			setAudioPlace(percent);
 			audioLine.open();
-
 			setResetOffset(percent);
-					
+
 			//set editor time at start
 			updateEditorTime();
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -129,7 +164,7 @@ public class Timer implements Runnable {
 			info = new DataLine.Info(SourceDataLine.class, format);
 
 			audioLine = (SourceDataLine) AudioSystem.getLine(info);
-
+			
 			audioLine.open(format);
 
 			bytesBuffer = new byte[BUFFER_SIZE];
@@ -168,7 +203,10 @@ public class Timer implements Runnable {
 
 	private synchronized boolean setNextSoundByte(long numBytes) {
 		try {
-			audioStream.skip(numBytes);
+			System.out.println("Num byytes skipping: " + numBytes);
+			System.out.println("Actual skipped: " + audioStream.skip(numBytes));
+			System.out.println("Available in setNextSoundByte: " + audioStream.available());
+			
 			
 //			Control[] controls = audioLine.getControls();
 //			FloatControl sampleRate = (FloatControl) audioLine.getControl(controls[3].getType());

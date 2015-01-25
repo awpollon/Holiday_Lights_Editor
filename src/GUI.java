@@ -440,7 +440,7 @@ public class GUI {
 			public void stateChanged(ChangeEvent arg0) {
 				//Make sure change is made by user
 				if(audioSlider.isEnabled()){
-					System.out.println("Slider val: " + audioSlider.getValue());
+//					System.out.println("Slider val: " + audioSlider.getValue());
 					editor.resetTimer();
 				}
 			}

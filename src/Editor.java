@@ -72,10 +72,10 @@ public class Editor {
 	}
 
 	void startTimer() {
-		System.out.println("Starting new thread");
+//		System.out.println("Starting new thread");
 
 		(new Thread(timer)).start();
-		System.out.println(Thread.activeCount());
+//		System.out.println(Thread.activeCount());
 		gui.togglePlayButton();
 	}
 
@@ -557,7 +557,7 @@ public class Editor {
 		//		}
 
 		//Get input from slider
-		System.out.println(gui.getSliderValue());
+//		System.out.println(gui.getSliderValue());
 		percent = gui.getSliderValue();
 
 		timer.reset(percent);

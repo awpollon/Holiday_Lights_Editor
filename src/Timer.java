@@ -88,11 +88,11 @@ public class Timer implements Runnable {
 			}
 
 			if ((bytesRead = audioStream.read(bytesBuffer)) != -1) {
-				System.out.println("Bytes to write: " + bytesRead);
-				System.out.println("bytesbuffer size: " + bytesBuffer.length);
-				System.out.println("Bytes available: " + audioLine.available());
+//				System.out.println("Bytes to write: " + bytesRead);
+//				System.out.println("bytesbuffer size: " + bytesBuffer.length);
+//				System.out.println("Bytes available: " + audioLine.available());
 				long bytesWritten = audioLine.write(bytesBuffer, 0, bytesRead);
-				System.out.println("bytes actually written: " + bytesWritten);
+//				System.out.println("bytes actually written: " + bytesWritten);
 				if(bytesWritten == 0) {
 					return false;
 				}
@@ -113,7 +113,7 @@ public class Timer implements Runnable {
 	}
 
 	 void reset(double percent) {
-		System.out.println("Percent: " + percent);
+//		System.out.println("Percent: " + percent);
 		try {
 			audioStream.close();
 			audioLine.close();
@@ -179,7 +179,7 @@ public class Timer implements Runnable {
 			long targetBytes = (long) (percent * audioFile.length());
 
 			if (setNextSoundByte(targetBytes)) {
-				System.out.println("Skipping to " + targetBytes);
+//				System.out.println("Skipping to " + targetBytes);
 				return true;
 			}
 			else {
@@ -196,9 +196,12 @@ public class Timer implements Runnable {
 
 	private synchronized boolean setNextSoundByte(long numBytes) {
 		try {
-			System.out.println("Num byytes skipping: " + numBytes);
-			System.out.println("Actual skipped: " + audioStream.skip(numBytes));
-			System.out.println("Available in setNextSoundByte: " + audioStream.available());
+			audioStream.skip(numBytes);
+
+			
+//			System.out.println("Num byytes skipping: " + numBytes);
+//			System.out.println("Actual skipped: " + audioStream.skip(numBytes));
+//			System.out.println("Available in setNextSoundByte: " + audioStream.available());
 			
 			
 //			Control[] controls = audioLine.getControls();

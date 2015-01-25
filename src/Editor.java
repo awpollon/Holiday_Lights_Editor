@@ -288,19 +288,21 @@ public class Editor {
 
 					for(int j=0; j<c.getEvents().size(); j++) {
 						LightEvent e = c.getEvents().get(j);
+						
+						//Check if channel is on active effects, if so remove
+						for (int k=0; k<activeEffects.size(); k++) {
+							if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
+								activeEffects.remove(k);
+								break;
+							}
+						}
+						
 						if(e.getState() == LightEvent.EFFECT_STATE){
 							//Add to active effects
 							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
 							Arduino.digitalWrite(bw, e.getChannel(), true);
 						}
 						else {
-							//Check if channel is on active effects, if so remove
-							for (int k=0; k<activeEffects.size(); k++) {
-								if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
-									activeEffects.remove(k);
-									break;
-								}
-							}
 							//Write channel based on isOn
 							Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
 						}

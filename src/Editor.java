@@ -453,6 +453,14 @@ public class Editor {
 			}
 		}
 		gui.printCues();
+		
+		//Select edited cue
+		setSelectedCue(editedCue);
+		gui.list.setSelectedValue(selectedCue, true);
+		
+		//Update displays
+		updateChDisplays();
+		updateGUIEventPanel();
 	}
 
 	public void addNewCue() {

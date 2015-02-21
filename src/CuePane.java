@@ -24,10 +24,12 @@ public class CuePane {
 	final ArrayList<EventInput> events = new ArrayList<EventInput>();
 	Editor editor = null;
 	Cue newCue;
+	String titleText;
 
 
-	public CuePane(final Editor ed, Cue cue) {
+	public CuePane(final Editor ed, Cue cue, String title) {
 		this.editor = ed;
+		this.titleText = title;
 
 		cuePanel = new JPanel();
 		cuePanel.setLayout(new BoxLayout(cuePanel, BoxLayout.Y_AXIS));
@@ -95,7 +97,7 @@ public class CuePane {
 
 	private boolean getInput(){
 		int result = JOptionPane.showConfirmDialog(null, scp, 
-				"New Cue", JOptionPane.OK_CANCEL_OPTION);
+				titleText, JOptionPane.OK_CANCEL_OPTION);
 
 
 		if (result == JOptionPane.OK_OPTION) {

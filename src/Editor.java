@@ -432,7 +432,7 @@ public class Editor {
 
 	public void editCue(Cue c) {
 		//Handle button click to add new cue
-		CuePane cp = new CuePane(this, c);
+		CuePane cp = new CuePane(this, c, "Edit Cue");
 		Cue editedCue = cp.getCue();
 
 
@@ -468,7 +468,7 @@ public class Editor {
 		Cue tmp = new Cue(editorTime);
 		tmp.addEvent(new LightEvent(song.getChannels()[0], true, false, 0));
 
-		CuePane cp = new CuePane(this, tmp);
+		CuePane cp = new CuePane(this, tmp, "Add Cue");
 		Cue newCue = cp.getCue();
 
 		if(newCue != null) {

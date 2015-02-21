@@ -214,7 +214,10 @@ public class Editor {
 
 
 		try {
-			File file = new File(arduino_export_path + song.getTitle());
+			String arduinoFileName = song.getTitle().replace(' ', '_').toLowerCase();
+			
+			
+			File file = new File(arduino_export_path + arduinoFileName);
 			if (!file.exists()) {
 				if (file.mkdir()) {
 					System.out.println("Directory is created!");
@@ -223,7 +226,7 @@ public class Editor {
 					return false;
 				}
 			}
-			file = new File(arduino_export_path + song.getTitle() +"/"+song.getTitle()+".ino");
+			file = new File(arduino_export_path + arduinoFileName +"/"+arduinoFileName+".ino");
 
 			// if file doesn't exists, then create it
 			if (!file.exists()) {

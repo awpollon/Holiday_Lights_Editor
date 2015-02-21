@@ -81,7 +81,8 @@ public class Song implements Serializable {
 	}
 
 	public String getFilePath() {
-		return ("" + this.fileLocation + "/" + this.fileName);
+		//Return location plus fileName, replacing spaces with underscores
+		return ("" + this.fileLocation + "/" + this.fileName.replace(' ', '_'));
 	}
 
 	public String getFileName() {

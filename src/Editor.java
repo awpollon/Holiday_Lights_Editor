@@ -62,7 +62,7 @@ public class Editor {
 	void stopTimer() {
 		isPlaying = false;
 		timer.audioLine.stop(); //Called directly due to threading issue		
-	
+
 
 		//set editor time to stopped time
 		setEditorTime((timer.audioLine.getMicrosecondPosition() / 1000) + timer.resetOffsetMillis);
@@ -72,10 +72,10 @@ public class Editor {
 	}
 
 	void startTimer() {
-//		System.out.println("Starting new thread");
+		//		System.out.println("Starting new thread");
 
 		(new Thread(timer)).start();
-//		System.out.println(Thread.activeCount());
+		//		System.out.println(Thread.activeCount());
 		gui.togglePlayButton();
 	}
 
@@ -87,9 +87,9 @@ public class Editor {
 
 	public static void main(String[] args) {
 		//Start memore check thread
-//		Thread mc = new Thread(new Memory_Check());
-//		mc.start();
-		
+		//		Thread mc = new Thread(new Memory_Check());
+		//		mc.start();
+
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Holiday LX Editor");
 
@@ -215,8 +215,8 @@ public class Editor {
 
 		try {
 			String arduinoFileName = song.getTitle().replace(' ', '_').toLowerCase();
-			
-			
+
+
 			File file = new File(arduino_export_path + arduinoFileName);
 			if (!file.exists()) {
 				if (file.mkdir()) {
@@ -291,7 +291,7 @@ public class Editor {
 
 					for(int j=0; j<c.getEvents().size(); j++) {
 						LightEvent e = c.getEvents().get(j);
-						
+
 						//Check if channel is on active effects, if so remove
 						for (int k=0; k<activeEffects.size(); k++) {
 							if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
@@ -299,7 +299,7 @@ public class Editor {
 								break;
 							}
 						}
-						
+
 						if(e.getState() == LightEvent.EFFECT_STATE){
 							//Add to active effects
 							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
@@ -537,10 +537,10 @@ public class Editor {
 		return false;
 	}
 
-	public void resetTimer() {
+	public void resetTimer(double percent) {
 		boolean valid = false;
 		String input;
-		double percent = -1;
+//		double percent = -1; //Now being passed by gui
 		//		while(!valid) {
 		//			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
 		//
@@ -559,10 +559,6 @@ public class Editor {
 		//			//If cancel is chosen, leave method
 		//			else return;
 		//		}
-
-		//Get input from slider
-//		System.out.println(gui.getSliderValue());
-		percent = gui.getSliderValue();
 
 		timer.reset(percent);
 

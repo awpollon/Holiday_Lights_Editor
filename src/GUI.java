@@ -342,9 +342,8 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//				editor.setEditorTime(0); //Will now be called by editor to get currentCue
-				//				updateTime(); Will also be called by editor
-				editor.resetTimer();
+				//Call restTime with percent set to 0
+				editor.resetTimer(0);
 			}
 		});
 
@@ -441,7 +440,7 @@ public class GUI {
 				//Make sure change is made by user
 				if(audioSlider.isEnabled()){
 //					System.out.println("Slider val: " + audioSlider.getValue());
-					editor.resetTimer();
+					editor.resetTimer(getSliderValue());
 				}
 			}
 		});

@@ -391,6 +391,7 @@ public class Editor {
 	public synchronized void setEditorTime(double editorTime) {
 		this.editorTime = editorTime;
 		
+		//Invoke later is called on gui update to avoid crash. I believe this is due to competing threads.
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override

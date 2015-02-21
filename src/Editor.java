@@ -215,7 +215,7 @@ public class Editor {
 
 
 		try {
-			String arduinoFileName = song.getTitle().replace(' ', '_').toLowerCase();
+			String arduinoFileName = song.getTitle().replace(' ', '_');
 
 
 			File file = new File(arduino_export_path + arduinoFileName);

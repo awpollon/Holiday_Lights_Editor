@@ -25,7 +25,7 @@ public class Editor {
 
 	public static final String appName = "Song Editor";
 	private final String arduino_export_path = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/arduino_exports/";
-  
+   
 
 	private Song song;
 	private double editorTime;

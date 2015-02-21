@@ -81,14 +81,18 @@ public class Timer implements Runnable {
 
 	public void updateEditorTime() {
 		//Update timer
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				//get current position plus the offset from reset.
-				editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000) + resetOffsetMillis); //Convert to millis							
-			}
-		});		
+		//get current position plus the offset from reset.
+		editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000) + resetOffsetMillis); //Convert to millis	
+		
+		
+//		SwingUtilities.invokeLater(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				//get current position plus the offset from reset.
+//				editor.setEditorTime((audioLine.getMicrosecondPosition() / 1000) + resetOffsetMillis); //Convert to millis							
+//			}
+//		});		
 	}
 
 	private boolean playNextSoundByte() {

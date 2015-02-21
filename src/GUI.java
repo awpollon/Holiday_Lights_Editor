@@ -344,7 +344,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				//Call restTime with percent set to 0
 				editor.resetTimer(0);
-				
+
 				//Move slider to 0
 				setSliderPosition(0);
 			}
@@ -437,17 +437,17 @@ public class GUI {
 
 		audioSlider = new JSlider(0, sliderMaxVal, 0);
 		audioSlider.addChangeListener(new ChangeListener() {
-			
+
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-//				System.out.println("Adjusting: " + audioSlider.getValueIsAdjusting());
-//				System.out.println(getSliderValue());
-//				System.out.println(audioSlider.getValue());
-//				System.out.println();
-				
+				//				System.out.println("Adjusting: " + audioSlider.getValueIsAdjusting());
+				//				System.out.println(getSliderValue());
+				//				System.out.println(audioSlider.getValue());
+				//				System.out.println();
+
 				//Make sure change is made by user
 				if(audioSlider.isEnabled()){
-//					System.out.println("Slider val: " + audioSlider.getValue());
+					//					System.out.println("Slider val: " + audioSlider.getValue());
 					editor.resetTimer(getSliderValue());
 				}
 			}
@@ -515,6 +515,14 @@ public class GUI {
 		if(e.getSelectedCue() != null) {
 			list.setSelectedValue(e.getSelectedCue(), true);
 		}
+		
+		//if no cue is selected, disable edit and remove cue buttons
+		if(list.getSelectedValue() == null){
+			editCue.setEnabled(false);
+			removeCue.setEnabled(false);
+			e.setSelectedCue(null);
+		}
+
 
 
 		//Disable remove cue since no cue will be selected
@@ -630,14 +638,14 @@ public class GUI {
 	public void togglePlayButton() {
 		if(start.getText() == "Play") {
 			start.setText("Stop");
-			
+
 			//Disable slider from being moved by user
 			reset.setEnabled(false);
 			audioSlider.setEnabled(false);
 		}
 		else {
 			start.setText("Play");
-			
+
 			//Enable slider and reset
 			reset.setEnabled(true);
 			audioSlider.setEnabled(true);

@@ -223,7 +223,7 @@ public class Editor {
 					return false;
 				}
 			}
-			file = new File(arduino_export_path + song.getTitle() +"/"+song.getTitle()+".txt");
+			file = new File(arduino_export_path + song.getTitle() +"/"+song.getTitle()+".ino");
 
 			// if file doesn't exists, then create it
 			if (!file.exists()) {
@@ -346,7 +346,6 @@ public class Editor {
 
 							//Get next effect in list
 							nextEffect = activeEffects.get(0);
-							assert lastRunTime < 100000;
 						}
 					}
 

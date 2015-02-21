@@ -104,15 +104,15 @@ public class Timer implements Runnable {
 				//				System.out.println("Bytes available: " + audioLine.available());
 				long bytesWritten = audioLine.write(bytesBuffer, 0, bytesRead);
 
-				int sum = 0;
-				int count =0;
-				for (byte b: bytesBuffer) {
-					if(b>=0){
-						sum+= b;
-						count++;
-					}
-				}
-				System.out.println(sum/(count));
+//				int sum = 0;
+//				int count =0;
+//				for (byte b: bytesBuffer) {
+//					if(b>=0){
+//						sum+= b;
+//						count++;
+//					}
+//				}
+//				System.out.println(sum/(count));
 
 				//				System.out.println("bytes actually written: " + bytesWritten);
 				if(bytesWritten == 0) {

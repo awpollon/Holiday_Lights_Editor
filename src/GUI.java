@@ -344,6 +344,9 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				//Call restTime with percent set to 0
 				editor.resetTimer(0);
+				
+				//Move slider to 0
+				setSliderPosition(0);
 			}
 		});
 

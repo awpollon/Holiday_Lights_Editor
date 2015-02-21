@@ -434,11 +434,16 @@ public class GUI {
 
 		audioSlider = new JSlider(0, sliderMaxVal, 0);
 		audioSlider.addChangeListener(new ChangeListener() {
-
+			
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				//Make sure change is made by user
-				if(audioSlider.isEnabled()){
+//				System.out.println("Adjusting: " + audioSlider.getValueIsAdjusting());
+//				System.out.println(getSliderValue());
+//				System.out.println(audioSlider.getValue());
+//				System.out.println();
+				
+				//Make sure change is made by user anf slider is done adjusting
+				if(audioSlider.isEnabled() && !audioSlider.getValueIsAdjusting()){
 //					System.out.println("Slider val: " + audioSlider.getValue());
 					editor.resetTimer(getSliderValue());
 				}

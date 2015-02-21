@@ -15,6 +15,7 @@ import java.util.Collections;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Editor {
@@ -389,35 +390,44 @@ public class Editor {
 	//Will be called by timer thread
 	public synchronized void setEditorTime(double editorTime) {
 		this.editorTime = editorTime;
-		//Update gui
-		gui.updateTime();
+		
+		//Invoke later is called on gui update to avoid crash. I believe this is due to competing threads.
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				//Update gui
+				gui.updateTime();
 
-		//Always look for next cue in case a cue was added before to change number
-		int currentIndex = song.getCueList().indexOf(currentCue);
-		if(currentIndex+1 == song.getCueList().size()) {
-			nextCue = null;
-		}
-
-		else {
-			nextCue = song.getCueList().get(currentIndex+1);
-
-
-			//See if cue list should update
-			if(editorTime >= nextCue.getRunTime()) {
-				//			gui.removeHighlightCue(currentCue);
-				//			gui.highlightCue(nextCue);
-				if(currentCue != null) currentCue.setActive(false);
-				nextCue.setActive(true);
-				currentCue = nextCue;
-				gui.printCues();
-
-				//If mode is show live, update states list.
-				if(showLive()) {
-					updateChDisplays();
-					updateGUIEventPanel();
+				//Always look for next cue in case a cue was added before to change number
+				int currentIndex = song.getCueList().indexOf(currentCue);
+				if(currentIndex+1 == song.getCueList().size()) {
+					nextCue = null;
 				}
+
+				else {
+					nextCue = song.getCueList().get(currentIndex+1);
+
+
+					//See if cue list should update
+					if(getEditorTime() >= nextCue.getRunTime()) {
+						//			gui.removeHighlightCue(currentCue);
+						//			gui.highlightCue(nextCue);
+						if(currentCue != null) currentCue.setActive(false);
+						nextCue.setActive(true);
+						currentCue = nextCue;
+						gui.printCues();
+
+						//If mode is show live, update states list.
+						if(showLive()) {
+							updateChDisplays();
+							updateGUIEventPanel();
+						}
+					}
+				}				
 			}
-		}
+		});
+		
 	}
 
 	public void editCue(Cue c) {
@@ -538,8 +548,9 @@ public class Editor {
 	}
 
 	public void resetTimer(double percent) {
-		boolean valid = false;
-		String input;
+		System.out.println(percent);
+//		boolean valid = false;
+//		String input;
 //		double percent = -1; //Now being passed by gui
 		//		while(!valid) {
 		//			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
@@ -564,7 +575,7 @@ public class Editor {
 
 		//need to revisit these
 		currentCue.setActive(false);
-
+		System.out.println(editorTime);
 		//Find nearest cue before new time
 		currentCue = getActiveCue(editorTime);
 		currentCue.setActive(true);

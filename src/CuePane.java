@@ -125,10 +125,13 @@ public class CuePane {
 					boolean on = false;
 					boolean effect = false;					
 					EventInput ei = events.get(i);
-					int effectRate = ei.getEffectRate();
+					int effectRate = 0;
 
 					//Check if effect
-					if(ei.getStateisEffect()) effect = true;
+					if(ei.getStateisEffect()) {
+						effect = true;
+						effectRate = ei.getEffectRate();
+					}
 
 					if(ei.getStateisOn()) on = true;
 

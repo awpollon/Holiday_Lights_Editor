@@ -445,8 +445,8 @@ public class GUI {
 //				System.out.println(audioSlider.getValue());
 //				System.out.println();
 				
-				//Make sure change is made by user anf slider is done adjusting
-				if(audioSlider.isEnabled() && !audioSlider.getValueIsAdjusting()){
+				//Make sure change is made by user
+				if(audioSlider.isEnabled()){
 //					System.out.println("Slider val: " + audioSlider.getValue());
 					editor.resetTimer(getSliderValue());
 				}

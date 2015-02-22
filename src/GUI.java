@@ -138,7 +138,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent ev) {
 				int confirmOpen = JOptionPane.showConfirmDialog(null, "Open New File?", "Open", JOptionPane.YES_NO_OPTION);
 				if (confirmOpen == JOptionPane.YES_OPTION){
-					Editor.openFile();
+					e.openFile();
 				}
 			}
 		});

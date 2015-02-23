@@ -204,15 +204,15 @@ public class GUI {
 		});
 		edit.add(checkFile);
 
-		editChannels = new JMenuItem("Channels");
+		editChannels = new JMenuItem("Edit Channels");
 		editChannels.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-
+				e.showEditChannels();
 			}
 		});
+		edit.add(editChannels);
 
 		duplicateCue = new JMenuItem("Duplicate Cue");
 		duplicateCue.addActionListener(new ActionListener() {

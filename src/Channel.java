@@ -12,7 +12,6 @@ public class Channel implements Serializable {
 	private String chVar;
 	private Color color;
 	private int chNum;
-	private int numLights;
 	private int arduinoPin;
 	
 	private transient int currentState; //storing current state in the editor
@@ -25,7 +24,6 @@ public class Channel implements Serializable {
 		this.setChName(name);
 		this.setColor(col);
 		this.setChNum(channel);
-		this.setNumLights(numLights);
 		this.setArduinoPin(pin);
 	}
 
@@ -52,14 +50,6 @@ public class Channel implements Serializable {
 
 	public void setChNum(int chNum) {
 		this.chNum = chNum;
-	}
-
-	public int getNumLights() {
-		return numLights;
-	}
-
-	public void setNumLights(int numLights) {
-		this.numLights = numLights;
 	}
 
 	public int getArduinoPin() {

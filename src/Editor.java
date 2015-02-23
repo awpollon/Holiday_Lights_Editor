@@ -519,5 +519,9 @@ public class Editor {
 		app.openFile();
 	}
 
+	public void showEditChannels() {
+		ChannelPane chpane = new ChannelPane(this);
+	}
+
 
 }

@@ -1,7 +1,12 @@
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -9,6 +14,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class LightsEditorApplication {
+	private String audioStartPath = null;
+	private String savedFilePath = null;
+	private String arduinoExportPath = null;
+	private String appName = null;
+
 	public LightsEditorApplication() {
 		setupApp();
 		startApp();
@@ -18,8 +28,36 @@ public class LightsEditorApplication {
 		LightsEditorApplication app = new LightsEditorApplication();
 	}
 
+	boolean readConfigFile() throws IOException{
+		Properties prop = new Properties();
+		String propFileName = "config.properties";
+ 
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+ 
+		if (inputStream != null) {
+			prop.load(inputStream);
+		} else {
+			throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+		}
+  
+		// get the property value and print it out
+		this.appName = prop.getProperty("appName");
+		this.audioStartPath  = prop.getProperty("audioStartingFilePath");
+		this.savedFilePath = prop.getProperty("savedFilePath");
+		this.arduinoExportPath = prop.getProperty("arduinoExportPath");
+		
+		return true;
+	}
+	
 	boolean setupApp(){
-	return true;
+		try {
+			this.readConfigFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
 	void startApp(){
@@ -59,16 +97,6 @@ public class LightsEditorApplication {
 				System.exit(0);
 			}
 		}
-
-		//		Song s = new Song("Let It Go", "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio/Let_It_Go.wav");
-
-		//		Song s = w.getSong();
-		//
-		//
-		//		Editor e = new Editor(s);
-
-		//		e.gui.printCues();
-
 	}
 	
 	
@@ -89,7 +117,7 @@ public class LightsEditorApplication {
 		File soundFile = promptAudioFile();
 
 		if(soundFile != null){
-			Song newSong = new Song(songName, soundFile);
+			Song newSong = new Song(songName, soundFile, this);
 			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
 
 			//Hardcode channels
@@ -121,7 +149,7 @@ public class LightsEditorApplication {
 	
 	public File promptAudioFile() {
 
-		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/audio");
+		JFileChooser fc = new JFileChooser(audioStartPath);
 
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"WAV", "wav");
@@ -135,7 +163,7 @@ public class LightsEditorApplication {
 	
 	public boolean openFile() {
 		System.out.println("Opening");
-		JFileChooser fc = new JFileChooser("/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/SavedFiles");
+		JFileChooser fc = new JFileChooser(savedFilePath );
 
 
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -170,6 +198,18 @@ public class LightsEditorApplication {
 		}
 
 		return false;
+	}
+
+	public String getArduinoExportPath() {
+		return arduinoExportPath;
+	}
+
+	public String getAppName() {
+		return appName ;
+	}
+
+	public String getSavedFilePath() {
+		return savedFilePath;
 	}
 
 }

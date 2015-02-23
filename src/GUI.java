@@ -92,7 +92,7 @@ public class GUI {
 	public GUI(final Editor editor) {
 		this.e = editor; //Specifies the editor session
 
-		f = new JFrame("Show Editor: \"" + e.getCurrentSong().getTitle() +"\"");
+		f = new JFrame(Editor.appName + ": \"" + e.getCurrentSong().getTitle() +"\"");
 		f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		f.setBounds(50, 100, 800, 400);
 		f.setVisible(true);
@@ -643,6 +643,4 @@ public class GUI {
 			audioSlider.setEnabled(true);
 		}
 	}
-
-
 }

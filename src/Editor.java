@@ -24,9 +24,8 @@ public class Editor {
 	 */
 	private static final long serialVersionUID = -7794921541255885374L;
 
-	public static final String appName = "Song Editor";
-	private final String arduino_export_path = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/arduino_exports/";
-
+	public static String appName;
+	private String arduino_export_path;
 	private LightsEditorApplication app;
 	private Song song;
 	private double editorTime;
@@ -43,6 +42,11 @@ public class Editor {
 	public Editor(Song s, LightsEditorApplication application) {		
 		this.song = s;
 		this.app = application;
+		
+		//Set config values
+		Editor.appName = app.getAppName();
+		this.arduino_export_path = app.getArduinoExportPath();
+		
 		//Set current and next cue for playback
 		//		this.currentCue = s.getCueList().get(0); first cue should be null until reached in plaback
 		this.currentCue = null;

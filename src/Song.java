@@ -23,12 +23,12 @@ public class Song implements Serializable {
 
 	private String fileLocation;	
 
-	public Song(String songTitle, File audio) {
+	public Song(String songTitle, File audio, LightsEditorApplication app) {
 		this.title = songTitle;
 		this.fileName = this.title + ".ser"; //Hardcode as .ser file for now
 		cues = new ArrayList<Cue>();
 		channels = new ArrayList<Channel>();
-		fileLocation = "/Users/AaronPollon/Documents/Projects/Arduino_Song_Generator/savedFiles";//hardcode for local file
+		fileLocation = app.getSavedFilePath();
 		//		this.audioFilePath = audioFilePath;
 		this.audioFile = audio;
 	}

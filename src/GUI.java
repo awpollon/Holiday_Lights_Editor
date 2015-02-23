@@ -92,7 +92,7 @@ public class GUI {
 	public GUI(final Editor editor) {
 		this.e = editor; //Specifies the editor session
 
-		f = new JFrame("Show Editor: \"" + e.getCurrentSong().getTitle() +"\"");
+		f = new JFrame(Editor.appName + ": \"" + e.getCurrentSong().getTitle() +"\"");
 		f.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		f.setBounds(50, 100, 800, 400);
 		f.setVisible(true);
@@ -138,7 +138,7 @@ public class GUI {
 			public void actionPerformed(ActionEvent ev) {
 				int confirmOpen = JOptionPane.showConfirmDialog(null, "Open New File?", "Open", JOptionPane.YES_NO_OPTION);
 				if (confirmOpen == JOptionPane.YES_OPTION){
-					Editor.openFile();
+					e.openFile();
 				}
 			}
 		});
@@ -651,6 +651,4 @@ public class GUI {
 			audioSlider.setEnabled(true);
 		}
 	}
-
-
 }

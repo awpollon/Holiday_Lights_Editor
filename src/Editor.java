@@ -34,6 +34,7 @@ public class Editor {
 	Timer timer;
 	private Cue currentCue;
 	private Cue nextCue;
+	private EffectsTimer effectsTimer;
 
 	private boolean showLive;
 
@@ -517,6 +518,10 @@ public class Editor {
 
 	public void openFile() {
 		app.openFile();
+	}
+
+	public void openEffectsTimer() {
+		effectsTimer = new EffectsTimer(this);
 	}
 
 

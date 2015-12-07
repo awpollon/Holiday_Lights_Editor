@@ -81,6 +81,8 @@ public class GUI {
 	JButton addCue;
 	JButton editCue;
 	JButton removeCue;
+	JButton openEffectsTimer;
+
 	JCheckBox setLiveBox;
 	JSlider audioSlider;
 
@@ -418,6 +420,15 @@ public class GUI {
 				else System.err.println("Error: No cue select");
 			}
 		});
+		
+		openEffectsTimer = new JButton("Effects Timer");
+		openEffectsTimer.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				editor.openEffectsTimer();
+			}
+		});
 
 		setLiveBox = new JCheckBox();
 		editor.setShowLive(false); //Initially unchecked
@@ -471,6 +482,7 @@ public class GUI {
 		bottomButtonPanel.add(addCue);
 		bottomButtonPanel.add(editCue);
 		bottomButtonPanel.add(removeCue);
+		bottomButtonPanel.add(openEffectsTimer);
 
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		buttonPanel.add(topButtonPanel);

@@ -120,12 +120,16 @@ public class LightsEditorApplication {
 			Song newSong = new Song(songName, soundFile, this);
 			//			newSong.copySong(this.song); //Reference for SAVE AS implementation
 
-			//Hardcode channels
+			//Hardcode channels for new song
 			newSong.addChannel(new Channel("White Tree", 1, 8, Color.WHITE));
 			newSong.addChannel(new Channel("Blue Tree", 2, 9, Color.blue));
 			newSong.addChannel(new Channel("Blues", 3, 3, Color.blue));
-			newSong.addChannel(new Channel("Whites", 4, 5, Color.white));
-			newSong.addChannel(new Channel("Wreaths", 5, 2, Color.orange));
+			newSong.addChannel(new Channel("Icicles", 4, 5, Color.white));
+			newSong.addChannel(new Channel("Multi Top", 5, 5, Color.ORANGE));
+			newSong.addChannel(new Channel("Wreaths", 6, 2, Color.orange));
+			newSong.addChannel(new Channel("Red", 7, 2, Color.red));
+			newSong.addChannel(new Channel("Multi Door", 8, 5, Color.ORANGE));
+
 
 			//Start with a cue at 0.0 with everything off
 			Cue firstCue = new Cue(0);

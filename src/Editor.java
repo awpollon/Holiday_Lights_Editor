@@ -136,13 +136,18 @@ public class Editor {
 
 			//Defines
 			Arduino.writeDefines(bw, chs);
+			Arduino.writeSongGlobals(bw, song);
 
 			//Intro comment
 			Arduino.writeIntro(bw);
 
 			//Setup method
+			bw.append("void setup() {\n");
 			Arduino.writeSetup(bw, chs);
+			Arduino.writeSongSetup(bw, song);
+			bw.append("}\n\n");
 
+			
 			//Begin Loop()
 			bw.append("void loop() {\n");
 

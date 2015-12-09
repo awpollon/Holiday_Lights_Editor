@@ -22,6 +22,8 @@ public class Song implements Serializable {
 	private File audioFile;
 
 	private String fileLocation;	
+	
+//	private double lagMod = .85; //Modifier to account for delay with music shield
 
 	public Song(String songTitle, File audio, LightsEditorApplication app) {
 		this.title = songTitle;
@@ -173,6 +175,23 @@ public class Song implements Serializable {
 
 			}
 		}
+	}
+
+	public double getLagMod() {
+		return 1.0;
+	}
+
+	public boolean getPlayMusic() {
+		return true;
+	}
+
+	public String getSDSongName() {
+		return "track_4.mp3";
+	}
+
+	//Lower the louder
+	public int getVolume() {
+		return 40;
 	}
 }
 

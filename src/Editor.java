@@ -34,6 +34,7 @@ public class Editor {
 	Timer timer;
 	private Cue currentCue;
 	private Cue nextCue;
+	private EffectsTimer effectsTimer;
 
 	private boolean showLive;
 
@@ -42,11 +43,11 @@ public class Editor {
 	public Editor(Song s, LightsEditorApplication application) {		
 		this.song = s;
 		this.app = application;
-		
+
 		//Set config values
 		Editor.appName = app.getAppName();
 		this.arduino_export_path = app.getArduinoExportPath();
-		
+
 		//Set current and next cue for playback
 		//		this.currentCue = s.getCueList().get(0); first cue should be null until reached in plaback
 		this.currentCue = null;
@@ -135,12 +136,17 @@ public class Editor {
 
 			//Defines
 			Arduino.writeDefines(bw, chs);
+			Arduino.writeSongGlobals(bw, song);
 
 			//Intro comment
 			Arduino.writeIntro(bw);
 
 			//Setup method
+			bw.append("void setup() {\n");
 			Arduino.writeSetup(bw, chs);
+			Arduino.writeSongSetup(bw, song);
+			bw.append("}\n\n");
+
 
 			//Begin Loop()
 			bw.append("void loop() {\n");
@@ -285,10 +291,10 @@ public class Editor {
 	//Will be called by timer thread
 	public synchronized void setEditorTime(double editorTime) {
 		this.editorTime = editorTime;
-		
+
 		//Invoke later is called on gui update to avoid crash. I believe this is due to competing threads.
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				//Update gui
@@ -322,7 +328,7 @@ public class Editor {
 				}				
 			}
 		});
-		
+
 	}
 
 	public void editCue(Cue c) {
@@ -348,11 +354,11 @@ public class Editor {
 			}
 		}
 		gui.printCues();
-		
+
 		//Select edited cue
 		setSelectedCue(editedCue);
 		gui.list.setSelectedValue(selectedCue, true);
-		
+
 		//Update displays
 		updateChDisplays();
 		updateGUIEventPanel();
@@ -414,9 +420,9 @@ public class Editor {
 
 	public void resetTimer(double percent) {
 		System.out.println(percent);
-//		boolean valid = false;
-//		String input;
-//		double percent = -1; //Now being passed by gui
+		//		boolean valid = false;
+		//		String input;
+		//		double percent = -1; //Now being passed by gui
 		//		while(!valid) {
 		//			input = JOptionPane.showInputDialog(null, "Enter song percent (0->1)");
 		//
@@ -523,5 +529,7 @@ public class Editor {
 		ChannelPane chpane = new ChannelPane(this);
 	}
 
-
+	public void openEffectsTimer() {
+		effectsTimer = new EffectsTimer(this);
+	}
 }

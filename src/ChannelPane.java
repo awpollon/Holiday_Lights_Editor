@@ -68,6 +68,7 @@ public class ChannelPane {
 		chPanel.validate();
 		int result = JOptionPane.showConfirmDialog(null, chPanel, 
 				"Edit Channels", JOptionPane.OK_CANCEL_OPTION);
+
 	}
   
 	private void addChannel(Channel c) {

@@ -182,7 +182,7 @@ public class Song implements Serializable {
 	}
 
 	public boolean getPlayMusic() {
-		return true;
+		return false;
 	}
 
 	public String getSDSongName() {

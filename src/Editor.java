@@ -152,7 +152,7 @@ public class Editor {
 			bw.append("void loop() {\n");
 
 			//Begin countdown
-			Arduino.writeCountdown(bw, 10);
+			Arduino.writeCountdown(bw, 5);
 
 			Object[] qs = song.getCues();
 
@@ -195,10 +195,12 @@ public class Editor {
 						LightEvent e = c.getEvents().get(j);
 
 						//Check if channel is on active effects, if so remove
-						for (int k=0; k<activeEffects.size(); k++) {
-							if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
-								activeEffects.remove(k);
-								break;
+						if(!e.isEffect()){
+							for (int k=0; k<activeEffects.size(); k++) {
+								if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
+									activeEffects.remove(k);
+									break;
+								}
 							}
 						}
 

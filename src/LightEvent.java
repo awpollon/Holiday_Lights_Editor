@@ -14,29 +14,33 @@ public class LightEvent implements Serializable{
 	private Channel channel;
 	private boolean on;
 	private boolean isEffect;
-	private int effectRate;
+//	private int effectRate;
+	private long effectOn = 0;
+	private long effectOff = 0;
 	private int state;
 
-	public LightEvent(Channel c, boolean turnOn, boolean isEffect, int effectRate) {
+	public LightEvent(Channel c, boolean turnOn, boolean isEffect, long effectOnRate, long effectOffRate) {
 		this.channel = c;
 		this.on = turnOn;
 		
 		this.isEffect = isEffect;
 		
 		if(this.isEffect) {
-			this.effectRate = effectRate;
+			this.effectOn = effectOnRate;
+			this.effectOff = effectOffRate;
+//			this.effectRate = effectRate;
 			this.state = EFFECT_STATE;
 		}
 		else {
-			effectRate = 0;	
+//			effectRate = 0;	
 			if(turnOn) this.state = ON_STATE;
 			else this.state = OFF_STATE;
 		}
 	}
 
-	public int getEffectRate() {
-		return effectRate;
-	}
+//	public int getEffectRate() {
+//		return effectRate;
+//	}
 
 	public Channel getChannel() {
 		return channel;
@@ -50,8 +54,16 @@ public class LightEvent implements Serializable{
 		return on;
 	}
 
-	public double getEffectRateInSecs() {
-		return effectRate / 1000.0;
+//	public double getEffectRateInSecs() {
+//		return effectRate / 1000.0;
+//	}
+	
+	public long getEffectOnRate(){
+		return effectOn;
+	}
+	
+	public long getEffectOffRate(){
+		return effectOff;
 	}
 
 	public int getState() {

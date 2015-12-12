@@ -19,7 +19,10 @@ public class Channel implements Serializable {
 
 	private transient Cue cueStateLastChanged;
 
-	private transient double currentEffectRate;
+//	private transient double currentEffectRate;
+	private transient long currentEffectOnRate;
+	private transient long currentEffectOffRate;
+
 	
 	public Channel(String name, int channel, int pin, Color col) {
 		this.setChName(name);
@@ -83,10 +86,12 @@ public class Channel implements Serializable {
 		return currentState;
 	}
 
-	public void setCurrentState(int i, Cue qLastChanged, double effectRate) {
+	public void setCurrentState(int i, Cue qLastChanged, long effectOnRate, long effectOffRate) {
 		this.currentState = i;
 		this.cueStateLastChanged = qLastChanged;
-		this.currentEffectRate = effectRate;
+		this.currentEffectOnRate = effectOnRate;
+		this.currentEffectOnRate = effectOffRate;
+//		this.currentEffectRate = effectRate;
 	}
 
 	public String getCurrentStateString() {
@@ -100,11 +105,19 @@ public class Channel implements Serializable {
 		return cueStateLastChanged;
 	}
 
-	public double getCurrentEffectRate() {
-		return currentEffectRate;
+	public double getCurrentEffectOnRate() {
+		return currentEffectOnRate;
 	}
 	
-	public double getCurrentEffectRateInSecs() {
-		return currentEffectRate / 1000.0;
+	public double getCurrentEffectOffRate() {
+		return currentEffectOffRate;
 	}
+
+//	public double getCurrentEffectRate() {
+//		return currentEffectRate;
+//	}
+//	
+//	public double getCurrentEffectRateInSecs() {
+//		return currentEffectRate / 1000.0;
+//	}
 }

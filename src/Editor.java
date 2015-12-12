@@ -165,7 +165,7 @@ public class Editor {
 				public ActiveEffect(LightEvent e, double startTime) {
 					this.event = e;
 					this.startTime = startTime;
-					this.nextRun = startTime + e.getEffectRate();
+					this.nextRun = startTime + e.getEffectOffRate(); //Start on
 					this.lastStateOn = true;
 				}
 
@@ -242,7 +242,13 @@ public class Editor {
 
 							//Set lastRunTime and nextRun
 							lastRunTime = nextEffect.nextRun;
-							nextEffect.nextRun += nextEffect.event.getEffectRate();
+							
+							if(nextEffect.lastStateOn){
+								nextEffect.nextRun += nextEffect.event.getEffectOnRate();
+							}
+							else{
+								nextEffect.nextRun += nextEffect.event.getEffectOffRate();
+							}
 
 							//Toggle lastState
 							nextEffect.lastStateOn = !nextEffect.lastStateOn;
@@ -369,7 +375,7 @@ public class Editor {
 	public void addNewCue() {
 		//Handle button click to add new cue
 		Cue tmp = new Cue(editorTime);
-		tmp.addEvent(new LightEvent(song.getChannels()[0], true, false, 0));
+		tmp.addEvent(new LightEvent(song.getChannels()[0], true, false, 0, 0));
 
 		CuePane cp = new CuePane(this, tmp, "Add Cue");
 		Cue newCue = cp.getCue();

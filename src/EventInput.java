@@ -13,28 +13,34 @@ public class EventInput {
 	public static final String offText = "Off";
 	public static final String effectText = "Effect";
 
-	
+
+
+
 	private JComboBox channel;
 	private JComboBox state;
 	private String[] options = {onText, offText, effectText};
-	private JTextField rateInput;
+	//	private JTextField rateInput;
+	private JTextField onRateInput;
+	private JTextField offRateInput;
 	private JButton rmvButton;
 	private JPanel newChPanel;
-	
+
 	private CuePane cuePane;
 
 
 	public EventInput(Song s, CuePane qPane) {
 		this.cuePane = qPane;
-		
+
 		newChPanel = new JPanel();
 
 		channel = new JComboBox(s.getChannels());
 		state = new JComboBox(options);
-		rateInput = new JTextField();
-		rateInput.setColumns(4);
+		onRateInput = new JTextField();
+		onRateInput.setColumns(4);
+		offRateInput = new JTextField();
+		offRateInput.setColumns(4);
 		rmvButton = new JButton("Remove");
-		
+
 		rmvButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -55,22 +61,20 @@ public class EventInput {
 		cuePane.removeEvent(this);	
 	}
 
-	public int getEffectRate() {
-		if(rateInput.getText() != null) {
+	public int getEffectOnRate(){
+		if(onRateInput.getText() != null) {
 			try {
-				double effectRateinSecs = Double.parseDouble(rateInput.getText());
-				if (effectRateinSecs > 0) {
-					
-					
+				double effectRateinSecs = Double.parseDouble(onRateInput.getText());
+				if (effectRateinSecs > 0) {		
 					return (int) (Math.floor(effectRateinSecs * 1000));
 				}
 				else {
-					System.err.println("Invalid effect input, rate must be greater than 0");
+					System.err.println("Invalid effect on input, rate must be greater than 0");
 					return -1;
 				}
 			}
 			catch (Exception e) {
-				System.err.println("Exception: Invalid effect input");
+				System.err.println("Exception: Invalid effect on input");
 				return -1;
 			}
 		}
@@ -80,13 +84,66 @@ public class EventInput {
 		}
 	}
 
+	public int getEffectOffRate(){
+		if(offRateInput.getText() != null) {
+			try {
+				double effectRateinSecs = Double.parseDouble(offRateInput.getText());
+				if (effectRateinSecs > 0) {
+
+					return (int) (Math.floor(effectRateinSecs * 1000));
+				}
+				else {
+					System.err.println("Invalid effect off input, rate must be greater than 0");
+					return -1;
+				}
+			}
+			catch (Exception e) {
+				System.err.println("Exception: Invalid effect off input");
+				return -1;
+			}
+		}
+		else {
+			System.err.println("No rate provided");
+			return -1;
+		}
+
+	}
+
+//	public int getEffectRate() {
+//		if(rateInput.getText() != null) {
+//			try {
+//				double effectRateinSecs = Double.parseDouble(rateInput.getText());
+//				if (effectRateinSecs > 0) {
+//
+//
+//					return (int) (Math.floor(effectRateinSecs * 1000));
+//				}
+//				else {
+//					System.err.println("Invalid effect input, rate must be greater than 0");
+//					return -1;
+//				}
+//			}
+//			catch (Exception e) {
+//				System.err.println("Exception: Invalid effect input");
+//				return -1;
+//			}
+//		}
+//		else {
+//			System.err.println("No rate provided");
+//			return -1;
+//		}
+//	}
+
 	JPanel createChPanel() {
 		newChPanel.add(new JLabel("Channel:"));
 		newChPanel.add(channel);
 		newChPanel.add(new JLabel("State:"));
 		newChPanel.add(state);
-		newChPanel.add(new JLabel("Eff. Rate:"));
-		newChPanel.add(rateInput);
+		newChPanel.add(new JLabel("Eff. On Rate:"));
+		newChPanel.add(onRateInput);
+		newChPanel.add(new JLabel("Eff. Off Rate:"));
+		newChPanel.add(offRateInput);
+
 
 		//Remove Button
 		newChPanel.add(rmvButton);
@@ -109,7 +166,7 @@ public class EventInput {
 	public boolean getStateisEffect() {
 		return (state.getSelectedItem() == effectText);
 	}
-	
+
 	public boolean getStateisOn() {
 		return (state.getSelectedItem() == onText);
 	}
@@ -128,21 +185,28 @@ public class EventInput {
 
 		}
 	}
-
-	public String getRateInput() {
-		return rateInput.getText();
+	public String getOnRateInput() {
+		return onRateInput.getText();
 	}
 
-	public void setRateInput(double rate) {
-		rateInput.setText(rate + "");
+	public void setOnRateInput(double rate) {
+		onRateInput.setText(rate + "");
 	}
 
-//	public JButton getRmvButton() {
-//		return rmvButton;
-//	}
+	public String getOffRateInput() {
+		return offRateInput.getText();
+	}
 
-//	public void setRmvButton(JButton rmvButton) {
-//		this.rmvButton = rmvButton;
-//	}
+	public void setOffRateInput(double rate) {
+		onRateInput.setText(rate + "");
+	}
+
+	//	public JButton getRmvButton() {
+	//		return rmvButton;
+	//	}
+
+	//	public void setRmvButton(JButton rmvButton) {
+	//		this.rmvButton = rmvButton;
+	//	}
 
 }

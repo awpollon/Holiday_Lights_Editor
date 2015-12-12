@@ -571,7 +571,9 @@ public class GUI {
 
 					if(ev.isEffect()) {
 						eventPanel.add(new  JLabel("State: Effect"));
-						eventPanel.add(new JLabel("Effect Rate "+ ev.getEffectRateInSecs()));
+						eventPanel.add(new JLabel("Effect On Rate "+ (ev.getEffectOnRate() / 1000.00)));
+						eventPanel.add(new JLabel("Effect Off Rate "+ (ev.getEffectOffRate() / 1000.00)));
+
 					}
 
 					else if (ev.isOn()){
@@ -615,7 +617,8 @@ public class GUI {
 				chStatePanel.setBackground(ch.getColor());
 			}
 			else if (ch.getCurrentState() == LightEvent.EFFECT_STATE) {
-				chStatePanel.add(new JLabel("Effect Rate: " + ch.getCurrentEffectRateInSecs()));
+				chStatePanel.add(new JLabel("Effect On Rate: " + (ch.getCurrentEffectOnRate() / 1000.00)));
+				chStatePanel.add(new JLabel("Effect Off Rate: " + (ch.getCurrentEffectOffRate() / 1000.00)));
 				chStatePanel.setBackground(ch.getColor());
 			}
 			else if (ch.getCurrentState() == LightEvent.OFF_STATE) {

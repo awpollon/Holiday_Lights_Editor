@@ -136,7 +136,7 @@ public class LightsEditorApplication {
 			firstCue.setActive(true);
 
 			for(Channel c: newSong.getChannels()) {
-				firstCue.addEvent(new LightEvent(c, false, false, 0));
+				firstCue.addEvent(new LightEvent(c, false, false, 0, 0));
 			}
 			newSong.addCue(firstCue);
 

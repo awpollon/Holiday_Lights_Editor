@@ -71,7 +71,8 @@ public class CuePane {
 			EventInput eIn = new EventInput(editor.getCurrentSong(), this);
 			eIn.setChannel(e.getChannel());
 			eIn.setState(e);
-			eIn.setRateInput(e.getEffectRateInSecs());
+			eIn.setOnRateInput(e.getEffectOnRate()/1000.00);
+			eIn.setOffRateInput(e.getEffectOffRate() / 1000.00);
 
 			events.add(eIn);
 			cuePanel.add(eIn.createChPanel());
@@ -124,20 +125,23 @@ public class CuePane {
 					boolean on = false;
 					boolean effect = false;					
 					EventInput ei = events.get(i);
-					int effectRate = 0;
+//					int effectRate = 0;
+					long effectOnRate = 0;
+					long effectOffRate = 0;
 
 					//Check if effect
 					if(ei.getStateisEffect()) {
 						effect = true;
-						effectRate = ei.getEffectRate();
+						effectOnRate = ei.getEffectOnRate();
+						effectOffRate= ei.getEffectOffRate();
 					}
 
 					if(ei.getStateisOn()) on = true;
 
 					Channel getCh = events.get(i).getChannel();
 
-					if(getCh != null && !(effect && effectRate <=0)) {
-						tmp.addEvent(new LightEvent(getCh, on, effect, effectRate));
+					if(getCh != null && !(effect && effectOnRate <=0 )) {
+						tmp.addEvent(new LightEvent(getCh, on, effect, effectOnRate, effectOffRate));
 					}
 					else {
 						System.err.println("Unable to add cue: Invalid Input.");

@@ -1,3 +1,5 @@
+package main.java;
+
 import java.awt.Color;
 import java.awt.Dialog;
 import java.io.BufferedWriter;
@@ -8,15 +10,24 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 
 public class Editor {
 	/**
@@ -105,12 +116,34 @@ public class Editor {
 		else return false;
 	}
 
+	private Configuration configFreeMarker(){
+		 // Create your Configuration instance, and specify if up to what FreeMarker
+		 // version (here 2.3.25) do you want to apply the fixes that are not 100%
+		 // backward-compatible. See the Configuration JavaDoc for details.
+		 Configuration cfg = new Configuration(Configuration.VERSION_2_3_25);
 
+		 cfg.setClassForTemplateLoading(this.getClass(), "/main/resources/templates");
+
+		 // Set the preferred charset template files are stored in. UTF-8 is
+		 // a good choice in most applications:
+		 cfg.setDefaultEncoding("UTF-8");
+
+		 // Sets how errors will appear.
+		 // During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
+		 cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+		 // Don't log exceptions inside FreeMarker that it will thrown at you anyway:
+		 cfg.setLogTemplateExceptions(false);
+		 
+		 return cfg;
+	}
 
 	public boolean writeFile(){
-
-
+	    	Configuration cfg = this.configFreeMarker();
+	    	
 		try {
+		    	Template temp = cfg.getTemplate("arduino.ftlh");
+
 			String arduinoFileName = song.getTitle().replace(' ', '_');
 
 
@@ -132,142 +165,150 @@ public class Editor {
 
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			Object[] chs = song.getChannels();
-
-			//Defines
-			Arduino.writeDefines(bw, chs);
-			Arduino.writeSongGlobals(bw, song);
-
-			//Intro comment
-			Arduino.writeIntro(bw);
-
-			//Setup method
-			bw.append("void setup() {\n");
-			Arduino.writeSetup(bw, chs);
-			Arduino.writeSongSetup(bw, song);
-			bw.append("}\n\n");
-
 			
-			//Begin Loop()
-			bw.append("void loop() {\n");
-
-			//Begin countdown
-			Arduino.writeCountdown(bw, 5);
-
-			Object[] qs = song.getCues();
-
-			class ActiveEffect implements Comparable<ActiveEffect> {
-				LightEvent event;
-				double startTime;
-				double nextRun;
-				boolean lastStateOn;
-
-				public ActiveEffect(LightEvent e, double startTime) {
-					this.event = e;
-					this.startTime = startTime;
-					this.nextRun = startTime + e.getEffectRate();
-					this.lastStateOn = true;
-				}
-
-				@Override
-				public int compareTo(ActiveEffect o) {
-					if(this.nextRun > o.nextRun) return 1;
-					else if (this.nextRun < o.nextRun) return -1;
-					else return 0;
-				}
-			}
-
-			//Check if any cues at all
-			if(qs.length >0){
-
-				ArrayList<ActiveEffect> activeEffects = new ArrayList<ActiveEffect>(); //Store current running effects;
-
-
-				//Insert first delay
-				Cue c = (Cue) qs[0];				
-				Arduino.writeDelay(bw, c.getRunTime());
-
-				for(int i=0; i<qs.length; i++) {
-					c = (Cue) qs[i];	
-					Arduino.printToSerial(bw, "Cue: " + c.toString());
-
-					for(int j=0; j<c.getEvents().size(); j++) {
-						LightEvent e = c.getEvents().get(j);
-
-						//Check if channel is on active effects, if so remove
-						if(!e.isEffect()){
-							for (int k=0; k<activeEffects.size(); k++) {
-								if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
-									activeEffects.remove(k);
-									break;
-								}
-							}
-						}
-
-						if(e.getState() == LightEvent.EFFECT_STATE){
-							//Add to active effects
-							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
-							Arduino.digitalWrite(bw, e.getChannel(), true);
-						}
-						else {
-							//Write channel based on isOn
-							Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
-						}
-
-					}
-					//Sort Active Effects
-					Collections.sort(activeEffects);
-
-
-					//After each cue, place a delay equal to difference in timing
-					//Check if there is another cue
-					Cue nextCue;
-
-					if (i<qs.length-1) nextCue = (Cue) qs[i+1];
-					else nextCue = null;
-
-					double lastRunTime = c.getRunTime();
-
-					//Compare timing of next effect with next cue
-					//See if there are any effects (but must have one cue left to avoid infinite loop
-					if(!activeEffects.isEmpty() && nextCue!=null) {
-						ActiveEffect nextEffect = activeEffects.get(0);
-						while((activeEffects.size() >0) && (nextEffect.nextRun <= nextCue.getRunTime())) {
-							//Remove the next effect
-							activeEffects.remove(0);
-
-							//Print delay and write digitalwrite for effect
-							Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);	
-							Arduino.digitalWrite(bw, nextEffect.event.getChannel(), !(nextEffect.lastStateOn));
-
-							//Set lastRunTime and nextRun
-							lastRunTime = nextEffect.nextRun;
-							nextEffect.nextRun += nextEffect.event.getEffectRate();
-
-							//Toggle lastState
-							nextEffect.lastStateOn = !nextEffect.lastStateOn;
-
-							//Add back to effects list and resort
-							activeEffects.add(nextEffect);
-							Collections.sort(activeEffects);
-
-							//Get next effect in list
-							nextEffect = activeEffects.get(0);
-						}
-					}
-
-					//If there is another cue, write next delay
-					if(nextCue != null) {
-						Arduino.writeDelay(bw, nextCue.getRunTime() - lastRunTime);
-					}
-				}
-			}
-			else {
-				System.err.println("No cues");
-			}
-
-			//End loop
-			bw.append("}");
+		        /* Create a data-model */
+		        Map root = new HashMap();
+		        root.put("song", song);
+			
+		    	temp.process(root, bw);
+			
+			
+//			Object[] chs = song.getChannels();
+//
+//			//Defines
+//			Arduino.writeDefines(bw, chs);
+//			Arduino.writeSongGlobals(bw, song);
+//
+//			//Intro comment
+//			Arduino.writeIntro(bw);
+//
+//			//Setup method
+//			bw.append("void setup() {\n");
+//			Arduino.writeSetup(bw, chs);
+//			Arduino.writeSongSetup(bw, song);
+//			bw.append("}\n\n");
+//
+//			
+//			//Begin Loop()
+//			bw.append("void loop() {\n");
+//
+//			//Begin countdown
+//			Arduino.writeCountdown(bw, 5);
+//
+//			Object[] qs = song.getCues();
+//
+//			class ActiveEffect implements Comparable<ActiveEffect> {
+//				LightEvent event;
+//				double startTime;
+//				double nextRun;
+//				boolean lastStateOn;
+//
+//				public ActiveEffect(LightEvent e, double startTime) {
+//					this.event = e;
+//					this.startTime = startTime;
+//					this.nextRun = startTime + e.getEffectRate();
+//					this.lastStateOn = true;
+//				}
+//
+//				@Override
+//				public int compareTo(ActiveEffect o) {
+//					if(this.nextRun > o.nextRun) return 1;
+//					else if (this.nextRun < o.nextRun) return -1;
+//					else return 0;
+//				}
+//			}
+//
+//			//Check if any cues at all
+//			if(qs.length >0){
+//
+//				ArrayList<ActiveEffect> activeEffects = new ArrayList<ActiveEffect>(); //Store current running effects;
+//
+//
+//				//Insert first delay
+//				Cue c = (Cue) qs[0];				
+//				Arduino.writeDelay(bw, c.getRunTime());
+//
+//				for(int i=0; i<qs.length; i++) {
+//					c = (Cue) qs[i];	
+//					Arduino.printToSerial(bw, "Cue: " + c.toString());
+//
+//					for(int j=0; j<c.getEvents().size(); j++) {
+//						LightEvent e = c.getEvents().get(j);
+//
+//						//Check if channel is on active effects, if so remove
+//						if(!e.isEffect()){
+//							for (int k=0; k<activeEffects.size(); k++) {
+//								if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
+//									activeEffects.remove(k);
+//									break;
+//								}
+//							}
+//						}
+//
+//						if(e.getState() == LightEvent.EFFECT_STATE){
+//							//Add to active effects
+//							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
+//							Arduino.digitalWrite(bw, e.getChannel(), true);
+//						}
+//						else {
+//							//Write channel based on isOn
+//							Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
+//						}
+//
+//					}
+//					//Sort Active Effects
+//					Collections.sort(activeEffects);
+//
+//
+//					//After each cue, place a delay equal to difference in timing
+//					//Check if there is another cue
+//					Cue nextCue;
+//
+//					if (i<qs.length-1) nextCue = (Cue) qs[i+1];
+//					else nextCue = null;
+//
+//					double lastRunTime = c.getRunTime();
+//
+//					//Compare timing of next effect with next cue
+//					//See if there are any effects (but must have one cue left to avoid infinite loop
+//					if(!activeEffects.isEmpty() && nextCue!=null) {
+//						ActiveEffect nextEffect = activeEffects.get(0);
+//						while((activeEffects.size() >0) && (nextEffect.nextRun <= nextCue.getRunTime())) {
+//							//Remove the next effect
+//							activeEffects.remove(0);
+//
+//							//Print delay and write digitalwrite for effect
+//							Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);	
+//							Arduino.digitalWrite(bw, nextEffect.event.getChannel(), !(nextEffect.lastStateOn));
+//
+//							//Set lastRunTime and nextRun
+//							lastRunTime = nextEffect.nextRun;
+//							nextEffect.nextRun += nextEffect.event.getEffectRate();
+//
+//							//Toggle lastState
+//							nextEffect.lastStateOn = !nextEffect.lastStateOn;
+//
+//							//Add back to effects list and resort
+//							activeEffects.add(nextEffect);
+//							Collections.sort(activeEffects);
+//
+//							//Get next effect in list
+//							nextEffect = activeEffects.get(0);
+//						}
+//					}
+//
+//					//If there is another cue, write next delay
+//					if(nextCue != null) {
+//						Arduino.writeDelay(bw, nextCue.getRunTime() - lastRunTime);
+//					}
+//				}
+//			}
+//			else {
+//				System.err.println("No cues");
+//			}
+//
+//			//End loop
+//			bw.append("}");
 
 
 			bw.close();
@@ -277,6 +318,9 @@ public class Editor {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
+		} catch (TemplateException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
 		}
 
 		return true;

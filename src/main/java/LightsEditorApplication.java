@@ -1,3 +1,5 @@
+package main.java;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +13,9 @@ import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
 
 
 public class LightsEditorApplication {
@@ -30,7 +35,7 @@ public class LightsEditorApplication {
 
 	boolean readConfigFile() throws IOException{
 		Properties prop = new Properties();
-		String propFileName = "config.properties";
+		String propFileName = "main/resources/config.properties";
  
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
  
@@ -57,6 +62,7 @@ public class LightsEditorApplication {
 			e.printStackTrace();
 			return false;
 		}
+		
 		return true;
 	}
 	

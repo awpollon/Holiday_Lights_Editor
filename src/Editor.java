@@ -1,14 +1,6 @@
 import java.awt.Color;
 import java.awt.Dialog;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -62,7 +54,11 @@ public class Editor {
 
 		gui.printCues();
 
-		timer = new Timer(this);
+		try {
+			timer = new Timer(this);
+		} catch (FileNotFoundException e) {
+			this.changeAudio();
+		}
 	}
 
 	void stopTimer() {
@@ -97,7 +93,12 @@ public class Editor {
 			//If new file was chosen, change file on song
 			this.song.setAudioFile(newAudio);
 			//Restart the timer
-			timer = new Timer(this);
+			try {
+				timer = new Timer(this);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			}
 			setEditorTime(0);
 			//			gui.updateTime();
 			return true;

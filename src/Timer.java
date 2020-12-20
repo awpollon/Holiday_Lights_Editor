@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 
@@ -31,7 +32,7 @@ public class Timer implements Runnable {
 	public double resetOffsetMillis;
 
 	Editor editor;
-	public Timer(Editor e) {
+	public Timer(Editor e) throws FileNotFoundException {
 //		SimplePlotCurve curve = new SimplePlotCurve(10000);
 //		SimplePlotPanel plot = new SimplePlotPanel(1, 10000);
 //		
@@ -45,7 +46,7 @@ public class Timer implements Runnable {
 			updateEditorTime();
 		}
 		else {
-			System.err.println("Unable to load file");
+			throw new FileNotFoundException("Audio file not found.");
 		}
 
 		audioLine.addLineListener(new LineListener() {
@@ -192,6 +193,10 @@ public class Timer implements Runnable {
 			songLengthInMillis = audioStream.getFrameLength() / 44.10; //44.100 frames/millis standard
 			setResetOffset(0);
 			return true;			
+		}
+		catch(FileNotFoundException ex) {
+			System.err.println("Audio file not found.");
+			return false;
 		}
 
 		catch (Exception ex) {

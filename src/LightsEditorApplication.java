@@ -1,15 +1,9 @@
-import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.awt.*;
+import java.io.*;
 import java.util.Date;
 import java.util.Properties;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
@@ -19,7 +13,12 @@ public class LightsEditorApplication {
 	private String arduinoExportPath = null;
 	private String appName = null;
 
+	private JFrame parentFrame;
+
 	public LightsEditorApplication() {
+		this.parentFrame = new JFrame();
+		this.parentFrame.setSize(1000,1000);
+		this.parentFrame.setVisible(true);
 		setupApp();
 		startApp();
 	}
@@ -152,38 +151,37 @@ public class LightsEditorApplication {
 	}
 	
 	public File promptAudioFile() {
+//		JFrame parentFrame = new JFrame();
+//		parentFrame.setVisible(true);
 
-		JFileChooser fc = new JFileChooser(audioStartPath);
+		FileDialog fd = new FileDialog(this.parentFrame, "Choose an audio file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFilenameFilter((dir, name) -> name.endsWith(".wav"));
+		fd.setMultipleMode(false);
+		fd.setVisible(true);
 
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"WAV", "wav");
-		fc.setFileFilter(filter);					
-		int opened = fc.showDialog(null, "Open");
-		if (opened == JFileChooser.APPROVE_OPTION) {
-			return fc.getSelectedFile();
-		}
-		else return null;
+		return fd.getFiles()[0];
 	}
 	
 	public boolean openFile() {
 		System.out.println("Opening");
-		JFileChooser fc = new JFileChooser(savedFilePath );
 
+		FileDialog fd = new FileDialog(this.parentFrame, "Choose a file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFilenameFilter((dir, name) -> name.endsWith(".ser"));
+		fd.setMultipleMode(false);
+		fd.setVisible(true);
+		String filename = fd.getFile();
 
-		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-				"Ser", "ser");
-		fc.setFileFilter(filter);					
-		int opened = fc.showDialog(null, "Open");
-		if (opened == JFileChooser.APPROVE_OPTION) {
-
+		if (filename != null) {
 			try {
-				FileInputStream fin = new FileInputStream(fc.getSelectedFile());
+				FileInputStream fin = new FileInputStream(filename);
 				ObjectInputStream ois = new ObjectInputStream(fin);
 				Song openSong = (Song) ois.readObject();
 				Editor newEditor = new Editor(openSong, this);
 
 				//Update file path in song file
-				openSong.setFileLocation(fc.getSelectedFile().getParent());
+				openSong.setFileLocation(fd.getDirectory());
 
 				ois.close();
 				return true;

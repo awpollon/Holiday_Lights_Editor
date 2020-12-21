@@ -1,3 +1,10 @@
+/Arduino_Song_Generator.iml
 /bin/
 *.wav
 WWTheme.wav
+/audio/
+/savedFiles/
+/arduino_exports/
+CueList.java
+/target/
+/.idea/

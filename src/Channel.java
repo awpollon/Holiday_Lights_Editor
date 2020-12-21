@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.awt.Color;
 import java.io.Serializable;
 
@@ -10,15 +12,20 @@ public class Channel implements Serializable {
 	
 	private String chName;
 	private String chVar;
+
+	@JsonIgnore
 	private Color color;
+	//TODO: Map a color enum list
+
 	private int chNum;
 	private int numLights;
 	private int arduinoPin;
-	
+
+	@JsonIgnore
 	private transient int currentState; //storing current state in the editor
-
+	@JsonIgnore
 	private transient Cue cueStateLastChanged;
-
+	@JsonIgnore
 	private transient double currentEffectRate;
 	
 	public Channel(String name, int channel, int pin, Color col) {
@@ -79,6 +86,7 @@ public class Channel implements Serializable {
 		return chVar;
 	}
 
+	@JsonIgnore
 	public int getCurrentState() {
 		return currentState;
 	}
@@ -89,6 +97,7 @@ public class Channel implements Serializable {
 		this.currentEffectRate = effectRate;
 	}
 
+	@JsonIgnore
 	public String getCurrentStateString() {
 		if(this.currentState == LightEvent.ON_STATE) return EventInput.onText;
 		else if(this.currentState == LightEvent.OFF_STATE) return EventInput.offText;
@@ -103,7 +112,7 @@ public class Channel implements Serializable {
 	public double getCurrentEffectRate() {
 		return currentEffectRate;
 	}
-	
+	@JsonIgnore
 	public double getCurrentEffectRateInSecs() {
 		return currentEffectRate / 1000.0;
 	}

@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -10,6 +12,7 @@ public class Cue implements Comparable<Cue>, Serializable {
 	private static final long serialVersionUID = -7498455730594590728L;
 	
 	private double runTime;
+	@JsonIgnore
 	private transient boolean isActive; //Is the current cue in playback
 	
 	private ArrayList<LightEvent> events;
@@ -58,7 +61,8 @@ public class Cue implements Comparable<Cue>, Serializable {
 	public void setActive(boolean active) {
 		this.isActive = active;
 	}
-	
+
+	@JsonIgnore()
 	public double getRuntTimeInSecs(){
 		return (Math.floor((runTime /10)) /100.0);
 	}

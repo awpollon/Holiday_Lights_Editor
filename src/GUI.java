@@ -147,7 +147,10 @@ public class GUI {
 
 		export = new JMenu("Export");
 		JMenuItem toSketch = new JMenuItem("Arduino Sketch");
+		JMenuItem toJson = new JMenuItem("JSON");
+
 		export.add(toSketch);
+		export.add(toJson);
 
 		toSketch.addActionListener(new ActionListener() {
 
@@ -162,6 +165,11 @@ public class GUI {
 					System.err.println("Sketch not saved");
 				}
 			}
+		});
+
+		toJson.addActionListener(e1 -> {
+			System.out.println("Exporting to JSON");
+			e.exportToJson();
 		});
 
 		quit = new JMenuItem("Quit");

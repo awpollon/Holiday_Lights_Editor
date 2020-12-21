@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
@@ -72,6 +74,7 @@ public class Song implements Serializable {
 		return cues.toArray(new Cue[this.cues.size()]);
 	}
 
+	@JsonIgnore
 	public ArrayList<Cue> getCueList() {
 		Collections.sort(this.cues);
 		return cues;

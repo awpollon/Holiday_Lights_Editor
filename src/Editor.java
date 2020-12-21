@@ -1,6 +1,9 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.awt.Color;
 import java.awt.Dialog;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -281,6 +284,16 @@ public class Editor {
 		}
 
 		return true;
+	}
+
+	public void exportToJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		// convert book object to JSON file
+		try {
+			mapper.writeValue(Paths.get("output.json").toFile(), this.song);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Song getCurrentSong() {

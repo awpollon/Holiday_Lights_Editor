@@ -171,11 +171,11 @@ public class LightsEditorApplication {
 		fd.setFilenameFilter((dir, name) -> name.endsWith(".ser"));
 		fd.setMultipleMode(false);
 		fd.setVisible(true);
-		String filename = fd.getFile();
 
-		if (filename != null) {
+		File file = fd.getFiles()[0];
+		if (file != null) {
 			try {
-				FileInputStream fin = new FileInputStream(filename);
+				FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream ois = new ObjectInputStream(fin);
 				Song openSong = (Song) ois.readObject();
 				Editor newEditor = new Editor(openSong, this);

@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
@@ -6,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.JOptionPane;
-
 
 public class Song implements Serializable {
 	/**
@@ -24,6 +25,9 @@ public class Song implements Serializable {
 	private String fileLocation;	
 	
 //	private double lagMod = .85; //Modifier to account for delay with music shield
+
+	public Song() {
+	}
 
 	public Song(String songTitle, File audio, LightsEditorApplication app) {
 		this.title = songTitle;
@@ -72,6 +76,7 @@ public class Song implements Serializable {
 		return cues.toArray(new Cue[this.cues.size()]);
 	}
 
+	@JsonIgnore
 	public ArrayList<Cue> getCueList() {
 		Collections.sort(this.cues);
 		return cues;
@@ -182,7 +187,7 @@ public class Song implements Serializable {
 	}
 
 	public boolean getPlayMusic() {
-		return true;
+		return false;
 	}
 
 	public String getSDSongName() {

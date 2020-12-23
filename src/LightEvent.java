@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 public class LightEvent implements Serializable{
@@ -10,12 +13,17 @@ public class LightEvent implements Serializable{
 	public static final int OFF_STATE = 2;
 	public static final int EFFECT_STATE = 3;
 
-	
+	@JsonIgnore
 	private Channel channel;
 	private boolean on;
+	@JsonProperty("isEffect")
 	private boolean isEffect;
+
 	private int effectRate;
 	private int state;
+
+	public LightEvent() {
+	}
 
 	public LightEvent(Channel c, boolean turnOn, boolean isEffect, int effectRate) {
 		this.channel = c;
@@ -42,6 +50,12 @@ public class LightEvent implements Serializable{
 		return channel;
 	}
 
+	@JsonProperty("channel")
+	public int getChannelNumber() {
+		return channel.getChNum();
+	}
+
+	@JsonIgnore
 	public boolean isEffect() {
 		return isEffect;
 	}
@@ -50,6 +64,7 @@ public class LightEvent implements Serializable{
 		return on;
 	}
 
+	@JsonIgnore
 	public double getEffectRateInSecs() {
 		return effectRate / 1000.0;
 	}

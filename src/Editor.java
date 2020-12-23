@@ -1,14 +1,9 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.awt.Color;
 import java.awt.Dialog;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -62,7 +57,11 @@ public class Editor {
 
 		gui.printCues();
 
-		timer = new Timer(this);
+		try {
+			timer = new Timer(this);
+		} catch (FileNotFoundException e) {
+			this.changeAudio();
+		}
 	}
 
 	void stopTimer() {
@@ -97,7 +96,12 @@ public class Editor {
 			//If new file was chosen, change file on song
 			this.song.setAudioFile(newAudio);
 			//Restart the timer
-			timer = new Timer(this);
+			try {
+				timer = new Timer(this);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				return false;
+			}
 			setEditorTime(0);
 			//			gui.updateTime();
 			return true;
@@ -152,7 +156,7 @@ public class Editor {
 			bw.append("void loop() {\n");
 
 			//Begin countdown
-			Arduino.writeCountdown(bw, 10);
+			Arduino.writeCountdown(bw, 5);
 
 			Object[] qs = song.getCues();
 
@@ -195,10 +199,12 @@ public class Editor {
 						LightEvent e = c.getEvents().get(j);
 
 						//Check if channel is on active effects, if so remove
-						for (int k=0; k<activeEffects.size(); k++) {
-							if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
-								activeEffects.remove(k);
-								break;
+						if(!e.isEffect()){
+							for (int k=0; k<activeEffects.size(); k++) {
+								if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
+									activeEffects.remove(k);
+									break;
+								}
 							}
 						}
 
@@ -278,6 +284,16 @@ public class Editor {
 		}
 
 		return true;
+	}
+
+	public void exportToJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		// convert book object to JSON file
+		try {
+			mapper.writeValue(Paths.get("output.json").toFile(), this.song);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Song getCurrentSong() {

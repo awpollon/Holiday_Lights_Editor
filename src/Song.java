@@ -161,7 +161,7 @@ public class Song implements Serializable {
 					for(Cue q: song.getCueList()) {
 						for(LightEvent ev: q.getEvents()) {
 							if(ev.getState() == 0) {
-								ev.setState();
+								ev.fixState();
 							}
 						}
 					}

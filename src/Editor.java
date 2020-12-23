@@ -206,8 +206,7 @@ public class Editor {
 							//Add to active effects
 							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
 							Arduino.digitalWrite(bw, song.getChannel(e.getChannelNum()), true);
-						}
-						else {
+						} else {
 							//Write channel based on isOn
 							Arduino.digitalWrite(bw, song.getChannel(e.getChannelNum()), e.isOn());
 						}

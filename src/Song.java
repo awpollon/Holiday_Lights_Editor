@@ -9,7 +9,6 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
-
 public class Song implements Serializable {
 	/**
 	 * 
@@ -26,6 +25,9 @@ public class Song implements Serializable {
 	private String fileLocation;	
 	
 //	private double lagMod = .85; //Modifier to account for delay with music shield
+
+	public Song() {
+	}
 
 	public Song(String songTitle, File audio, LightsEditorApplication app) {
 		this.title = songTitle;

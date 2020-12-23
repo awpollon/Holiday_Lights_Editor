@@ -1,5 +1,8 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Properties;
 
@@ -74,23 +77,25 @@ public class LightsEditorApplication {
 
 
 		while(!success) {
-			String[] buttons = {"Quit", "Open Song", "Create New Song" };
+			String[] buttons = {"Quit", "Open Song from JSON", "Open Song", "Create New Song"};
 			int selection = JOptionPane.showOptionDialog(null, "Welcome to the app!", "Welcome", JOptionPane.DEFAULT_OPTION, 0, null, buttons, buttons[2]);
 
-			if(selection==2) {
+			if (selection == 3) {
 				//Create new song
-				if(this.createNewSong()) success = true;
+				if (this.createNewSong()) success = true;
 				else success = false;
-			}
-			else if(selection == 1) {
+			} else if (selection == 2) {
 				//Open song
-				if(!this.openFile()) {
+				if (!this.openFile()) {
 					success = false;
-				}
-				else success = true;
+				} else success = true;
 
-			}
-			else {
+			} else if (selection == 1) {
+				//Open song
+				if (!this.openFilefromJSON()) {
+					success = false;
+				} else success = true;
+			} else {
 				//Exit app
 				success = true;
 				System.exit(0);
@@ -199,6 +204,34 @@ public class LightsEditorApplication {
 			}
 		}
 
+		return false;
+	}
+
+	public boolean openFilefromJSON() {
+		System.out.println("Opening from JSON");
+
+		FileDialog fd = new FileDialog(this.parentFrame, "Choose a JSON file", FileDialog.LOAD);
+		fd.setDirectory("C:\\");
+		fd.setFilenameFilter((dir, name) -> name.endsWith(".json"));
+		fd.setMultipleMode(false);
+		fd.setVisible(true);
+
+		File file = fd.getFiles()[0];
+		if (file != null) {
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				Song song = mapper.readValue(file, Song.class);
+				Editor newEditor = new Editor(song, this);
+
+				//Update file path in song file
+				song.setFileLocation(fd.getDirectory());
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 		return false;
 	}
 

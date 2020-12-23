@@ -27,7 +27,10 @@ public class Channel implements Serializable {
 	private transient Cue cueStateLastChanged;
 	@JsonIgnore
 	private transient double currentEffectRate;
-	
+
+	public Channel() {
+	}
+
 	public Channel(String name, int channel, int pin, Color col) {
 		this.setChName(name);
 		this.setColor(col);
@@ -105,6 +108,7 @@ public class Channel implements Serializable {
 		else return null;
 	}
 
+	@JsonIgnore
 	public Cue getCueLastChanged() {
 		return cueStateLastChanged;
 	}

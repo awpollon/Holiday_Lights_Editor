@@ -20,6 +20,9 @@ public class Cue implements Comparable<Cue>, Serializable {
 		return events;
 	}
 
+	public Cue() {
+	}
+
 	public Cue(double time) {
 		this.setRunTime(time);
 		events = new ArrayList<LightEvent>();

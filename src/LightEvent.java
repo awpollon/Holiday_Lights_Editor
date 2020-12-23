@@ -13,13 +13,17 @@ public class LightEvent implements Serializable{
 	public static final int OFF_STATE = 2;
 	public static final int EFFECT_STATE = 3;
 
-	@JsonIgnore()
+	@JsonIgnore
 	private Channel channel;
 	private boolean on;
+	@JsonProperty("isEffect")
 	private boolean isEffect;
 
 	private int effectRate;
 	private int state;
+
+	public LightEvent() {
+	}
 
 	public LightEvent(Channel c, boolean turnOn, boolean isEffect, int effectRate) {
 		this.channel = c;
@@ -51,6 +55,7 @@ public class LightEvent implements Serializable{
 		return channel.getChNum();
 	}
 
+	@JsonIgnore
 	public boolean isEffect() {
 		return isEffect;
 	}

@@ -96,6 +96,7 @@ public class Song implements Serializable {
 		this.cues = song.cues;
 	}
 
+	@JsonIgnore
 	public String getFilePath() {
 		//Return location plus fileName, replacing spaces with underscores
 		return ("" + this.fileLocation + "/" + this.fileName.replace(' ', '_'));
@@ -170,39 +171,43 @@ public class Song implements Serializable {
 		}
 
 
-		//check for colors
-		{
-			for(Channel ch: song.getChannelsMap().values()) {
-				if(ch.getColor() == null) {
-					System.err.println("Error: Ch. " + ch.toString() + " missing color");
-					String input = JOptionPane.showInputDialog("type color name");
-					Field f;
-					try {
-						f = Color.class.getField(input);
-						System.out.println(f.get(null));
-						ch.setColor((Color) f.get(null));
-
-					} catch (Exception e) {
-						System.err.println("Error: unable to set color");
-					} 
-				} 
-
-			}
-		}
+//		//check for colors
+//		{
+//			for(Channel ch: song.getChannelsMap().values()) {
+//				if(ch.getColor() == null) {
+//					System.err.println("Error: Ch. " + ch.toString() + " missing color");
+//					String input = JOptionPane.showInputDialog("type color name");
+//					Field f;
+//					try {
+//						f = Color.class.getField(input);
+//						System.out.println(f.get(null));
+//						ch.setColor((Color) f.get(null));
+//
+//					} catch (Exception e) {
+//						System.err.println("Error: unable to set color");
+//					}
+//				}
+//
+//			}
+//		}
 	}
 
+	@JsonIgnore
 	public double getLagMod() {
 		return 1.0;
 	}
 
+	@JsonIgnore
 	public boolean getPlayMusic() {
 		return false;
 	}
 
+	@JsonIgnore
 	public String getSDSongName() {
 		return "track_4.mp3";
 	}
 
+	@JsonIgnore
 	//Lower the louder
 	public int getVolume() {
 		return 40;
@@ -216,7 +221,7 @@ public class Song implements Serializable {
 			}
 			this.channels = null;
 		}
-
+		this.channelsMap.values().forEach(Channel::migrateLegacy);
 		this.cues.forEach(Cue::migrateLegacy);
 	}
 }

@@ -37,6 +37,10 @@ public class GUI {
 	 */
 	private static final long serialVersionUID = 2843788118490686677L;
 
+	enum DisplayColor {
+		WHITE, BLUE, RED, LIGHT_BLUE, ORANGE
+	}
+
 	Editor e;
 
 	JTextField timeText;
@@ -86,7 +90,6 @@ public class GUI {
 	private final int sliderMaxVal = 100;
 
 	private Object[] cues;
-
 
 	public GUI(final Editor editor) {
 		this.e = editor; //Specifies the editor session
@@ -618,11 +621,11 @@ public class GUI {
 			chStatePanel.add(new JLabel("State: " + ch.getCurrentStateString()));
 
 			if(ch.getCurrentState() == LightEvent.ON_STATE) {
-				chStatePanel.setBackground(ch.getColor());
+				chStatePanel.setBackground(getColor(ch.getDisplayColor()));
 			}
 			else if (ch.getCurrentState() == LightEvent.EFFECT_STATE) {
 				chStatePanel.add(new JLabel("Effect Rate: " + ch.getCurrentEffectRateInSecs()));
-				chStatePanel.setBackground(ch.getColor());
+				chStatePanel.setBackground(getColor(ch.getDisplayColor()));
 			}
 			else if (ch.getCurrentState() == LightEvent.OFF_STATE) {
 				chStatePanel.setBackground(Color.gray);
@@ -667,6 +670,19 @@ public class GUI {
 			//Enable slider and reset
 			reset.setEnabled(true);
 			audioSlider.setEnabled(true);
+		}
+	}
+
+	public static Color getColor(DisplayColor color) {
+		if (color == null) return Color.WHITE;
+
+		switch (color) {
+			case RED: return Color.red;
+			case BLUE: return Color.blue;
+			case WHITE: return Color.white;
+			case LIGHT_BLUE: return Color.blue.brighter();
+			case ORANGE: return Color.orange;
+			default: return Color.white;
 		}
 	}
 }

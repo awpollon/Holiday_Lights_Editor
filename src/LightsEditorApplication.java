@@ -123,14 +123,14 @@ public class LightsEditorApplication {
 
 
 			//Hardcode channels for new song
-			newSong.addChannel(new Channel("White Tree", 1, 47, Color.WHITE));
-			newSong.addChannel(new Channel("Blue Tree", 2, 46, Color.blue));
-			newSong.addChannel(new Channel("Blues", 3, 48, Color.blue));
-			newSong.addChannel(new Channel("Whites", 4, 49, Color.white));
-			newSong.addChannel(new Channel("Multi Top", 5, 44, Color.ORANGE));
-			newSong.addChannel(new Channel("Wreaths", 6, 45, Color.orange));
-			newSong.addChannel(new Channel("Red", 7, 43, Color.red));
-			newSong.addChannel(new Channel("Multi Arch", 8, 42, Color.ORANGE));
+			newSong.addChannel(new Channel("White Tree", 1, 47, GUI.DisplayColor.WHITE));
+			newSong.addChannel(new Channel("Blue Tree", 2, 46, GUI.DisplayColor.BLUE));
+			newSong.addChannel(new Channel("Blues", 3, 48, GUI.DisplayColor.LIGHT_BLUE));
+			newSong.addChannel(new Channel("Whites", 4, 49, GUI.DisplayColor.WHITE));
+			newSong.addChannel(new Channel("Multi Top", 5, 44, GUI.DisplayColor.ORANGE));
+			newSong.addChannel(new Channel("Wreaths", 6, 45, GUI.DisplayColor.ORANGE));
+			newSong.addChannel(new Channel("Red", 7, 43, GUI.DisplayColor.RED));
+			newSong.addChannel(new Channel("Multi Arch", 8, 42, GUI.DisplayColor.ORANGE));
 
 			//Start with a cue at 0.0 with everything off
 			Cue firstCue = new Cue(0);
@@ -231,7 +231,7 @@ public class LightsEditorApplication {
 				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public String getArduinoExportPath() {

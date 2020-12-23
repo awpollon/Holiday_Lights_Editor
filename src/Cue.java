@@ -30,7 +30,6 @@ public class Cue implements Comparable<Cue>, Serializable {
 	}
 
 	boolean addEvent(LightEvent e) {
-
 		return events.add(e);
 	}
 
@@ -57,10 +56,12 @@ public class Cue implements Comparable<Cue>, Serializable {
 		return (this.getRuntTimeInSecs() + "");
 	}
 
+	@JsonIgnore
 	public boolean isActive() {
 		return isActive;
 	}
-	
+
+	@JsonIgnore
 	public void setActive(boolean active) {
 		this.isActive = active;
 	}

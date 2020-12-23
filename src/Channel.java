@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.awt.Color;
 import java.io.Serializable;
@@ -9,16 +10,18 @@ public class Channel implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -7257850489035330987L;
-	
+
 	private String chName;
+
+	@JsonIgnore
 	private String chVar;
 
 	@JsonIgnore
-	private Color color;
-	//TODO: Map a color enum list
+	private Color color; //TODO: For legacy
+
+	private GUI.DisplayColor displayColor;
 
 	private int chNum;
-	private int numLights;
 	private int arduinoPin;
 
 	@JsonIgnore
@@ -31,12 +34,11 @@ public class Channel implements Serializable {
 	public Channel() {
 	}
 
-	public Channel(String name, int channel, int pin, Color col) {
+	public Channel(String name, int channel, int pin, GUI.DisplayColor color) {
 		this.setChName(name);
-		this.setColor(col);
-		this.setChNum(channel);
-		this.setNumLights(numLights);
+		this.chNum = channel;
 		this.setArduinoPin(pin);
+		this.displayColor = color;
 	}
 
 	public String getChName() {
@@ -48,28 +50,16 @@ public class Channel implements Serializable {
 		this.chVar = chName.replaceAll("\\s+","");
 	}
 
-	public Color getColor() {
-		return color;
+	public GUI.DisplayColor getDisplayColor() {
+		return displayColor;
 	}
 
-	public void setColor(Color color) {
-		this.color = color;
+	public void setDisplayColor(GUI.DisplayColor displayColor) {
+		this.displayColor = displayColor;
 	}
 
 	public int getChNum() {
 		return chNum;
-	}
-
-	public void setChNum(int chNum) {
-		this.chNum = chNum;
-	}
-
-	public int getNumLights() {
-		return numLights;
-	}
-
-	public void setNumLights(int numLights) {
-		this.numLights = numLights;
 	}
 
 	public int getArduinoPin() {
@@ -119,5 +109,12 @@ public class Channel implements Serializable {
 	@JsonIgnore
 	public double getCurrentEffectRateInSecs() {
 		return currentEffectRate / 1000.0;
+	}
+
+	public void migrateLegacy() {
+		if (this.color != null) {
+			this.displayColor = null;
+			this.color = null;
+		}
 	}
 }

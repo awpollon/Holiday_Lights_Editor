@@ -2,12 +2,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.awt.*;
 import java.io.*;
-import java.nio.file.Paths;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class LightsEditorApplication {
@@ -139,8 +136,8 @@ public class LightsEditorApplication {
 			Cue firstCue = new Cue(0);
 			firstCue.setActive(true);
 
-			for(Channel c: newSong.getChannels()) {
-				firstCue.addEvent(new LightEvent(c, false, false, 0));
+			for(Channel c: newSong.getChannelsMap().values()) {
+				firstCue.addEvent(new LightEvent(c.getChNum(), false, false, 0));
 			}
 			newSong.addCue(firstCue);
 
@@ -183,6 +180,8 @@ public class LightsEditorApplication {
 				FileInputStream fin = new FileInputStream(file);
 				ObjectInputStream ois = new ObjectInputStream(fin);
 				Song openSong = (Song) ois.readObject();
+				openSong.migrateLegacy();
+
 				Editor newEditor = new Editor(openSong, this);
 
 				//Update file path in song file

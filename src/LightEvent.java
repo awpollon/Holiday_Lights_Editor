@@ -14,7 +14,9 @@ public class LightEvent implements Serializable{
 	public static final int EFFECT_STATE = 3;
 
 	@JsonIgnore
-	private Channel channel;
+	private Channel channel; // TODO: Remove
+
+	private int channelNum;
 	private boolean on;
 	@JsonProperty("isEffect")
 	private boolean isEffect;
@@ -25,8 +27,8 @@ public class LightEvent implements Serializable{
 	public LightEvent() {
 	}
 
-	public LightEvent(Channel c, boolean turnOn, boolean isEffect, int effectRate) {
-		this.channel = c;
+	public LightEvent(int channelNum, boolean turnOn, boolean isEffect, int effectRate) {
+		this.channelNum = channelNum;
 		this.on = turnOn;
 		
 		this.isEffect = isEffect;
@@ -46,13 +48,8 @@ public class LightEvent implements Serializable{
 		return effectRate;
 	}
 
-	public Channel getChannel() {
-		return channel;
-	}
-
-	@JsonProperty("channel")
-	public int getChannelNumber() {
-		return channel.getChNum();
+	public int getChannelNum() {
+		return channelNum;
 	}
 
 	@JsonIgnore
@@ -81,6 +78,14 @@ public class LightEvent implements Serializable{
 		else {
 			if(this.on) this.state = ON_STATE;
 			else this.state = OFF_STATE;
+		}
+	}
+
+	public void migrateLegacy() {
+		// Migrate legacy class
+		if (this.channel != null) {
+			this.channelNum = this.channel.getChNum();
+			this.channel = null;
 		}
 	}
 }

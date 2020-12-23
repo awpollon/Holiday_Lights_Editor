@@ -1,17 +1,11 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.awt.Color;
-import java.awt.Dialog;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Editor {
 	/**
@@ -35,7 +29,7 @@ public class Editor {
 
 	private Cue selectedCue;
 
-	public Editor(Song s, LightsEditorApplication application) {		
+	public Editor(Song s, LightsEditorApplication application) {
 		this.song = s;
 		this.app = application;
 		
@@ -136,7 +130,7 @@ public class Editor {
 
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			Object[] chs = song.getChannels();
+			Object[] chs = song.getChannelsMap().values().toArray();
 
 			//Defines
 			Arduino.writeDefines(bw, chs);
@@ -201,7 +195,7 @@ public class Editor {
 						//Check if channel is on active effects, if so remove
 						if(!e.isEffect()){
 							for (int k=0; k<activeEffects.size(); k++) {
-								if(activeEffects.get(k).event.getChannel() == e.getChannel()) {
+								if(activeEffects.get(k).event.getChannelNum() == e.getChannelNum()) {
 									activeEffects.remove(k);
 									break;
 								}
@@ -211,11 +205,11 @@ public class Editor {
 						if(e.getState() == LightEvent.EFFECT_STATE){
 							//Add to active effects
 							activeEffects.add(new ActiveEffect(e, c.getRunTime()));
-							Arduino.digitalWrite(bw, e.getChannel(), true);
+							Arduino.digitalWrite(bw, song.getChannel(e.getChannelNum()), true);
 						}
 						else {
 							//Write channel based on isOn
-							Arduino.digitalWrite(bw, e.getChannel(), e.isOn());
+							Arduino.digitalWrite(bw, song.getChannel(e.getChannelNum()), e.isOn());
 						}
 
 					}
@@ -242,7 +236,7 @@ public class Editor {
 
 							//Print delay and write digitalwrite for effect
 							Arduino.writeDelay(bw, nextEffect.nextRun - lastRunTime);	
-							Arduino.digitalWrite(bw, nextEffect.event.getChannel(), !(nextEffect.lastStateOn));
+							Arduino.digitalWrite(bw, song.getChannel(nextEffect.event.getChannelNum()), !(nextEffect.lastStateOn));
 
 							//Set lastRunTime and nextRun
 							lastRunTime = nextEffect.nextRun;
@@ -383,7 +377,8 @@ public class Editor {
 	public void addNewCue() {
 		//Handle button click to add new cue
 		Cue tmp = new Cue(editorTime);
-		tmp.addEvent(new LightEvent(song.getChannels()[0], true, false, 0));
+		// TODO: avoid blindly setting first channel val
+		tmp.addEvent(new LightEvent((Integer) song.getChannelsMap().values().toArray()[0], true, false, 0));
 
 		CuePane cp = new CuePane(this, tmp, "Add Cue");
 		Cue newCue = cp.getCue();

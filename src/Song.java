@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
@@ -17,7 +18,9 @@ public class Song implements Serializable {
 
 	private String title;
 	private ArrayList<Cue> cues;
-	private ArrayList<Channel> channels;
+	private ArrayList<Channel> channels; //TODO: remove
+
+	private HashMap<Integer, Channel> channelsMap;
 	private String fileName;
 	//	private String audioFilePath;
 	private File audioFile;
@@ -33,7 +36,8 @@ public class Song implements Serializable {
 		this.title = songTitle;
 		this.fileName = this.title + ".ser"; //Hardcode as .ser file for now
 		cues = new ArrayList<Cue>();
-		channels = new ArrayList<Channel>();
+//		channels = new ArrayList<Channel>();
+		this.channelsMap = new HashMap<>();
 		fileLocation = app.getSavedFilePath();
 		//		this.audioFilePath = audioFilePath;
 		this.audioFile = audio;
@@ -58,16 +62,21 @@ public class Song implements Serializable {
 		this.title = title;
 		this.fileName = title + ".ser"; //Hard code .ser
 	}
-	public Channel[] getChannels() {
-		return channels.toArray(new Channel[channels.size()]);
+
+	public HashMap<Integer, Channel> getChannelsMap() {
+		return channelsMap;
 	}
 
-	public boolean addChannel(Channel ch) {
-		return this.channels.add(ch);
+	public Channel getChannel(Integer number) {
+		return this.channelsMap.get(number);
 	}
 
-	public boolean removeChannel(Channel ch) {
-		return this.channels.remove(ch);
+	public void addChannel(Channel ch) {
+		this.channelsMap.put(ch.getChNum(), ch);
+	}
+
+	public void removeChannel(Channel ch) {
+		this.channelsMap.remove(ch.getChNum());
 	}
 
 	public Cue[] getCues() {
@@ -83,7 +92,7 @@ public class Song implements Serializable {
 	}
 
 	public void copySong(Song song) {
-		this.channels = song.channels;
+		this.channelsMap = song.channelsMap;
 		this.cues = song.cues;
 	}
 
@@ -110,14 +119,14 @@ public class Song implements Serializable {
 	}
 
 	public void setChStates(Cue c) {
-		//Will set the state of each channel based on cue provided		
-		for(Channel ch: channels) {
+		//Will set the state of each channel based on cue provided
+		this.channelsMap.values().forEach(ch -> {
 			boolean found = false;
 
 			//Go backwards through each cue, starting with current
 			for(int i=cues.indexOf(c); i>=0; i--){
 				for(LightEvent ev: cues.get(i).getEvents()) {
-					if(ev.getChannel().equals(ch)) {
+					if(ev.getChannelNum() == ch.getChNum()) {
 						found = true;
 						ch.setCurrentState(ev.getState(), cues.get(i), ev.getEffectRate());
 //						System.out.println("State of " + ch.getChName() + " in cue " + c + ": " + ch.getCurrentState() +", set in cue " + cues.get(i).getRuntTimeInSecs()); 
@@ -128,7 +137,7 @@ public class Song implements Serializable {
 				}
 				if(found) break;
 			}
-		}
+		});
 	}
 
 	public static void checkFile(Song song) {
@@ -140,7 +149,7 @@ public class Song implements Serializable {
 			for(Cue q: song.getCueList()) {
 				for(LightEvent ev: q.getEvents()) {
 					if(ev.getState() == 0) {
-						System.err.println("Cue " + q.getRuntTimeInSecs() + ", event " + ev.getChannel() + ": Missing state");
+						System.err.println("Cue " + q.getRuntTimeInSecs() + ", event " + ev.getChannelNum() + ": Missing state");
 						errFound = true;
 					}
 				}
@@ -163,7 +172,7 @@ public class Song implements Serializable {
 
 		//check for colors
 		{
-			for(Channel ch: song.getChannels()) {
+			for(Channel ch: song.getChannelsMap().values()) {
 				if(ch.getColor() == null) {
 					System.err.println("Error: Ch. " + ch.toString() + " missing color");
 					String input = JOptionPane.showInputDialog("type color name");
@@ -197,6 +206,18 @@ public class Song implements Serializable {
 	//Lower the louder
 	public int getVolume() {
 		return 40;
+	}
+
+	public void migrateLegacy() {
+		if (this.channels != null) {
+			this.channelsMap = new HashMap<>();
+			for (Channel channel: this.channels) {
+				this.channelsMap.put(channel.getChNum(), channel);
+			}
+			this.channels = null;
+		}
+
+		this.cues.forEach(Cue::migrateLegacy);
 	}
 }
 

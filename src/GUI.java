@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -23,7 +21,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -573,9 +570,10 @@ public class GUI {
 					eventPanel.add(Box.createVerticalStrut(15));
 					LightEvent ev = evs.get(i);
 
+					Channel channel = this.e.getCurrentSong().getChannel(ev.getChannelNum());
 					eventPanel.add(new JLabel("Event: " + i));
-					eventPanel.add(new  JLabel("Channel: " + ev.getChannel().getChName()));
-					eventPanel.add(new  JLabel("Channel #: " + ev.getChannel().getChNum()));
+					eventPanel.add(new  JLabel("Channel: " + channel.getChName()));
+					eventPanel.add(new  JLabel("Channel #: " + ev.getChannelNum()));
 
 					if(ev.isEffect()) {
 						eventPanel.add(new  JLabel("State: Effect"));
@@ -613,7 +611,7 @@ public class GUI {
 		//		f.add(statePanel, BorderLayout.CENTER);
 
 
-		for(Channel ch: e.getCurrentSong().getChannels()) {
+		for(Channel ch: e.getCurrentSong().getChannelsMap().values()) {
 			JPanel chStatePanel = new JPanel();
 			chStatePanel.setLayout(new BoxLayout(chStatePanel, BoxLayout.PAGE_AXIS));
 			chStatePanel.add(new JLabel(ch.getChNum() +": " + ch.getChName()));

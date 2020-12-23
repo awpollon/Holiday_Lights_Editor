@@ -69,7 +69,9 @@ public class Cue implements Comparable<Cue>, Serializable {
 	public double getRuntTimeInSecs(){
 		return (Math.floor((runTime /10)) /100.0);
 	}
-	
 
+	public void migrateLegacy() {
+		this.events.forEach(LightEvent::migrateLegacy);
+	}
 }
 

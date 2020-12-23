@@ -29,7 +29,7 @@ public class EventInput {
 		
 		newChPanel = new JPanel();
 
-		channel = new JComboBox(s.getChannels());
+		channel = new JComboBox(s.getChannelsMap().values().toArray());
 		state = new JComboBox(options);
 		rateInput = new JTextField();
 		rateInput.setColumns(4);

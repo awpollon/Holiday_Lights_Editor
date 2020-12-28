@@ -138,8 +138,7 @@ public class CuePane {
 
 					if(selectedChannel != null && !(effect && effectRate <=0)) {
 						tmp.addEvent(new LightEvent(selectedChannel, on, effect, effectRate));
-					}
-					else {
+					} else {
 						System.err.println("Unable to add cue: Invalid Input.");
 						feedback = new JLabel("Unable to add cue: Invalid Input.");
 						feedback.setForeground(Color.red);

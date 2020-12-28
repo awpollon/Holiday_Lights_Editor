@@ -632,7 +632,9 @@ public class GUI {
 			}
 			else System.err.println("Error: invalid current state");
 
-			chStatePanel.add(new JLabel("Cue Last Changed: " + ch.getCueLastChanged().toString()));
+			if (ch.getCueLastChanged() != null) {
+				chStatePanel.add(new JLabel("Cue Last Changed: " + ch.getCueLastChanged().toString()));
+			}
 			statePanel.add(chStatePanel);
 		}
 		//		statePanel.validate();

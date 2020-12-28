@@ -201,14 +201,14 @@ public class Editor {
 						LightEvent e = c.getEvents().get(j);
 
 						//Check if channel is on active effects, if so remove
-						if(!e.isEffect()){
+//						if(!e.isEffect()){
 							for (int k=0; k<activeEffects.size(); k++) {
 								if(activeEffects.get(k).event.getChannelNum() == e.getChannelNum()) {
 									activeEffects.remove(k);
 									break;
 								}
 							}
-						}
+//						}
 
 						if(e.getState() == LightEvent.EFFECT_STATE){
 							//Add to active effects
@@ -412,7 +412,7 @@ public class Editor {
 		//Handle button click to add new cue
 		Cue tmp = new Cue(editorTime);
 		// TODO: avoid blindly setting first channel val
-		tmp.addEvent(new LightEvent((Integer) song.getChannelsMap().values().toArray()[0], true, false, 0));
+		tmp.addEvent(new LightEvent(((Channel) song.getChannelsMap().values().toArray()[0]).getChNum(), true, false, 0));
 
 		CuePane cp = new CuePane(this, tmp, "Add Cue");
 		Cue newCue = cp.getCue();

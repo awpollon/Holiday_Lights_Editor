@@ -38,6 +38,11 @@ public class LightEvent implements Serializable{
 	public LightEvent() {
 	}
 
+	public LightEvent(int channelNum) {
+		this.channelNum = channelNum;
+		this.state = OFF_STATE;
+	}
+
 	public LightEvent(int channelNum, boolean turnOn, boolean isEffect, int effectRate) {
 		this.channelNum = channelNum;
 

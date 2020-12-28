@@ -2,7 +2,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
+import java.util.Collection;
 
 
 public class Cue implements Comparable<Cue>, Serializable {
@@ -33,8 +33,16 @@ public class Cue implements Comparable<Cue>, Serializable {
 		return events.add(e);
 	}
 
+	boolean addEvents(Collection<LightEvent> events) {
+		return this.events.addAll(events);
+	}
+
 	boolean removeEvent(LightEvent e) {
 		return events.remove(e);
+	}
+
+	boolean removeAllEvents() {
+		return this.events.removeAll(this.events);
 	}
 
 	public double getRunTime() {

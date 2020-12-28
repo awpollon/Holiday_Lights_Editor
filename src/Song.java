@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -211,6 +212,16 @@ public class Song implements Serializable {
 	//Lower the louder
 	public int getVolume() {
 		return 40;
+	}
+
+	public void initChannels() {
+		// Add all channels to cue zero
+		Cue cueZero = cues.get(0);
+		cueZero.removeAllEvents();
+		cueZero.addEvents(
+			this.channelsMap.keySet().stream()
+			.map(LightEvent::new)
+			.collect(Collectors.toList()));
 	}
 
 	public void migrateLegacy() {

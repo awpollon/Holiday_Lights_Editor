@@ -226,6 +226,8 @@ public class LightsEditorApplication {
 				//Update file path in song file
 				song.setFileLocation(fd.getDirectory());
 
+				song.initChannels();
+
 			} catch (IOException e) {
 				e.printStackTrace();
 				return false;
